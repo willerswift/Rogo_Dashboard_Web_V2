@@ -29,17 +29,18 @@ export function NavSidebar() {
   };
 
   return (
-    <aside className="flex h-screen w-[180px] flex-col border-r border-neutral-200 bg-white shadow-[2px_0_8px_rgba(0,0,0,0.02)]">
-      <div className="flex h-[72px] items-center px-4">
-        <div className="flex items-center gap-2">
-          <Image src="/LogoRogo.svg" alt="Rogo" width={85} height={24} className="h-auto w-auto" />
-          <div className="text-[9px] font-bold leading-tight text-neutral-400 uppercase tracking-tighter">
+    <aside className="flex h-screen w-[240px] flex-col border-r border-neutral-200 bg-white shadow-[2px_0_8px_rgba(0,0,0,0.02)] p-6">
+      <div className="flex items-center mb-10">
+        <div className="flex items-center gap-3">
+          <Image src="/Rogo logo_light.svg" alt="Rogo" width={110} height={32} className="h-auto w-auto" />
+          <div className="h-8 w-[1px] bg-neutral-200 mx-1" />
+          <div className="text-[10px] font-bold leading-tight text-neutral-400 uppercase tracking-wider">
             Partner<br/>Admin
           </div>
         </div>
       </div>
 
-      <nav className="flex-1 space-y-1 px-3 py-4">
+      <nav className="flex-1 space-y-2">
         {NAV_ITEMS.map((item) => {
           const Icon = ICONS[item.icon as keyof typeof ICONS] || LayoutDashboard;
           const isActive = pathname.startsWith(item.href);
@@ -49,25 +50,28 @@ export function NavSidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "group flex items-center rounded-lg px-3 py-2.5 text-[13px] font-semibold transition-all",
+                "group relative flex items-center rounded-xl px-4 py-3 text-[14px] font-bold transition-all overflow-hidden",
                 isActive
                   ? "bg-[#E6E8F4] text-[#393984]"
                   : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900"
               )}
             >
-              <Icon className={cn("mr-3 size-[18px]", isActive ? "text-[#393984]" : "text-neutral-400 group-hover:text-neutral-600")} />
-              {item.title}
+              <Icon className={cn("mr-4 size-[20px] shrink-0", isActive ? "text-[#393984]" : "text-neutral-400 group-hover:text-neutral-600")} />
+              <span className="truncate whitespace-nowrap">{item.title}</span>
+              {isActive && (
+                <div className="absolute right-0 top-0 h-full w-1 rounded-l-full bg-[#393984]" />
+              )}
             </Link>
           );
         })}
       </nav>
 
-      <div className="mt-auto border-t border-neutral-100 p-3">
+      <div className="mt-auto pt-6 border-t border-neutral-100">
         <button 
           onClick={handleLogout}
-          className="flex w-full items-center rounded-lg px-3 py-2.5 text-[13px] font-semibold text-red-500 hover:bg-red-50 transition-colors"
+          className="flex w-full items-center rounded-xl px-4 py-3 text-[14px] font-bold text-red-500 hover:bg-red-50 transition-colors"
         >
-          <LogOut className="mr-3 size-[18px] text-red-500" />
+          <LogOut className="mr-4 size-[20px] text-red-500" />
           Logout
         </button>
       </div>

@@ -9,10 +9,7 @@ export function Topbar() {
   return (
     <header className="flex h-[72px] items-center justify-between border-b border-neutral-100 bg-white px-8">
       <div className="flex items-center gap-2">
-        <div className="flex h-[42px] items-center gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-2 hover:bg-neutral-50 cursor-pointer transition-all shadow-sm">
-          <span className="text-[13px] font-bold text-neutral-900">Partner: {session.activePartnerId || "Rogo"}</span>
-          <ChevronDown className="size-4 text-neutral-400" />
-        </div>
+        {/* Partner Switcher moved to AccessTreeSidebar */}
       </div>
 
       <div className="flex items-center gap-5">

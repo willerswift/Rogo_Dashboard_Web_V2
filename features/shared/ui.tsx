@@ -40,16 +40,16 @@ export function Modal({
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative z-10 mx-4 w-full rounded-2xl bg-white p-6 shadow-2xl",
+          "relative z-10 mx-4 w-full rounded-2xl bg-white p-6 shadow-2xl border border-neutral-200",
           wide ? "max-w-2xl" : "max-w-lg",
         )}
       >
         <div className="mb-5 flex items-start justify-between gap-4">
-          <h2 className="text-lg font-semibold text-zinc-950">{title}</h2>
+          <h2 className="text-lg font-semibold text-neutral-900">{title}</h2>
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-lg p-1 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-600"
+            className="shrink-0 rounded-lg p-1 text-neutral-400 transition hover:bg-neutral-50 hover:text-neutral-600"
           >
             <X className="h-5 w-5" />
           </button>
@@ -74,11 +74,11 @@ export function Panel({
   action?: React.ReactNode;
 }) {
   return (
-    <section className={cn("rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm", className)}>
-      <div className="mb-4 flex items-start justify-between gap-4">
+    <section className={cn("rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm", className)}>
+      <div className="mb-6 flex items-start justify-between gap-4">
         <div className="space-y-1">
-          <h2 className="text-lg font-semibold text-zinc-950">{title}</h2>
-          {description ? <p className="text-sm text-zinc-500">{description}</p> : null}
+          <h2 className="text-[18px] font-bold text-neutral-900">{title}</h2>
+          {description ? <p className="text-sm text-neutral-500">{description}</p> : null}
         </div>
         {action ? <div className="shrink-0">{action}</div> : null}
       </div>
@@ -99,12 +99,12 @@ export function Field({
   children: React.ReactNode;
 }) {
   return (
-    <label className="flex flex-col gap-2 text-sm font-medium text-zinc-700">
-      <span>{label}</span>
+    <div className="flex flex-col gap-1.5">
+      <span className="text-[13px] font-semibold text-neutral-700">{label}</span>
       {children}
-      {hint ? <span className="text-xs font-normal text-zinc-500">{hint}</span> : null}
+      {hint ? <span className="text-xs font-normal text-neutral-500">{hint}</span> : null}
       {error ? <span className="text-xs font-medium text-red-600">{error}</span> : null}
-    </label>
+    </div>
   );
 }
 
@@ -117,8 +117,8 @@ export function TextInput(
     <input
       {...inputProps}
       className={cn(
-        "h-10 rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-950 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200",
-        invalid && "border-red-500 focus:border-red-500 focus:ring-red-100",
+        "h-10 rounded-xl border border-neutral-200 bg-white px-4 text-[14px] text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20",
+        invalid && "border-red-200 focus:border-red-200 focus:ring-red-100/20",
         className,
       )}
     />
@@ -134,8 +134,8 @@ export function TextArea(
     <textarea
       {...textareaProps}
       className={cn(
-        "min-h-28 rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-950 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200",
-        invalid && "border-red-500 focus:border-red-500 focus:ring-red-100",
+        "min-h-28 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-[14px] text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20",
+        invalid && "border-red-200 focus:border-red-200 focus:ring-red-100/20",
         className,
       )}
     />
@@ -151,8 +151,8 @@ export function SelectInput(
     <select
       {...selectProps}
       className={cn(
-        "h-10 rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-950 outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200",
-        invalid && "border-red-500 focus:border-red-500 focus:ring-red-100",
+        "h-10 rounded-xl border border-neutral-200 bg-white px-4 text-[14px] text-neutral-900 outline-none transition focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20",
+        invalid && "border-red-200 focus:border-red-200 focus:ring-red-100/20",
         className,
       )}
     />
@@ -160,7 +160,7 @@ export function SelectInput(
 }
 
 export function CheckboxInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} type="checkbox" className={cn("h-4 w-4 rounded border-zinc-300", props.className)} />;
+  return <input {...props} type="checkbox" className={cn("h-4 w-4 rounded border-neutral-300 text-primary-300 focus:ring-primary-300", props.className)} />;
 }
 
 export function PrimaryButton({
@@ -174,7 +174,7 @@ export function PrimaryButton({
       {...props}
       disabled={loading || props.disabled}
       className={cn(
-        "inline-flex h-10 items-center justify-center rounded-xl bg-zinc-950 px-4 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60",
+        "inline-flex h-11 items-center justify-center rounded-full bg-primary-300 px-8 text-[14px] font-bold text-white transition hover:bg-primary-400 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-300",
         className,
       )}
     >
@@ -189,7 +189,7 @@ export function SecondaryButton(props: React.ButtonHTMLAttributes<HTMLButtonElem
     <button
       {...props}
       className={cn(
-        "inline-flex h-10 items-center justify-center rounded-xl border border-zinc-300 bg-white px-4 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60",
+        "inline-flex h-11 items-center justify-center rounded-full border border-neutral-200 bg-white px-8 text-[14px] font-bold text-neutral-700 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60",
         props.className,
       )}
     />
@@ -197,12 +197,12 @@ export function SecondaryButton(props: React.ButtonHTMLAttributes<HTMLButtonElem
 }
 
 export function InlineCode({ value }: { value: string }) {
-  return <code className="rounded bg-zinc-100 px-2 py-1 text-xs text-zinc-700">{value}</code>;
+  return <code className="rounded bg-neutral-100 px-2 py-1 text-xs text-neutral-700 font-mono">{value}</code>;
 }
 
 export function JsonBlock({ value }: { value: unknown }) {
   return (
-    <pre className="overflow-x-auto rounded-2xl bg-zinc-950 p-4 text-xs leading-6 text-zinc-100">
+    <pre className="overflow-x-auto rounded-2xl bg-secondary-500 p-6 text-[13px] leading-6 text-neutral-100 font-mono shadow-inner">
       {JSON.stringify(value, null, 2)}
     </pre>
   );
@@ -211,28 +211,28 @@ export function JsonBlock({ value }: { value: unknown }) {
 export function Notice({ tone = "default", children }: { tone?: "default" | "error" | "warn"; children: React.ReactNode }) {
   const toneClass =
     tone === "error"
-      ? "border-red-200 bg-red-50 text-red-700"
+      ? "border-red-100 bg-red-100/10 text-red-700"
       : tone === "warn"
-        ? "border-amber-200 bg-amber-50 text-amber-700"
-        : "border-zinc-200 bg-zinc-50 text-zinc-700";
+        ? "border-yellow-100 bg-yellow-100/10 text-yellow-700"
+        : "border-primary-100 bg-primary-100/10 text-neutral-700";
 
-  return <div className={cn("rounded-xl border px-3 py-2 text-sm", toneClass)}>{children}</div>;
+  return <div className={cn("rounded-xl border px-4 py-3 text-sm flex gap-3", toneClass)}>{children}</div>;
 }
 
 export function LoadingBlock({ label = "Loading..." }: { label?: string }) {
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-4 py-6 text-sm text-zinc-500">
-      <Loader2 className="h-4 w-4 animate-spin" />
-      <span>{label}</span>
+    <div className="flex items-center gap-3 rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-4 py-8 text-sm text-neutral-500 justify-center">
+      <Loader2 className="h-5 w-5 animate-spin text-primary-300" />
+      <span className="font-medium">{label}</span>
     </div>
   );
 }
 
 export function EmptyState({ title, description }: { title: string; description: string }) {
   return (
-    <div className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 px-4 py-8 text-center">
-      <h3 className="font-medium text-zinc-900">{title}</h3>
-      <p className="mt-2 text-sm text-zinc-500">{description}</p>
+    <div className="rounded-2xl border border-dashed border-neutral-200 bg-neutral-50 px-4 py-12 text-center">
+      <h3 className="font-bold text-neutral-900">{title}</h3>
+      <p className="mt-2 text-sm text-neutral-500 max-w-sm mx-auto">{description}</p>
     </div>
   );
 }
@@ -240,13 +240,13 @@ export function EmptyState({ title, description }: { title: string; description:
 export function StatusBadge({ value }: { value: string }) {
   const colorClass =
     value === "ACTIVE" || value === "released"
-      ? "bg-emerald-50 text-emerald-700"
-      : value === "DISABLED"
-        ? "bg-red-50 text-red-700"
-        : "bg-zinc-100 text-zinc-600";
+      ? "bg-green-100 text-green-700"
+      : value === "DISABLED" || value === "DEACTIVATED"
+        ? "bg-red-100 text-red-700"
+        : "bg-neutral-100 text-neutral-600";
 
   return (
-    <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium", colorClass)}>
+    <span className={cn("inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wider", colorClass)}>
       {value}
     </span>
   );

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat, Inter } from "next/font/google";
+import { Montserrat } from "next/font/google";
 
 import { Providers } from "@/lib/components/providers";
 import { EMPTY_PARTNER_SESSION } from "@/lib/config/session";
@@ -9,11 +9,6 @@ import "./globals.css";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
-  subsets: ["latin"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -35,7 +30,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${montserrat.variable} ${inter.variable} h-full antialiased`}
+      className={`${montserrat.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-white text-neutral-900">
         <Providers initialSession={session}>{children}</Providers>
