@@ -66,11 +66,8 @@ export function AccountPage() {
           action={<span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">ID: RO-8829-X</span>}
         >
           <div className="flex flex-col gap-8 md:flex-row md:items-start">
-            <div className="group relative flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-neutral-100 text-2xl font-bold text-neutral-400 shadow-sm border border-neutral-100">
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-white text-2xl font-bold text-neutral-300 border border-neutral-100 shadow-sm">
               JD
-              <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/40 opacity-0 transition group-hover:opacity-100 cursor-pointer">
-                <span className="text-[10px] text-white font-bold uppercase tracking-wider">Upload</span>
-              </div>
             </div>
 
             <div className="flex-1 space-y-5">
@@ -78,8 +75,8 @@ export function AccountPage() {
                 <Field label="Username">
                   <TextInput
                     value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    className="w-full"
+                    readOnly
+                    className="w-full bg-neutral-50 text-neutral-400 cursor-not-allowed border-dashed"
                   />
                 </Field>
                 <Field label="Email Address">
@@ -121,12 +118,12 @@ export function AccountPage() {
             </div>
           }
         >
-          <div className="grid gap-8 sm:grid-cols-2">
+          <div className="flex justify-between items-start">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-400">Partner Agency</p>
               <p className="mt-1.5 text-[14px] font-bold text-neutral-900">Rogo Global</p>
             </div>
-            <div>
+            <div className="text-right">
               <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-400">Member Since</p>
               <p className="mt-1.5 text-[14px] font-bold text-neutral-900">Oct 12, 2022</p>
             </div>

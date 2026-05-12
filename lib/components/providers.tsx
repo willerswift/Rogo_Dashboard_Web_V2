@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 
 import { PartnerProvider } from "@/lib/hooks/usePartnerContext";
 import type { PartnerSession } from "@/lib/types/partner";
+import { ThemeProvider } from "./ThemeProvider";
 
 export function Providers({
   children,
@@ -14,17 +15,19 @@ export function Providers({
   initialSession: PartnerSession;
 }) {
   return (
-    <PartnerProvider initialSession={initialSession}>
-      {children}
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          classNames: {
-            toast: "border border-border bg-surface text-foreground shadow-panel",
-            description: "text-muted-foreground",
-          },
-        }}
-      />
-    </PartnerProvider>
+    <ThemeProvider>
+      <PartnerProvider initialSession={initialSession}>
+        {children}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            classNames: {
+              toast: "border border-border bg-surface text-foreground shadow-panel",
+              description: "text-muted-foreground",
+            },
+          }}
+        />
+      </PartnerProvider>
+    </ThemeProvider>
   );
 }

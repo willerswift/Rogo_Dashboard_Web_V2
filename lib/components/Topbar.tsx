@@ -18,12 +18,8 @@ export function Topbar() {
           <span className="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-[#fd3566] ring-2 ring-white" />
         </button>
 
-        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-neutral-50 overflow-hidden shadow-sm">
-          <img 
-            src="https://avatar.vercel.sh/admin" 
-            alt="Admin" 
-            className="h-full w-full object-cover"
-          />
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-purple-500 shadow-sm">
+          <span className="text-[14px] font-bold text-white">JD</span>
         </div>
       </div>
     </header>

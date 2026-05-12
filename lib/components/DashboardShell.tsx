@@ -23,8 +23,8 @@ export function DashboardShell({ children }: { children: ReactNode }) {
       {/* 3. Main Content Area */}
       <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
         <Topbar />
-        <main className="flex-1 overflow-y-auto p-8">
-          <div className="mx-auto w-full max-w-[1400px]">
+        <main className="flex flex-col flex-1 items-start self-stretch pt-8 px-8 pb-[56.83px] overflow-y-auto w-full">
+          <div className="w-full">
             {children}
           </div>
         </main>

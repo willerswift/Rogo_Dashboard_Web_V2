@@ -68,7 +68,7 @@ export function AccessTreeSidebar() {
       {/* 1. Partner Switcher */}
       <div className="p-4 border-b border-neutral-100">
         <div className="flex h-[48px] items-center justify-between rounded-xl border border-neutral-200 bg-white px-4 py-2 hover:bg-neutral-50 cursor-pointer transition-all shadow-sm">
-          <span className="text-[14px] font-bold text-neutral-900 truncate">
+          <span className="text-sm font-bold text-neutral-900 truncate">
             <span className="font-normal text-neutral-500 mr-2">Partner:</span>
             {session.activePartnerId || "Rogo"}
           </span>
@@ -79,17 +79,17 @@ export function AccessTreeSidebar() {
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* 2. Access Tree Header */}
         <div className="p-6 pb-2">
-          <h2 className="text-[20px] font-bold font-heading text-neutral-900 tracking-tight">Access Tree</h2>
+          <h2 className="text-[20px] font-semibold font-heading text-neutral-900 tracking-tight">Access Tree</h2>
         </div>
 
         {/* 3. Search */}
-        <div className="px-6 py-4">
+        <div className="px-6 py-2">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
             <input
               type="text"
               placeholder="Search partner, org, project"
-              className="w-full h-11 rounded-xl border border-neutral-200 bg-white pl-11 pr-3 text-[14px] font-sans outline-none focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20 transition-all placeholder:text-neutral-400 shadow-sm"
+              className="w-full h-[40px] rounded-xl border border-neutral-200 bg-white pl-9 pr-3 py-2 text-sm font-sans outline-none focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20 transition-all placeholder:text-neutral-400"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -98,13 +98,13 @@ export function AccessTreeSidebar() {
 
         {/* 4. Access Scope Toggle */}
         <div className="px-6 py-2">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-3 font-sans">ACCESS SCOPE</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2 font-sans">ACCESS SCOPE</p>
           <div className="flex p-1 bg-neutral-100 rounded-2xl">
             <button
               onClick={() => setAccessScope("partner")}
               className={cn(
-                "flex-1 py-2 text-[13px] font-bold rounded-xl transition-all font-sans whitespace-nowrap",
-                accessScope === "partner" ? "bg-[#FD3566] text-white shadow-md" : "text-neutral-500 hover:text-neutral-700"
+                "flex-1 py-2 px-3 text-sm font-normal rounded-xl transition-all font-sans whitespace-nowrap",
+                accessScope === "partner" ? "bg-[#FD3566] text-white shadow-sm" : "text-[#777777] hover:text-neutral-900"
               )}
             >
               Partner View
@@ -112,8 +112,8 @@ export function AccessTreeSidebar() {
             <button
               onClick={() => setAccessScope("user")}
               className={cn(
-                "flex-1 py-2 text-[13px] font-bold rounded-xl transition-all font-sans whitespace-nowrap",
-                accessScope === "user" ? "bg-[#FD3566] text-white shadow-md" : "text-neutral-500 hover:text-neutral-700"
+                "flex-1 py-2 px-3 text-sm font-normal rounded-xl transition-all font-sans whitespace-nowrap",
+                accessScope === "user" ? "bg-[#FD3566] text-white shadow-sm" : "text-[#777777] hover:text-neutral-900"
               )}
             >
               User View
@@ -122,11 +122,11 @@ export function AccessTreeSidebar() {
         </div>
 
         {/* Tree Content */}
-        <div className="mt-4 border-t border-neutral-100 pt-4 flex-1 overflow-y-auto px-4 custom-scrollbar font-sans">
+        <div className="mt-4 border-t border-neutral-200 pt-4 flex-1 overflow-y-auto px-4 custom-scrollbar font-sans">
           <div className="space-y-1">
             {/* Partner Root */}
-            <div className="flex items-center gap-2 px-1 py-1.5 text-[12px] font-bold text-neutral-600 whitespace-nowrap">
-              <FolderIcon className="size-3.5 text-neutral-400 fill-neutral-400/10" />
+            <div className="flex items-center gap-4 py-2 text-sm font-normal text-[#777777] whitespace-nowrap px-2">
+              <FolderIcon className="size-5 text-[#777777] fill-current" />
               <span>{session.activePartnerId || "Rogo"}</span>
             </div>
 
@@ -138,29 +138,29 @@ export function AccessTreeSidebar() {
 
                 return (
                   <div key={org.orgId} className="space-y-0">
-                    <div className="group flex items-center">
+                    <div className="group flex items-center pl-2">
                       <button 
                         onClick={() => toggleOrg(org.orgId)}
-                        className="p-0.5 hover:bg-neutral-100 rounded text-neutral-400 transition-colors"
+                        className="p-1 hover:bg-neutral-100 rounded text-[#777777] transition-colors mr-1"
                       >
-                        {isExpanded ? <ChevronDown className="size-3" /> : <ChevronRight className="size-3" />}
+                        {isExpanded ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
                       </button>
                       <button
                         onClick={() => handleSelectOrg(org.orgId)}
                         className={cn(
-                          "flex flex-1 items-center gap-1.5 rounded-md px-1.5 py-0.5 text-[10px] font-bold font-sans transition-all whitespace-nowrap",
-                          isActive 
-                            ? "bg-[#E6E8F4] text-[#393984]" 
-                            : "text-neutral-500 hover:text-neutral-800"
+                          "flex flex-1 items-center gap-3 rounded-md px-2 py-2 text-sm font-sans transition-all whitespace-nowrap",
+                          isExpanded || isActive
+                            ? "font-normal text-[#777777]" 
+                            : "font-normal text-[#777777] hover:bg-neutral-50 hover:text-neutral-900"
                         )}
                       >
-                        <Building2 className={cn("size-3", isActive ? "text-[#393984]" : "text-neutral-300")} />
+                        <Building2 className="size-[18px] shrink-0 text-[#777777]" />
                         <span className="truncate">{org.name}</span>
                       </button>
                     </div>
 
                     {isExpanded && (
-                      <div className="pl-3.5 space-y-0 border-l border-neutral-100 ml-1.5">
+                      <div className="space-y-0">
                         <OrgProjectsList 
                           orgId={org.orgId} 
                           activeProjectId={activeProjectId}
@@ -173,27 +173,27 @@ export function AccessTreeSidebar() {
               })}
 
               {standaloneProjects.map((project) => (
-                <div key={project.uuid} className="pl-3.5">
+                <div key={project.uuid} className="pl-2">
                   <button
                     onClick={() => handleSelectProject(project.uuid)}
                     className={cn(
-                      "flex w-full items-center gap-1.5 rounded-md px-1.5 py-0.5 text-[10px] font-bold font-sans transition-all relative overflow-hidden whitespace-nowrap",
+                      "flex w-full items-center gap-3 rounded-l-md rounded-r-none py-2 pl-[42px] pr-2 text-sm font-sans transition-all relative whitespace-nowrap",
                       activeProjectId === project.uuid
-                        ? "bg-[#E6E8F4] text-[#393984]"
-                        : "text-neutral-500 hover:text-neutral-800"
+                        ? "bg-[#F3F4F6] font-normal text-[#777777]"
+                        : "font-normal text-[#777777] hover:bg-neutral-50 hover:text-neutral-900"
                     )}
                   >
-                    <Dot className={cn("size-3.5", activeProjectId === project.uuid ? "text-[#393984]" : "text-green-500")} />
+                    <Dot className="size-[18px] shrink-0 text-[#22C55E]" />
                     <span className="truncate">{project.name}</span>
                     {activeProjectId === project.uuid && (
-                      <div className="absolute right-0 top-0 h-full w-0.5 bg-[#393984]" />
+                      <div className="absolute right-0 top-0 h-full w-[4px] bg-[#393984]" />
                     )}
                   </button>
                 </div>
               ))}
             </div>
 
-            <button className="flex w-full items-center gap-1.5 px-2 py-3 text-[10.5px] font-bold text-[#FD3566] hover:bg-[#FD3566]/5 rounded-xl transition-colors mt-2 font-sans whitespace-nowrap">
+            <button className="flex w-full items-center gap-1.5 py-2 text-sm font-bold text-[#FD3566] hover:bg-[#FD3566]/5 rounded-xl transition-colors mt-2 font-sans whitespace-nowrap">
               <Plus className="size-5" />
               <span>Create New Organization</span>
             </button>
@@ -235,16 +235,16 @@ function OrgProjectsList({ orgId, activeProjectId, onSelect }: {
           key={p.uuid}
           onClick={() => onSelect(p.uuid)}
           className={cn(
-            "flex w-full items-center gap-1.5 rounded-md px-1.5 py-0.5 text-[10px] font-bold transition-all relative overflow-hidden whitespace-nowrap",
+            "flex w-full items-center gap-3 rounded-l-md rounded-r-none py-2 pl-[42px] pr-2 text-sm font-sans transition-all relative whitespace-nowrap",
             activeProjectId === p.uuid
-              ? "bg-[#E6E8F4] text-[#393984]"
-              : "text-neutral-500 hover:text-neutral-800"
+              ? "bg-[#F3F4F6] font-normal text-[#777777]"
+              : "font-normal text-[#777777] hover:bg-neutral-50 hover:text-neutral-900"
           )}
         >
-          <Dot className={cn("size-3.5", activeProjectId === p.uuid ? "text-[#393984]" : "text-green-500")} />
+          <Dot className="size-[18px] shrink-0 text-[#22C55E]" />
           <span className="truncate">{p.name}</span>
           {activeProjectId === p.uuid && (
-            <div className="absolute right-0 top-0 h-full w-0.5 bg-[#393984]" />
+            <div className="absolute right-0 top-0 h-full w-[4px] bg-[#393984]" />
           )}
         </button>
       ))}

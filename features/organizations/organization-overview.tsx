@@ -77,7 +77,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold font-heading text-neutral-900 tracking-tight">Project in Organization</h3>
-          <PrimaryButton className="h-10 rounded-full px-5 bg-[#FD3566] hover:bg-[#EA023B] text-[13px] font-bold shadow-md shadow-[#FD3566]/20 transition-all">
+          <PrimaryButton className="h-10 rounded-full px-5 bg-[#FD3566] hover:bg-[#EA023B] shadow-md shadow-[#FD3566]/20 transition-all">
             <Plus className="mr-2 size-4 stroke-[3px]" />
             Create Project
           </PrimaryButton>
@@ -146,8 +146,8 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
               Showing <span className="text-neutral-900 font-bold">1</span> to <span className="text-neutral-900 font-bold">{projects.length}</span> of <span className="text-neutral-900 font-bold">{projects.length}</span> entries
             </div>
             <div className="flex gap-2">
-              <button disabled className="h-9 px-4 rounded-lg border border-neutral-200 bg-white text-[13px] font-bold text-neutral-400 hover:bg-neutral-50 disabled:opacity-30 transition-all">Previous</button>
-              <button disabled className="h-9 px-4 rounded-lg border border-neutral-200 bg-white text-[13px] font-bold text-neutral-400 hover:bg-neutral-50 disabled:opacity-30 transition-all">Next</button>
+              <button disabled className="h-9 px-4 rounded-lg border border-neutral-200 bg-white text-[16px] font-semibold text-neutral-400 hover:bg-neutral-50 disabled:opacity-30 transition-all font-heading">Previous</button>
+              <button disabled className="h-9 px-4 rounded-lg border border-neutral-200 bg-white text-[16px] font-semibold text-neutral-400 hover:bg-neutral-50 disabled:opacity-30 transition-all font-heading">Next</button>
             </div>
           </div>
         </div>

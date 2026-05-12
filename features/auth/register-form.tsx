@@ -202,7 +202,7 @@ export function RegisterForm() {
         type="submit"
         disabled={isSubmitting}
         className={cn(
-          "w-full h-11 flex items-center justify-center rounded-full bg-primary-300 text-white text-[15px] font-bold transition-all hover:bg-[#E62E5F] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-primary-300/20"
+          "w-full h-11 flex items-center justify-center rounded-full bg-primary-300 text-white text-[16px] font-semibold transition-all hover:bg-[#E62E5F] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-primary-300/20 font-heading"
         )}
       >
         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}

@@ -174,7 +174,7 @@ export function PrimaryButton({
       {...props}
       disabled={loading || props.disabled}
       className={cn(
-        "inline-flex h-11 items-center justify-center rounded-full bg-primary-300 px-8 text-[14px] font-bold text-white transition hover:bg-primary-400 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-300",
+        "inline-flex h-10 items-center justify-center rounded-full bg-primary-300 px-3 py-2 text-[16px] font-semibold text-white transition hover:bg-primary-400 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-300 font-heading",
         className,
       )}
     >
@@ -189,7 +189,7 @@ export function SecondaryButton(props: React.ButtonHTMLAttributes<HTMLButtonElem
     <button
       {...props}
       className={cn(
-        "inline-flex h-11 items-center justify-center rounded-full border border-neutral-200 bg-white px-8 text-[14px] font-bold text-neutral-700 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60",
+        "inline-flex h-10 items-center justify-center rounded-full border border-neutral-200 bg-white px-3 py-2 text-[16px] font-semibold text-neutral-700 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60 font-heading",
         props.className,
       )}
     />
