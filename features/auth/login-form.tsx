@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { login } from "@/lib/api/auth";
 import { cn } from "@/lib/utils/cn";
@@ -22,7 +21,6 @@ type LoginValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
 
   const {
     register,
@@ -41,7 +39,7 @@ export function LoginForm() {
     try {
       await login(values);
       toast.success("Signed in successfully.");
-      router.push("/");
+      window.location.href = "/";
     } catch (error) {
       const message = error instanceof Error ? error.message : "Login failed.";
       toast.error(message);
@@ -144,13 +142,8 @@ export function LoginForm() {
 
       <div className="pt-4 text-center">
         <p className="text-[13px] text-zinc-600">
-<<<<<<< Updated upstream
           Don't have an account?{" "}
           <Link href="/register" className="font-bold text-primary-300 hover:underline" style={{ color: '#FF356A' }}>
-=======
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="font-bold text-primary-300 hover:underline">
->>>>>>> Stashed changes
             Register
           </Link>
         </p>
