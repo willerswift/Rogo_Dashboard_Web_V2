@@ -12,6 +12,10 @@ This file serves as a persistent record of work completed, current status, and p
     - Updated `lib/server/upstream.ts` to remove retry logic in `withUpstreamAuthRetry`.
     - Updated `app/api/session/route.ts` to remove refresh attempt in session sync.
     - Removed unused `refreshAccessToken` function and cleaned up imports.
+- **Updated Branding**: Set custom `web_icon.png` as the browser favicon while maintaining the original sidebar logo.
+    - Updated `lib/components/ThemeProvider.tsx` to use `/web_icon.png` for favicon and revert logo to `/Rogo logo_light.svg`.
+    - Updated `app/layout.tsx` metadata for browser tab icon.
+    - Removed legacy `app/favicon.ico`.
 
 ### Current Status
 - Project is in a "greenfield" state but with core shell architecture implemented.

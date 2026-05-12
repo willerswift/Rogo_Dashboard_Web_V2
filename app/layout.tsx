@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     template: "%s · Rogo Partner Dashboard",
   },
   description: "Reference partner dashboard shell for the Next.js admin app.",
+  icons: {
+    icon: "/web_icon.png",
+  },
 };
 
 export default async function RootLayout({

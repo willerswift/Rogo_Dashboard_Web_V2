@@ -14,7 +14,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [primaryColor, setPrimaryColor] = useState("#fd3566");
   const [logoUrl, setLogoUrl] = useState("/Rogo logo_light.svg");
-  const [faviconUrl, setFaviconUrl] = useState("/favicon.ico");
+  const [faviconUrl, setFaviconUrl] = useState("/web_icon.png");
 
   useEffect(() => {
     const run = async () => {
