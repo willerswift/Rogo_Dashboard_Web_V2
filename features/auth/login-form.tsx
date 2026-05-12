@@ -122,13 +122,13 @@ export function LoginForm() {
           />
           <span className="text-[13px] font-medium text-zinc-600 group-hover:text-zinc-900 transition-colors">Remember me</span>
         </label>
-        <Link 
-          href="/forgot-password" 
-          className="text-[13px] font-bold text-primary-300 hover:opacity-80 transition-opacity"
+        <Link
+          href="/forgot-password"
+          className="text-[13px] font-bold text-[#fd3566] hover:opacity-80 transition-opacity" style={{ color: '#FF356A' }}
         >
           Forgot password?
         </Link>
-        </div>
+      </div>
       <button
         type="submit"
         disabled={isSubmitting}
@@ -143,7 +143,7 @@ export function LoginForm() {
       <div className="pt-4 text-center">
         <p className="text-[13px] text-zinc-600">
           Don't have an account?{" "}
-          <Link href="/register" className="font-bold text-primary-300 hover:underline">
+          <Link href="/register" className="font-bold text-primary-300 hover:underline" style={{ color: '#FF356A' }}>
             Register
           </Link>
         </p>
