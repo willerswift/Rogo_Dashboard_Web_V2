@@ -7,6 +7,7 @@ import { listOrganizations } from "@/lib/api/organization";
 import { listProjects } from "@/lib/api/project";
 import type { OrgWithOwner, Project } from "@/lib/types/partner";
 import { cn } from "@/lib/utils/cn";
+import { projectEvents } from "@/lib/utils/events";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { CreateOrganizationDialog } from "@/features/organizations/CreateOrganizationDialog";
 
@@ -52,6 +53,18 @@ export function AccessTreeSidebar() {
     };
     void run();
   }, [loadTree]);
+
+  // Auto-expand the active organization when it changes
+  useEffect(() => {
+    if (activeOrgId) {
+      setExpandedOrgs((prev) => {
+        if (prev.has(activeOrgId)) return prev;
+        const next = new Set(prev);
+        next.add(activeOrgId);
+        return next;
+      });
+    }
+  }, [activeOrgId]);
 
   const toggleOrg = (orgId: string) => {
     const next = new Set(expandedOrgs);
@@ -145,7 +158,7 @@ export function AccessTreeSidebar() {
             {/* Organizations */}
             <div className="pl-0.5 space-y-0">
               {orgs.map((org) => {
-                const isExpanded = expandedOrgs.has(org.orgId) || activeOrgId === org.orgId;
+                const isExpanded = expandedOrgs.has(org.orgId);
                 const isActive = activeOrgId === org.orgId && !activeProjectId;
 
                 return (
@@ -199,7 +212,7 @@ export function AccessTreeSidebar() {
                   <button
                     onClick={() => handleSelectProject(project.uuid)}
                     className={cn(
-                      "flex w-full items-center gap-3 rounded-l-md rounded-r-none py-2 pl-[42px] pr-2 text-[14px] font-sans transition-all relative whitespace-nowrap",
+                      "flex w-full items-center gap-3 rounded-l-md rounded-r-none py-2 pl-1 pr-2 text-[14px] font-sans transition-all relative whitespace-nowrap",
                       activeProjectId === project.uuid
                         ? "bg-[#F3F4F6] font-normal text-[#777777]"
                         : "font-normal text-[#777777] hover:bg-neutral-50 hover:text-neutral-900"
@@ -263,7 +276,16 @@ function OrgProjectsList({ orgId, activeProjectId, onSelect }: {
       void load();
     };
     void run();
-  }, [load]);
+
+    // Listen for project creation events to refresh the list
+    const unsubscribe = projectEvents.on("projectCreated", (createdOrgId) => {
+      if (createdOrgId === orgId) {
+        void load();
+      }
+    });
+
+    return () => unsubscribe();
+  }, [load, orgId]);
 
   if (loading) return <div className="pl-4 py-1 text-[9px] text-neutral-400 italic font-bold">Loading...</div>;
 

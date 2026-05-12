@@ -12,6 +12,7 @@ import { listOrganizations } from "@/lib/api/organization";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import type { OrgWithOwner } from "@/lib/types/partner";
 import { cn } from "@/lib/utils/cn";
+import { projectEvents } from "@/lib/utils/events";
 import { CreateOrganizationDialog } from "./CreateOrganizationDialog";
 
 const projectSchema = z.object({
@@ -106,10 +107,12 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
       toast.success("Project created successfully.");
       reset();
       onClose();
+      
+      // Notify components that a project was created in this organization
+      projectEvents.emit("projectCreated", values.orgId);
+      
       if (onSuccess) {
         onSuccess();
-      } else {
-        window.location.reload(); 
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to create project.");
