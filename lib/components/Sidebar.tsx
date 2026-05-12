@@ -11,7 +11,8 @@ import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { cn } from "@/lib/utils/cn";
 import { getAccessibleNavItems } from "@/lib/utils/permissions";
 
-const ICONS: Record<(typeof NAV_ITEMS)[number]["href"], LucideIcon> = {
+const ICONS: Record<string, LucideIcon> = {
+  "/overview": Building2,
   "/organizations": Building2,
   "/projects": FolderKanban,
   "/products": Box,

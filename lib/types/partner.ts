@@ -96,6 +96,8 @@ export type Project = {
   needVerifyEmail: boolean
   authorizedServices: Array<Record<string, JsonValue>>
   description?: string
+  createdDate?: string
+  updatedDate?: string
 }
 
 export type ProjectKeyInfo = {

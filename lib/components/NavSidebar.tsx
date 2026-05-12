@@ -50,14 +50,14 @@ export function NavSidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "group relative flex items-center rounded-xl px-4 py-3 text-[14px] font-bold transition-all overflow-hidden",
+                "group relative flex items-center rounded-xl px-4 py-2.5 text-[13px] font-bold transition-all overflow-hidden whitespace-nowrap",
                 isActive
                   ? "bg-[#E6E8F4] text-[#393984]"
                   : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900"
               )}
             >
-              <Icon className={cn("mr-4 size-[20px] shrink-0", isActive ? "text-[#393984]" : "text-neutral-400 group-hover:text-neutral-600")} />
-              <span className="truncate whitespace-nowrap">{item.title}</span>
+              <Icon className={cn("mr-3.5 size-[18px] shrink-0", isActive ? "text-[#393984]" : "text-neutral-400 group-hover:text-neutral-600")} />
+              <span>{item.title}</span>
               {isActive && (
                 <div className="absolute right-0 top-0 h-full w-1 rounded-l-full bg-[#393984]" />
               )}
@@ -69,7 +69,7 @@ export function NavSidebar() {
       <div className="mt-auto pt-6 border-t border-neutral-100">
         <button 
           onClick={handleLogout}
-          className="flex w-full items-center rounded-xl px-4 py-3 text-[14px] font-bold text-red-500 hover:bg-red-50 transition-colors"
+          className="flex w-full items-center rounded-xl px-4 py-3 text-[14px] font-bold text-red-500 hover:bg-red-50 transition-colors whitespace-nowrap"
         >
           <LogOut className="mr-4 size-[20px] text-red-500" />
           Logout

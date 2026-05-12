@@ -1,31 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
+import { Plus, UserPlus, Trash2 } from "lucide-react";
 
 import { attachUserToProject, listProjects } from "@/lib/api/project";
 import { syncSession } from "@/lib/api/auth";
-import { checkUserExists } from "@/lib/api/organization";
-import { addPartnerUser, deletePartnerUser, getUserPermissionRecord, listPartnerUsers } from "@/lib/api/user";
+import { checkUserExists, listOrganizations } from "@/lib/api/organization";
+import { addPartnerUser, deletePartnerUser, listPartnerUsers } from "@/lib/api/user";
+import { listPermissionRecords } from "@/lib/api/permission";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { usePermission } from "@/lib/hooks/usePermission";
-import type { PermissionRecord, Project, UserWithNumProject } from "@/lib/types/partner";
+import type { PermissionRecord, Project, UserWithNumProject, OrgWithOwner } from "@/lib/types/partner";
 import {
-  EmptyState,
   Field,
-  JsonBlock,
   LoadingBlock,
   Modal,
-  Notice,
-  Panel,
   PrimaryButton,
   SecondaryButton,
   SelectInput,
   TextInput,
 } from "@/features/shared/ui";
+import { DataTable, type DataTableColumn } from "@/lib/components/DataTable";
+import { Avatar } from "@/lib/components/ui/avatar";
+import { cn } from "@/lib/utils/cn";
 
 const addUserSchema = z.object({
   name: z.string().min(1, "Name is required."),
@@ -44,17 +46,24 @@ type AttachUserValues = z.infer<typeof attachUserSchema>;
 
 export function UsersPage() {
   const { session, setSession } = usePartnerContext();
+  const searchParams = useSearchParams();
+  const orgId = searchParams.get("orgId");
+  const projectId = searchParams.get("projectId");
+
   const canAddUser = usePermission("projectAuth:edit");
-  const canView = usePermission("authorization:view");
   const canDelete = usePermission("authorization:edit");
   const partnerId = session.activePartnerId;
+
   const [users, setUsers] = useState<UserWithNumProject[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [selectedOwnerId, setSelectedOwnerId] = useState<string | null>(null);
-  const [selectedPermissionRecord, setSelectedPermissionRecord] = useState<PermissionRecord | null>(null);
+  const [orgs, setOrgs] = useState<OrgWithOwner[]>([]);
+  const [permissionRecords, setPermissionRecords] = useState<PermissionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [showAttach, setShowAttach] = useState(false);
+
+  const activeOrg = useMemo(() => orgs.find(o => o.orgId === orgId), [orgs, orgId]);
+  const activeProject = useMemo(() => projects.find(p => p.uuid === projectId), [projects, projectId]);
 
   const addUserForm = useForm<AddUserValues>({
     resolver: zodResolver(addUserSchema),
@@ -74,7 +83,7 @@ export function UsersPage() {
     },
   });
 
-  async function loadUsers() {
+  async function loadData() {
     if (!partnerId) {
       setLoading(false);
       return;
@@ -82,34 +91,25 @@ export function UsersPage() {
 
     try {
       setLoading(true);
-      const [nextUsers, nextProjects] = await Promise.all([
+      const [nextUsers, nextProjects, nextOrgs, nextPermissions] = await Promise.all([
         listPartnerUsers(partnerId),
         listProjects(partnerId),
+        listOrganizations(partnerId),
+        listPermissionRecords(partnerId),
       ]);
       setUsers(nextUsers);
       setProjects(nextProjects);
+      setOrgs(nextOrgs);
+      setPermissionRecords(nextPermissions);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to load users.");
+      toast.error(error instanceof Error ? error.message : "Failed to load users data.");
     } finally {
       setLoading(false);
     }
   }
 
-  async function loadPermissionRecord(ownerId: string) {
-    if (!partnerId) {
-      return;
-    }
-
-    try {
-      setSelectedOwnerId(ownerId);
-      setSelectedPermissionRecord(await getUserPermissionRecord(partnerId, ownerId));
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to load permission record.");
-    }
-  }
-
   useEffect(() => {
-    void loadUsers();
+    void loadData();
   }, [partnerId]);
 
   const handleAddUser = addUserForm.handleSubmit(async (values) => {
@@ -128,7 +128,7 @@ export function UsersPage() {
       toast.success("User created.");
       addUserForm.reset();
       setShowCreate(false);
-      await loadUsers();
+      await loadData();
       const { session: refreshed } = await syncSession();
       setSession(refreshed);
     } catch (error) {
@@ -137,17 +137,14 @@ export function UsersPage() {
   });
 
   const handleDeleteUser = async (uuid: string) => {
-    if (!partnerId || !window.confirm(`Delete partner user ${uuid}?`)) {
+    if (!partnerId || !window.confirm(`Delete partner user?`)) {
       return;
     }
 
     try {
       await deletePartnerUser({ partnerId, uuid });
       toast.success("User deleted.");
-      await loadUsers();
-      if (selectedOwnerId) {
-        setSelectedPermissionRecord(null);
-      }
+      await loadData();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to delete user.");
     }
@@ -182,97 +179,178 @@ export function UsersPage() {
       toast.success("User attached to project.");
       attachUserForm.reset();
       setShowAttach(false);
+      await loadData();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to attach user to project.");
     }
   });
 
-  return (
-    <div className="space-y-6">
-      <Panel
-        title="Partner users"
-        description="All users in the active partner and their project memberships."
-        action={
-          canAddUser ? (
-            <div className="flex gap-2">
-              <SecondaryButton type="button" onClick={() => setShowAttach(true)}>
-                Attach existing
-              </SecondaryButton>
-              <PrimaryButton type="button" onClick={() => setShowCreate(true)}>
-                + Add user
-              </PrimaryButton>
-            </div>
-          ) : undefined
+  const columns: DataTableColumn<UserWithNumProject>[] = [
+    {
+      id: "user",
+      header: "USER",
+      headerClassName: "text-[11px] font-bold text-neutral-400 uppercase tracking-wider",
+      cell: ({ user }) => (
+        <div className="flex items-center gap-3">
+          <Avatar name={user.name} email={user.email} />
+          <div className="flex flex-col">
+            <span className="text-[14px] font-bold text-neutral-900 leading-tight">{user.name}</span>
+            <span className="text-[12px] text-neutral-500 leading-tight mt-0.5">{user.email}</span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "permissions",
+      header: "PERMISSION",
+      headerClassName: "text-[11px] font-bold text-neutral-400 uppercase tracking-wider",
+      cell: ({ user }) => {
+        const record = permissionRecords.find(r => r.ownerId === user.ownerId);
+        if (!record || !record.abac || !record.abac.length) return <span className="text-neutral-300 text-[12px] italic">No permissions</span>;
+        
+        // 1. Mapping for short resource names - Distinguish between global and project resources
+        const resMap: Record<string, string> = {
+          "organization": "ORG",
+          "authorization": "AUTH",
+          "projectAuth": "PRJ AUTH",
+          "projectMgmt": "PRJ MQTT",
+          "productDev": "PROD",
+          "projectDev": "PRJ PROD",
+          "report": "REPORT",
+          "projectReport": "PRJ REPORT",
+        };
+
+        // 2. Extract and group by SHORT NAME to prevent duplicates (e.g., authorization & projectAuth both map to AUTH)
+        const rawActions = record.abac.flatMap(entry => entry.actions);
+        const uniqueRawActions = Array.from(new Set(rawActions.map(a => a.trim()))).filter(Boolean);
+
+        if (uniqueRawActions.includes("*")) {
+          return <PermissionBadge label="ADMIN" isAdmin />;
         }
-      >
-        {loading ? (
-          <LoadingBlock label="Loading users..." />
-        ) : users.length === 0 ? (
-          <EmptyState title="No users found" description="Add a user using the button above." />
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-zinc-200 text-zinc-500">
-                  <th className="pb-3 pr-4 font-medium">Email</th>
-                  <th className="pb-3 pr-4 font-medium">Name</th>
-                  <th className="pb-3 pr-4 font-medium">Projects</th>
-                  <th className="pb-3 text-right font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map(({ user, numOfProject }) => (
-                  <tr key={user.uuid} className="border-b border-zinc-100 align-top">
-                    <td className="py-3 pr-4 font-medium text-zinc-900">{user.email}</td>
-                    <td className="py-3 pr-4 text-zinc-600">{user.name}</td>
-                    <td className="py-3 pr-4 text-zinc-600">{numOfProject}</td>
-                    <td className="py-3 text-right">
-                      <div className="flex justify-end gap-2">
-                        {canView ? (
-                          <SecondaryButton type="button" onClick={() => void loadPermissionRecord(user.ownerId)}>
-                            Permissions
-                          </SecondaryButton>
-                        ) : null}
-                        {canDelete ? (
-                          <SecondaryButton type="button" onClick={() => void handleDeleteUser(user.uuid)}>
-                            Remove
-                          </SecondaryButton>
-                        ) : null}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+
+        const shortNameGroups: Record<string, Set<string>> = {};
+        uniqueRawActions.forEach(action => {
+          const [resource, act] = action.split(":");
+          const shortName = resMap[resource] || resource.toUpperCase();
+          const effectiveAction = act || "*";
+          
+          if (!shortNameGroups[shortName]) shortNameGroups[shortName] = new Set();
+          shortNameGroups[shortName].add(effectiveAction);
+        });
+
+        // 3. Apply priority logic per SHORT NAME: * or edit -> EDIT badge, view -> VIEW badge
+        const finalBadges: { label: string; isAdmin: boolean }[] = [];
+        Object.entries(shortNameGroups).forEach(([shortName, acts]) => {
+          const hasFullAccess = acts.has("*") || acts.has("edit");
+          const hasViewAccess = acts.has("view");
+
+          if (hasFullAccess) {
+            finalBadges.push({ label: `${shortName} EDIT`, isAdmin: true });
+          } else if (hasViewAccess) {
+            finalBadges.push({ label: `${shortName} VIEW`, isAdmin: false });
+          }
+        });
+        
+        return (
+          <div className="flex flex-wrap gap-1.5">
+            {finalBadges.sort((a, b) => a.label.localeCompare(b.label)).map(badge => (
+              <PermissionBadge key={badge.label} label={badge.label} isAdmin={badge.isAdmin} />
+            ))}
+          </div>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "",
+      className: "text-right",
+      cell: ({ user }) => (
+        <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+          {canDelete ? (
+            <button
+              onClick={() => void handleDeleteUser(user.uuid)}
+              className="p-2 text-neutral-400 hover:text-red-500 transition-colors"
+              title="Remove user"
+            >
+              <Trash2 className="size-4" />
+            </button>
+          ) : null}
+        </div>
+      ),
+    },
+  ];
+
+  const pageTitle = useMemo(() => {
+    if (activeProject) return `${activeOrg?.name || "Organization"} / ${activeProject.name}`;
+    if (activeOrg) return activeOrg.name;
+    return "Partner Users";
+  }, [activeOrg, activeProject]);
+
+  return (
+    <div className="space-y-5 animate-in fade-in duration-500">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-[20px] font-bold text-neutral-900 tracking-tight font-heading">
+            {pageTitle}
+            {projectId && (
+              <span className="ml-2 inline-flex items-center rounded-full bg-primary-100/50 px-2 py-0.5 text-[10px] font-bold text-primary-300 font-sans">
+                ID: {projectId.slice(0, 8)}
+              </span>
+            )}
+          </h1>
+          <p className="text-[13px] text-neutral-500 mt-0.5">Users with access to this {activeProject ? "project" : activeOrg ? "organization" : "partner"}.</p>
+        </div>
+
+        {canAddUser && (
+          <div className="flex items-center gap-2">
+            <SecondaryButton 
+              type="button" 
+              onClick={() => setShowAttach(true)}
+              className="h-8 px-3 text-[12px] border-neutral-200 hover:border-neutral-300 shadow-sm"
+            >
+              <Plus className="mr-1.5 size-3" />
+              Attach existing
+            </SecondaryButton>
+            <PrimaryButton 
+              type="button" 
+              onClick={() => setShowCreate(true)}
+              className="h-8 px-3 text-[12px] shadow-md shadow-primary-300/20"
+            >
+              <UserPlus className="mr-1.5 size-3" />
+              Add user
+            </PrimaryButton>
           </div>
         )}
-      </Panel>
+      </div>
 
-      {canView && selectedPermissionRecord ? (
-        <Panel
-          title={`Permissions for ${users.find((u) => u.user.ownerId === selectedOwnerId)?.user.email ?? selectedOwnerId}`}
-          description="ABAC V2 permission record for this user."
-        >
-          <JsonBlock value={selectedPermissionRecord} />
-        </Panel>
-      ) : null}
+      {loading ? (
+        <LoadingBlock label="Loading users..." />
+      ) : (
+        <DataTable
+          title="Users with access"
+          columns={columns}
+          data={users}
+          emptyTitle="No users found"
+          emptyDescription="Add or attach a user to grant them access."
+        />
+      )}
 
       <Modal
         open={showCreate}
         onClose={() => { setShowCreate(false); addUserForm.reset(); }}
         title="Add user to partner"
       >
-        <form className="grid gap-4 md:grid-cols-2" onSubmit={handleAddUser}>
+        <form className="grid gap-5 md:grid-cols-2" onSubmit={handleAddUser}>
           <Field label="Name" error={addUserForm.formState.errors.name?.message}>
-            <TextInput invalid={Boolean(addUserForm.formState.errors.name)} {...addUserForm.register("name")} />
+            <TextInput invalid={Boolean(addUserForm.formState.errors.name)} {...addUserForm.register("name")} placeholder="Full name" />
           </Field>
           <Field label="Email" error={addUserForm.formState.errors.email?.message}>
-            <TextInput type="email" invalid={Boolean(addUserForm.formState.errors.email)} {...addUserForm.register("email")} />
+            <TextInput type="email" invalid={Boolean(addUserForm.formState.errors.email)} {...addUserForm.register("email")} placeholder="email@example.com" />
           </Field>
           <Field label="Temporary password" error={addUserForm.formState.errors.password?.message}>
-            <TextInput type="password" invalid={Boolean(addUserForm.formState.errors.password)} {...addUserForm.register("password")} />
+            <TextInput type="password" invalid={Boolean(addUserForm.formState.errors.password)} {...addUserForm.register("password")} placeholder="••••••••" />
           </Field>
-          <Field label="Project" error={addUserForm.formState.errors.projectId?.message}>
+          <Field label="Initial Project" error={addUserForm.formState.errors.projectId?.message}>
             <SelectInput invalid={Boolean(addUserForm.formState.errors.projectId)} {...addUserForm.register("projectId")}>
               <option value="">Select a project</option>
               {projects.map((project) => (
@@ -282,13 +360,13 @@ export function UsersPage() {
               ))}
             </SelectInput>
           </Field>
-          <div className="md:col-span-2 flex gap-2">
-            <PrimaryButton type="submit" loading={addUserForm.formState.isSubmitting}>
-              Create user
-            </PrimaryButton>
-            <SecondaryButton type="button" onClick={() => { setShowCreate(false); addUserForm.reset(); }}>
+          <div className="md:col-span-2 flex justify-end gap-3 mt-4">
+            <SecondaryButton type="button" onClick={() => { setShowCreate(false); addUserForm.reset(); }} className="h-10 px-6">
               Cancel
             </SecondaryButton>
+            <PrimaryButton type="submit" loading={addUserForm.formState.isSubmitting} className="h-10 px-8">
+              Create user
+            </PrimaryButton>
           </div>
         </form>
       </Modal>
@@ -296,9 +374,9 @@ export function UsersPage() {
       <Modal
         open={showAttach}
         onClose={() => { setShowAttach(false); attachUserForm.reset(); }}
-        title="Attach existing user to project"
+        title="Attach existing user"
       >
-        <form className="space-y-4" onSubmit={handleAttachUser}>
+        <form className="space-y-5" onSubmit={handleAttachUser}>
           <Field label="User email" error={attachUserForm.formState.errors.email?.message}>
             <TextInput
               type="email"
@@ -307,7 +385,7 @@ export function UsersPage() {
               {...attachUserForm.register("email")}
             />
           </Field>
-          <Field label="Project" error={attachUserForm.formState.errors.projectId?.message}>
+          <Field label="Target Project" error={attachUserForm.formState.errors.projectId?.message}>
             <SelectInput invalid={Boolean(attachUserForm.formState.errors.projectId)} {...attachUserForm.register("projectId")}>
               <option value="">Select a project</option>
               {projects.map((project) => (
@@ -317,16 +395,29 @@ export function UsersPage() {
               ))}
             </SelectInput>
           </Field>
-          <div className="flex gap-2">
-            <PrimaryButton type="submit" loading={attachUserForm.formState.isSubmitting}>
-              Attach user
-            </PrimaryButton>
-            <SecondaryButton type="button" onClick={() => { setShowAttach(false); attachUserForm.reset(); }}>
+          <div className="flex justify-end gap-3 mt-6">
+            <SecondaryButton type="button" onClick={() => { setShowAttach(false); attachUserForm.reset(); }} className="h-10 px-6">
               Cancel
             </SecondaryButton>
+            <PrimaryButton type="submit" loading={attachUserForm.formState.isSubmitting} className="h-10 px-8">
+              Attach user
+            </PrimaryButton>
           </div>
         </form>
       </Modal>
     </div>
+  );
+}
+
+function PermissionBadge({ label, isAdmin }: { label: string; isAdmin: boolean }) {
+  return (
+    <span className={cn(
+      "inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold tracking-tight border whitespace-nowrap transition-colors",
+      isAdmin 
+        ? "bg-[#F5F3FF] text-[#7C3AED] border-[#DDD6FE]" // Purple for Admin/Edit/Full access
+        : "bg-neutral-100 text-neutral-600 border-neutral-200" // Neutral for View only
+    )}>
+      {label}
+    </span>
   );
 }
