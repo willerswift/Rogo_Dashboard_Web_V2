@@ -1,0 +1,219 @@
+
+> rogo-dashboard-v2@0.1.0 lint
+> eslint
+
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/organizations/organization-detail-page.tsx
+  74:10  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/organizations/organization-detail-page.tsx:74:10
+  72 |
+  73 |   useEffect(() => {
+> 74 |     void loadDetail();
+     |          ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  75 |   }, [partnerId, orgId]);
+  76 |
+  77 |   const handleAddMember = addMemberForm.handleSubmit(async ({ email }) => {  react-hooks/set-state-in-effect
+  75:6   warning  React Hook useEffect has a missing dependency: 'loadDetail'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      react-hooks/exhaustive-deps
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/organizations/organization-overview.tsx
+  40:16  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/organizations/organizations-page.tsx
+  104:10  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/organizations/organizations-page.tsx:104:10
+  102 |
+  103 |   useEffect(() => {
+> 104 |     void loadOrganizations();
+      |          ^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  105 |   }, [partnerId]);
+  106 |
+  107 |   const handleCreate = createForm.handleSubmit(async (values) => {  react-hooks/set-state-in-effect
+  105:6   warning  React Hook useEffect has a missing dependency: 'loadOrganizations'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               react-hooks/exhaustive-deps
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/permissions/permissions-page.tsx
+   21:3   warning  'Notice' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  104:10  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/permissions/permissions-page.tsx:104:10
+  102 |
+  103 |   useEffect(() => {
+> 104 |     void loadRecords();
+      |          ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  105 |   }, [partnerId]);
+  106 |
+  107 |   const handleSelectRecord = async (ownerId: string) => {  react-hooks/set-state-in-effect
+  105:6   warning  React Hook useEffect has a missing dependency: 'loadRecords'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            react-hooks/exhaustive-deps
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/products/product-detail-page.tsx
+  157:10  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/products/product-detail-page.tsx:157:10
+  155 |
+  156 |   useEffect(() => {
+> 157 |     void loadProduct(devicePage);
+      |          ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  158 |   }, [partnerId, productId, devicePage]);
+  159 |
+  160 |   const handleSave = form.handleSubmit(async (values) => {  react-hooks/set-state-in-effect
+  158:6   warning  React Hook useEffect has a missing dependency: 'loadProduct'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              react-hooks/exhaustive-deps
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/products/products-page.tsx
+  135:10  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/products/products-page.tsx:135:10
+  133 |
+  134 |   useEffect(() => {
+> 135 |     void loadProducts(page);
+      |          ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  136 |   }, [partnerId, page]);
+  137 |
+  138 |   const handleCreate = createForm.handleSubmit(async (values) => {  react-hooks/set-state-in-effect
+  136:6   warning  React Hook useEffect has a missing dependency: 'loadProducts'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          react-hooks/exhaustive-deps
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/projects/project-detail-page.tsx
+  42:10  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/projects/project-detail-page.tsx:42:10
+  40 |
+  41 |   useEffect(() => {
+> 42 |     void loadDetail();
+     |          ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  43 |   }, [partnerId, projectId]);
+  44 |
+  45 |   const handleDeactivate = async (uuid: string) => {  react-hooks/set-state-in-effect
+  43:6   warning  React Hook useEffect has a missing dependency: 'loadDetail'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         react-hooks/exhaustive-deps
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/projects/projects-page.tsx
+  96:10  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/projects/projects-page.tsx:96:10
+  94 |
+  95 |   useEffect(() => {
+> 96 |     void loadProjects();
+     |          ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  97 |   }, [partnerId, selectedOrgId]);
+  98 |
+  99 |   const handleCreate = createForm.handleSubmit(async (values) => {  react-hooks/set-state-in-effect
+  97:6   warning  React Hook useEffect has a missing dependency: 'loadProjects'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react-hooks/exhaustive-deps
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/settings/ColorConfigDialog.tsx
+  32:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/settings/ColorConfigDialog.tsx:32:5
+  30 |
+  31 |   useEffect(() => {
+> 32 |     setColor(initialColor);
+     |     ^^^^^^^^ Avoid calling setState() directly within an effect
+  33 |     setRgb(hexToRgb(initialColor));
+  34 |   }, [initialColor]);
+  35 |  react-hooks/set-state-in-effect
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/settings/LogoAssetUpload.tsx
+  7:10  warning  'cn' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/users/account-page.tsx
+  19:23  warning  'setDisplayName' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/users/users-page.tsx
+  112:10  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/features/users/users-page.tsx:112:10
+  110 |
+  111 |   useEffect(() => {
+> 112 |     void loadData();
+      |          ^^^^^^^^ Avoid calling setState() directly within an effect
+  113 |   }, [partnerId]);
+  114 |
+  115 |   const handleAddUser = addUserForm.handleSubmit(async (values) => {  react-hooks/set-state-in-effect
+  113:6   warning  React Hook useEffect has a missing dependency: 'loadData'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        react-hooks/exhaustive-deps
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/lib/components/AccessTreeSidebar.tsx
+  22:10  warning  'loading' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/lib/components/Sidebar.tsx
+  8:10  warning  'NAV_ITEMS' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/lib/components/ThemeProvider.tsx
+  26:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/lib/components/ThemeProvider.tsx:26:7
+  24 |     
+  25 |     if (savedColor) {
+> 26 |       setPrimaryColor(savedColor);
+     |       ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  27 |       document.documentElement.style.setProperty("--brand-primary", savedColor);
+  28 |     }
+  29 |     if (savedLogo) {  react-hooks/set-state-in-effect
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/lib/components/Topbar.tsx
+  3:16  warning  'ChevronDown' is defined but never used       @typescript-eslint/no-unused-vars
+  3:29  warning  'UserCircle' is defined but never used        @typescript-eslint/no-unused-vars
+  7:11  warning  'session' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/khanhtruongvu/Documents/GitHub/Rogo_Dashboard_Web_V2/lib/components/ui/avatar.tsx
+  16:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+✖ 28 problems (10 errors, 18 warnings)
+

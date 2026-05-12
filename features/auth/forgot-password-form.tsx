@@ -30,13 +30,13 @@ export function ForgotPasswordForm() {
     },
   });
 
-  const onSubmit = handleSubmit(async (values) => {
+  const onSubmit = handleSubmit(async () => {
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
       toast.success("Reset link sent to your email.");
       setIsSent(true);
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong. Please try again.");
     }
   });
@@ -50,7 +50,7 @@ export function ForgotPasswordForm() {
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-[#111827]">Check your email</h2>
           <p className="text-sm text-zinc-500">
-            We've sent a password reset link to your email address.
+            We&apos;ve sent a password reset link to your email address.
           </p>
         </div>
         <Link

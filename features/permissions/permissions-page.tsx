@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,7 +18,6 @@ import {
   JsonBlock,
   LoadingBlock,
   Modal,
-  Notice,
   Panel,
   PrimaryButton,
   SecondaryButton,
@@ -84,7 +83,7 @@ export function PermissionsPage() {
     },
   });
 
-  async function loadRecords() {
+  const loadRecords = useCallback(async () => {
     if (!partnerId) {
       setLoading(false);
       return;
@@ -98,13 +97,17 @@ export function PermissionsPage() {
     } finally {
       setLoading(false);
     }
-  }
-
-  useEffect(() => {
-    void loadRecords();
   }, [partnerId]);
 
-  const handleSelectRecord = async (ownerId: string) => {
+  useEffect(() => {
+    const run = async () => {
+      await Promise.resolve();
+      void loadRecords();
+    };
+    void run();
+  }, [loadRecords]);
+
+  const handleSelectRecord = useCallback(async (ownerId: string) => {
     if (!partnerId) {
       return;
     }
@@ -114,7 +117,7 @@ export function PermissionsPage() {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to load permission record.");
     }
-  };
+  }, [partnerId]);
 
   async function refreshCurrentSessionIfNeeded(ownerId: string) {
     if (ownerId !== session.userId) {

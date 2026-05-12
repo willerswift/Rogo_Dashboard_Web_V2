@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -50,7 +50,7 @@ export function OrganizationDetailPage({ orgId }: { orgId: string }) {
     defaultValues: { email: "" },
   });
 
-  async function loadDetail() {
+  const loadDetail = useCallback(async () => {
     if (!partnerId) {
       return;
     }
@@ -68,11 +68,15 @@ export function OrganizationDetailPage({ orgId }: { orgId: string }) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [partnerId, orgId]);
 
   useEffect(() => {
-    void loadDetail();
-  }, [partnerId, orgId]);
+    const run = async () => {
+      await Promise.resolve();
+      void loadDetail();
+    };
+    void run();
+  }, [loadDetail]);
 
   const handleAddMember = addMemberForm.handleSubmit(async ({ email }) => {
     if (!partnerId) {

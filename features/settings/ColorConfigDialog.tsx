@@ -29,8 +29,12 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
   const [rgb, setRgb] = useState(hexToRgb(initialColor));
 
   useEffect(() => {
-    setColor(initialColor);
-    setRgb(hexToRgb(initialColor));
+    const run = async () => {
+      await Promise.resolve();
+      setColor(initialColor);
+      setRgb(hexToRgb(initialColor));
+    };
+    void run();
   }, [initialColor]);
 
   const handleHexChange = (e: React.ChangeEvent<HTMLInputElement>) => {

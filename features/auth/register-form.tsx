@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Mail, Lock, User, ShieldCheck, Loader2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils/cn";
 
@@ -26,6 +27,7 @@ type RegisterValues = z.infer<typeof registerSchema>;
 export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -42,13 +44,13 @@ export function RegisterForm() {
     },
   });
 
-  const onSubmit = handleSubmit(async (values) => {
+  const onSubmit = handleSubmit(async () => {
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
       toast.success("Account created successfully!");
-      window.location.href = "/login";
-    } catch (error) {
+      router.push("/login");
+    } catch {
       toast.error("Registration failed. Please try again.");
     }
   });

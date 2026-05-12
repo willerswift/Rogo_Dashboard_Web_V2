@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import { Box, Building2, FolderKanban, ShieldCheck, Users } from "lucide-react";
 
-import { NAV_ITEMS } from "@/lib/config/navigation";
 import { Badge } from "@/lib/components/ui/badge";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { cn } from "@/lib/utils/cn";

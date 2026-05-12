@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
-import { Plus, MoreVertical } from "lucide-react";
+import { Plus, MoreVertical, Users, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 
 import { getOrganization, listOrganizationUsers } from "@/lib/api/organization";
@@ -12,6 +12,7 @@ import type { OrgWithOwner, Project, OrganizationMember } from "@/lib/types/part
 import { LoadingBlock, EmptyState, PrimaryButton } from "@/features/shared/ui";
 import { cn } from "@/lib/utils/cn";
 import { formatDate } from "@/lib/utils/format";
+import { CreateProjectDialog } from "./CreateProjectDialog";
 
 export function OrganizationOverview({ orgId }: { orgId: string }) {
   const { session } = usePartnerContext();
@@ -21,28 +22,30 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+  const load = useCallback(async () => {
+    if (!partnerId || !orgId) return;
+    try {
+      setLoading(true);
+      const [nextOrg, nextProjects, nextMembers] = await Promise.all([
+        getOrganization(partnerId, orgId),
+        listProjects(partnerId, orgId),
+        listOrganizationUsers(partnerId, orgId),
+      ]);
+      setOrg(nextOrg);
+      setProjects(nextProjects);
+      setMembers(nextMembers);
+    } catch {
+      toast.error("Failed to load organization details");
+    } finally {
+      setLoading(false);
+    }
+  }, [partnerId, orgId]);
 
   useEffect(() => {
-    async function load() {
-      if (!partnerId || !orgId) return;
-      try {
-        setLoading(true);
-        const [nextOrg, nextProjects, nextMembers] = await Promise.all([
-          getOrganization(partnerId, orgId),
-          listProjects(partnerId, orgId),
-          listOrganizationUsers(partnerId, orgId),
-        ]);
-        setOrg(nextOrg);
-        setProjects(nextProjects);
-        setMembers(nextMembers);
-      } catch (error) {
-        toast.error("Failed to load organization details");
-      } finally {
-        setLoading(false);
-      }
-    }
     void load();
-  }, [partnerId, orgId]);
+  }, [load]);
 
   if (loading) return <LoadingBlock label="Loading organization..." />;
   if (!org) return <EmptyState title="Not found" description="Select an organization from the tree." />;
@@ -77,7 +80,10 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold font-heading text-neutral-900 tracking-tight">Project in Organization</h3>
-          <PrimaryButton className="h-10 rounded-full px-5 bg-[#FD3566] hover:bg-[#EA023B] shadow-md shadow-[#FD3566]/20 transition-all">
+          <PrimaryButton 
+            onClick={() => setIsCreateOpen(true)}
+            className="h-10 rounded-full px-5 bg-[#FD3566] hover:bg-[#EA023B] shadow-md shadow-[#FD3566]/20 transition-all"
+          >
             <Plus className="mr-2 size-4 stroke-[3px]" />
             Create Project
           </PrimaryButton>
@@ -91,7 +97,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                 <th className="px-8 py-5">Project ID</th>
                 <th className="px-8 py-5">Status</th>
                 <th className="px-8 py-5">Created</th>
-                <th className="px-8 py-5">Created By</th>
+                <th className="px-8 py-5">Created</th>
                 <th className="px-8 py-5 text-right">Actions</th>
               </tr>
             </thead>
@@ -152,8 +158,13 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
           </div>
         </div>
       </div>
+
+      <CreateProjectDialog 
+        open={isCreateOpen} 
+        onClose={() => setIsCreateOpen(false)} 
+        onSuccess={load}
+        initialOrgId={orgId}
+      />
     </div>
   );
 }
-
-import { Users, LayoutDashboard } from "lucide-react";

@@ -17,24 +17,28 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [faviconUrl, setFaviconUrl] = useState("/favicon.ico");
 
   useEffect(() => {
-    // Load from localStorage on mount
-    const savedColor = localStorage.getItem("rogo-primary-color");
-    const savedLogo = localStorage.getItem("rogo-logo-url");
-    const savedFavicon = localStorage.getItem("rogo-favicon-url");
-    
-    if (savedColor) {
-      setPrimaryColor(savedColor);
-      document.documentElement.style.setProperty("--brand-primary", savedColor);
-    }
-    if (savedLogo) {
-      setLogoUrl(savedLogo);
-    }
-    if (savedFavicon) {
-      setFaviconUrl(savedFavicon);
-      // Update real favicon
-      const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
-      if (link) link.href = savedFavicon;
-    }
+    const run = async () => {
+      await Promise.resolve();
+      // Load from localStorage on mount
+      const savedColor = localStorage.getItem("rogo-primary-color");
+      const savedLogo = localStorage.getItem("rogo-logo-url");
+      const savedFavicon = localStorage.getItem("rogo-favicon-url");
+      
+      if (savedColor) {
+        setPrimaryColor(savedColor);
+        document.documentElement.style.setProperty("--brand-primary", savedColor);
+      }
+      if (savedLogo) {
+        setLogoUrl(savedLogo);
+      }
+      if (savedFavicon) {
+        setFaviconUrl(savedFavicon);
+        // Update real favicon
+        const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+        if (link) link.href = savedFavicon;
+      }
+    };
+    void run();
   }, []);
 
   const setBranding = (color: string, logo: string, favicon: string) => {

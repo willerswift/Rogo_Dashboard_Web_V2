@@ -98,7 +98,7 @@ export function NavSidebar() {
               )}
             >
               <Icon className={cn("size-[22px] shrink-0", isCollapsed ? "" : "mr-3", isActive ? "text-[#393984]" : "text-neutral-900 stroke-[1.5px]")} />
-              {!isCollapsed && <span className="truncate whitespace-nowrap text-[14px] leading-[21px] font-heading">{item.title}</span>}
+              {!isCollapsed && <span className="truncate whitespace-nowrap text-[14px] leading-[21px] font-sans">{item.title}</span>}
               {isActive && (
                 <div className="absolute right-0 top-0 h-full w-[3px] rounded-l-full bg-[#393984]" />
               )}
@@ -117,7 +117,7 @@ export function NavSidebar() {
           )}
         >
           <LogOut className={cn("size-[20px] text-red-500", isCollapsed ? "" : "mr-3")} />
-          {!isCollapsed && <span className="text-[14px] font-medium font-heading">Logout</span>}
+          {!isCollapsed && <span className="text-[14px] font-medium font-sans">Logout</span>}
         </button>
       </div>
     </aside>

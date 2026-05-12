@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,6 +18,7 @@ import { usePermission } from "@/lib/hooks/usePermission";
 import type { OrgWithOwner } from "@/lib/types/partner";
 import { formatOwnerEmail } from "@/lib/utils/format";
 import { slugify } from "@/lib/utils/parsing";
+import { CreateOrganizationDialog } from "./CreateOrganizationDialog";
 import {
   EmptyState,
   Field,
@@ -34,12 +35,6 @@ import {
   TextInput,
 } from "@/features/shared/ui";
 
-const createSchema = z.object({
-  orgId: z.string().optional(),
-  name: z.string().min(1, "Name is required."),
-  description: z.string().optional(),
-});
-
 const editSchema = z.object({
   orgId: z.string().min(1),
   name: z.string().min(1, "Name is required."),
@@ -47,7 +42,6 @@ const editSchema = z.object({
   status: z.string().min(1, "Status is required."),
 });
 
-type CreateValues = z.infer<typeof createSchema>;
 type EditValues = z.infer<typeof editSchema>;
 
 export function OrganizationsPage() {
@@ -58,15 +52,6 @@ export function OrganizationsPage() {
   const [editing, setEditing] = useState<OrgWithOwner | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const partnerId = session.activePartnerId;
-
-  const createForm = useForm<CreateValues>({
-    resolver: zodResolver(createSchema),
-    defaultValues: {
-      orgId: "",
-      name: "",
-      description: "",
-    },
-  });
 
   const editForm = useForm<EditValues>({
     resolver: zodResolver(editSchema),
@@ -83,7 +68,7 @@ export function OrganizationsPage() {
     [organizations],
   );
 
-  async function loadOrganizations() {
+  const loadOrganizations = useCallback(async () => {
     if (!partnerId) {
       setOrganizations([]);
       setLoading(false);
@@ -98,32 +83,15 @@ export function OrganizationsPage() {
     } finally {
       setLoading(false);
     }
-  }
-
-  useEffect(() => {
-    void loadOrganizations();
   }, [partnerId]);
 
-  const handleCreate = createForm.handleSubmit(async (values) => {
-    if (!partnerId) {
-      return;
-    }
-
-    try {
-      await createOrganization({
-        partnerId,
-        orgId: values.orgId?.trim() || slugify(values.name),
-        name: values.name,
-        description: values.description,
-      });
-      toast.success("Organization created.");
-      createForm.reset();
-      setShowCreate(false);
-      await loadOrganizations();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to create organization.");
-    }
-  });
+  useEffect(() => {
+    const run = async () => {
+      await Promise.resolve();
+      void loadOrganizations();
+    };
+    void run();
+  }, [loadOrganizations]);
 
   const handleEdit = editForm.handleSubmit(async (values) => {
     if (!partnerId) {
@@ -256,33 +224,13 @@ export function OrganizationsPage() {
         )}
       </Panel>
 
-      <Modal
+      <CreateOrganizationDialog
         open={showCreate}
-        onClose={() => { setShowCreate(false); createForm.reset(); }}
-        title="Create organization"
-      >
-        <form className="grid gap-4 md:grid-cols-2" onSubmit={handleCreate}>
-          <Field label="Name" error={createForm.formState.errors.name?.message}>
-            <TextInput invalid={Boolean(createForm.formState.errors.name)} {...createForm.register("name")} />
-          </Field>
-          <Field label="Org ID" hint="Optional — auto-generated from name if blank.">
-            <TextInput {...createForm.register("orgId")} />
-          </Field>
-          <div className="md:col-span-2">
-            <Field label="Description" error={createForm.formState.errors.description?.message}>
-              <TextArea rows={3} {...createForm.register("description")} />
-            </Field>
-          </div>
-          <div className="md:col-span-2 flex gap-2">
-            <PrimaryButton type="submit" loading={createForm.formState.isSubmitting}>
-              Create organization
-            </PrimaryButton>
-            <SecondaryButton type="button" onClick={() => { setShowCreate(false); createForm.reset(); }}>
-              Cancel
-            </SecondaryButton>
-          </div>
-        </form>
-      </Modal>
+        onClose={() => setShowCreate(false)}
+        onSuccess={() => {
+          void loadOrganizations();
+        }}
+      />
 
       <Modal
         open={editing !== null}

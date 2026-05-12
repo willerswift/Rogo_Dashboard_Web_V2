@@ -4,8 +4,6 @@ import { Upload, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { useRef } from "react";
 
-import { cn } from "@/lib/utils/cn";
-
 interface LogoAssetUploadProps {
   label: string;
   description: string;

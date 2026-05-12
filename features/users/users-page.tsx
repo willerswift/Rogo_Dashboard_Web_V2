@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -83,7 +83,7 @@ export function UsersPage() {
     },
   });
 
-  async function loadData() {
+  const loadData = useCallback(async () => {
     if (!partnerId) {
       setLoading(false);
       return;
@@ -106,11 +106,15 @@ export function UsersPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [partnerId]);
 
   useEffect(() => {
-    void loadData();
-  }, [partnerId]);
+    const run = async () => {
+      await Promise.resolve();
+      void loadData();
+    };
+    void run();
+  }, [loadData]);
 
   const handleAddUser = addUserForm.handleSubmit(async (values) => {
     if (!partnerId) {

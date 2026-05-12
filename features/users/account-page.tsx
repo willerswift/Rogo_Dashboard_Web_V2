@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils/cn";
 
 export function AccountPage() {
   const { session } = usePartnerContext();
-  const [displayName, setDisplayName] = useState(session.email.split("@")[0]);
+  const displayName = session.email.split("@")[0];
   const [jobTitle, setJobTitle] = useState("Senior IoT Architect");
   
   // Password states

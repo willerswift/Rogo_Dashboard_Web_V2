@@ -1,11 +1,8 @@
 "use client";
 
-import { Bell, ChevronDown, UserCircle } from "lucide-react";
-import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
+import { Bell } from "lucide-react";
 
 export function Topbar() {
-  const { session } = usePartnerContext();
-
   return (
     <header className="flex h-[72px] items-center justify-between border-b border-neutral-100 bg-white px-8">
       <div className="flex items-center gap-2">

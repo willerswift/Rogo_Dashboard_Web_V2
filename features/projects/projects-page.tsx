@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +13,7 @@ import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { usePermission } from "@/lib/hooks/usePermission";
 import type { OrgWithOwner, Project } from "@/lib/types/partner";
 import { parseJsonInput, stringifyJson } from "@/lib/utils/parsing";
+import { CreateProjectDialog } from "@/features/organizations/CreateProjectDialog";
 import {
   EmptyState,
   Field,
@@ -27,19 +28,12 @@ import {
   TextInput,
 } from "@/features/shared/ui";
 
-const projectSchema = z.object({
-  name: z.string().min(1, "Name is required."),
-  orgId: z.string().min(1, "Organization is required."),
-  authorizedServices: z.string().optional(),
-});
-
 const editProjectSchema = z.object({
   name: z.string().min(1, "Name is required."),
   needVerifyEmail: z.boolean().optional(),
   authorizedServices: z.string().optional(),
 });
 
-type CreateProjectValues = z.infer<typeof projectSchema>;
 type EditProjectValues = z.infer<typeof editProjectSchema>;
 
 export function ProjectsPage() {
@@ -52,11 +46,6 @@ export function ProjectsPage() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Project | null>(null);
   const [showCreate, setShowCreate] = useState(false);
-
-  const createForm = useForm<CreateProjectValues>({
-    resolver: zodResolver(projectSchema),
-    defaultValues: { name: "", orgId: "", authorizedServices: "[]" },
-  });
 
   const editForm = useForm<EditProjectValues>({
     resolver: zodResolver(editProjectSchema),
@@ -71,7 +60,7 @@ export function ProjectsPage() {
     return projects.filter((project) => project.orgId === selectedOrgId);
   }, [projects, selectedOrgId]);
 
-  async function loadProjects() {
+  const loadProjects = useCallback(async () => {
     if (!partnerId) {
       setLoading(false);
       return;
@@ -90,32 +79,15 @@ export function ProjectsPage() {
     } finally {
       setLoading(false);
     }
-  }
-
-  useEffect(() => {
-    void loadProjects();
   }, [partnerId, selectedOrgId]);
 
-  const handleCreate = createForm.handleSubmit(async (values) => {
-    if (!partnerId) {
-      return;
-    }
-
-    try {
-      await createProject({
-        partnerId,
-        orgId: values.orgId,
-        name: values.name,
-        authorizedServices: parseJsonInput(values.authorizedServices || "[]", []),
-      });
-      toast.success("Project created.");
-      createForm.reset({ name: "", orgId: values.orgId, authorizedServices: "[]" });
-      setShowCreate(false);
-      await loadProjects();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to create project.");
-    }
-  });
+  useEffect(() => {
+    const run = async () => {
+      await Promise.resolve();
+      void loadProjects();
+    };
+    void run();
+  }, [loadProjects]);
 
   const startEditing = (project: Project) => {
     setEditing(project);
@@ -245,41 +217,13 @@ export function ProjectsPage() {
         )}
       </Panel>
 
-      <Modal
+      <CreateProjectDialog
         open={showCreate}
-        onClose={() => { setShowCreate(false); createForm.reset(); }}
-        title="Create project"
-        wide
-      >
-        <form className="grid gap-4 md:grid-cols-2" onSubmit={handleCreate}>
-          <Field label="Project name" error={createForm.formState.errors.name?.message}>
-            <TextInput invalid={Boolean(createForm.formState.errors.name)} {...createForm.register("name")} />
-          </Field>
-          <Field label="Organization" error={createForm.formState.errors.orgId?.message}>
-            <SelectInput invalid={Boolean(createForm.formState.errors.orgId)} {...createForm.register("orgId")}>
-              <option value="">Select an organization</option>
-              {organizations.map((organization) => (
-                <option key={organization.uuid ?? organization.orgId} value={organization.orgId}>
-                  {organization.name}
-                </option>
-              ))}
-            </SelectInput>
-          </Field>
-          <div className="md:col-span-2">
-            <Field label="Authorized services (JSON array)" hint="Leave as [] for no initial services.">
-              <TextArea rows={6} {...createForm.register("authorizedServices")} />
-            </Field>
-          </div>
-          <div className="md:col-span-2 flex gap-2">
-            <PrimaryButton type="submit" loading={createForm.formState.isSubmitting}>
-              Create project
-            </PrimaryButton>
-            <SecondaryButton type="button" onClick={() => { setShowCreate(false); createForm.reset(); }}>
-              Cancel
-            </SecondaryButton>
-          </div>
-        </form>
-      </Modal>
+        onClose={() => setShowCreate(false)}
+        onSuccess={() => {
+          void loadProjects();
+        }}
+      />
 
       <Modal
         open={editing !== null}

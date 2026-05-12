@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -82,6 +83,7 @@ export function ProductDetailPage({ productId }: { productId: string }) {
   const { session } = usePartnerContext();
   const canEdit = usePermission("productDev:edit");
   const partnerId = session.activePartnerId;
+  const router = useRouter();
   const [product, setProduct] = useState<Model | null>(null);
   const [devices, setDevices] = useState<DeviceListResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -112,7 +114,7 @@ export function ProductDetailPage({ productId }: { productId: string }) {
     },
   });
 
-  async function loadProduct(nextDevicePage = devicePage) {
+  const loadProduct = useCallback(async (nextDevicePage = devicePage) => {
     if (!partnerId) {
       return;
     }
@@ -151,11 +153,15 @@ export function ProductDetailPage({ productId }: { productId: string }) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [partnerId, productId, devicePage, form]);
 
   useEffect(() => {
-    void loadProduct(devicePage);
-  }, [partnerId, productId, devicePage]);
+    const run = async () => {
+      await Promise.resolve();
+      void loadProduct(devicePage);
+    };
+    void run();
+  }, [loadProduct, devicePage]);
 
   const handleSave = form.handleSubmit(async (values) => {
     if (!partnerId) {
@@ -194,7 +200,7 @@ export function ProductDetailPage({ productId }: { productId: string }) {
     try {
       await deleteProduct({ partnerId, modelId: productId });
       toast.success("Product deleted.");
-      window.location.assign("/products");
+      router.push("/products");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to delete product.");
     }

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import {
@@ -18,12 +19,13 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
   const { session } = usePartnerContext();
   const canEdit = usePermission("projectMgmt:edit");
   const partnerId = session.activePartnerId;
+  const router = useRouter();
   const [detail, setDetail] = useState<ProjectDetailResponse | null>(null);
   const [generatedKey, setGeneratedKey] = useState<GeneratedProjectKey | null>(null);
   const [loading, setLoading] = useState(true);
   const [generatingKey, setGeneratingKey] = useState(false);
 
-  async function loadDetail() {
+  const loadDetail = useCallback(async () => {
     if (!partnerId) {
       return;
     }
@@ -36,11 +38,15 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [partnerId, projectId]);
 
   useEffect(() => {
-    void loadDetail();
-  }, [partnerId, projectId]);
+    const run = async () => {
+      await Promise.resolve();
+      void loadDetail();
+    };
+    void run();
+  }, [loadDetail]);
 
   const handleDeactivate = async (uuid: string) => {
     if (!partnerId) {
@@ -104,7 +110,7 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
     try {
       await deleteProject(partnerId, projectId);
       toast.success("Project deleted.");
-      window.location.assign("/projects");
+      router.push("/projects");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to delete project.");
     }
