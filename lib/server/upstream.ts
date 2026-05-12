@@ -63,13 +63,6 @@ export async function fetchJsonFromUpstream<T>(path: string, init?: RequestInit)
   return body as T;
 }
 
-export async function refreshAccessToken(refreshToken: string) {
-  return fetchJsonFromUpstream<TokenBundle>("/partner/auth/refresh", {
-    method: "POST",
-    body: JSON.stringify({ refresh_token: refreshToken }),
-  });
-}
-
 export async function getResourcesWithAccessToken(accessToken: string) {
   return fetchJsonFromUpstream<UserResourcesResponse>("/partner/user/resources", {
     method: "GET",
@@ -117,20 +110,14 @@ export async function withUpstreamAuthRetry(input: {
   };
 
   let response = await perform(accessToken);
-  let rotatedBundle: TokenBundle | null = null;
 
   if (response.status === 401) {
-    try {
-      rotatedBundle = await refreshAccessToken(refreshToken);
-      response = await perform(rotatedBundle.access_token);
-    } catch {
-      const unauthorizedResponse = NextResponse.json(
-        { message: "Session expired. Please log in again." },
-        { status: 401 },
-      );
-      clearSessionCookies(unauthorizedResponse);
-      return unauthorizedResponse;
-    }
+    const unauthorizedResponse = NextResponse.json(
+      { message: "Session expired. Please log in again." },
+      { status: 401 },
+    );
+    clearSessionCookies(unauthorizedResponse);
+    return unauthorizedResponse;
   }
 
   const payload = await response.text();
@@ -141,42 +128,6 @@ export async function withUpstreamAuthRetry(input: {
       "cache-control": "no-store",
     },
   });
-
-  if (rotatedBundle) {
-    try {
-      const resources = await getResourcesWithAccessToken(rotatedBundle.access_token);
-      const session = createSession(resources, rotatedBundle);
-      setSessionCookies(proxiedResponse, rotatedBundle, session);
-    } catch {
-      const existingSession = await getSessionCookie();
-
-      if (existingSession) {
-        setSessionCookies(proxiedResponse, rotatedBundle, {
-          ...existingSession,
-          accessTokenExpiresAt: Date.now() + rotatedBundle.expires_in * 1000,
-        });
-      } else {
-        proxiedResponse.cookies.set({
-          httpOnly: true,
-          sameSite: "lax",
-          secure: process.env.NODE_ENV === "production",
-          path: "/",
-          name: "rogo_access_token",
-          value: rotatedBundle.access_token,
-          maxAge: rotatedBundle.expires_in,
-        });
-        proxiedResponse.cookies.set({
-          httpOnly: true,
-          sameSite: "lax",
-          secure: process.env.NODE_ENV === "production",
-          path: "/",
-          name: "rogo_refresh_token",
-          value: rotatedBundle.refresh_token,
-          maxAge: 60 * 60 * 24 * 14,
-        });
-      }
-    }
-  }
 
   return proxiedResponse;
 }

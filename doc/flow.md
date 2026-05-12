@@ -12,6 +12,7 @@ Rogo Dashboard V2 is a management interface for Rogo Partner APIs, built using N
 - **Session Validation**:
     - The `app/(dashboard)/layout.tsx` checks for the session cookie.
     - If absent, it redirects the user back to `/login`.
+    - **Session Expiration**: If an API call fails with a 401 (Unauthorized) because the token has expired, the server clears all session cookies and returns a 401. The client then automatically redirects the user to the `/login` page to re-authenticate. Automatic token refresh is intentionally disabled to ensure a clean state.
 - **Session Data**: Basic user info and permissions are bootstrapped via `GET /api/partner/user/resources`.
 
 ## 3. Main Interface Structure

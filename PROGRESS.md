@@ -8,6 +8,10 @@ This file serves as a persistent record of work completed, current status, and p
 - Created `doc/flow.md` providing a comprehensive overview of the application's architecture, auth flow, and navigation.
 - Established this `PROGRESS.md` file for session-to-session tracking.
 - Investigated project structure (Next.js 16, App Router, ABAC permissions).
+- **Modified Token Logic**: Removed automatic token refresh to prevent UI flickering on failure. Now, when a token expires (401), the system clears session cookies and redirects to the login page.
+    - Updated `lib/server/upstream.ts` to remove retry logic in `withUpstreamAuthRetry`.
+    - Updated `app/api/session/route.ts` to remove refresh attempt in session sync.
+    - Removed unused `refreshAccessToken` function and cleaned up imports.
 
 ### Current Status
 - Project is in a "greenfield" state but with core shell architecture implemented.

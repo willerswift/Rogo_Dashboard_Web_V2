@@ -8,7 +8,7 @@ import {
   getSessionCookie,
   setSessionCookies,
 } from "@/lib/server/session";
-import { getResourcesWithAccessToken, refreshAccessToken } from "@/lib/server/upstream";
+import { getResourcesWithAccessToken } from "@/lib/server/upstream";
 
 export async function GET() {
   const session = await getSessionCookie();
@@ -29,32 +29,19 @@ export async function POST() {
       return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
     }
 
-    let tokenBundle = null;
-    let resources;
-
-    try {
-      resources = await getResourcesWithAccessToken(accessToken);
-    } catch {
-      tokenBundle = await refreshAccessToken(refreshToken);
-      resources = await getResourcesWithAccessToken(tokenBundle.access_token);
-    }
-
-    const session = createSession(resources, tokenBundle ?? undefined);
+    const resources = await getResourcesWithAccessToken(accessToken);
+    const session = createSession(resources);
     const response = NextResponse.json({ session });
 
-    if (tokenBundle) {
-      setSessionCookies(response, tokenBundle, session);
-    } else {
-      response.cookies.set({
-        httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-        name: "rogo_session",
-        value: JSON.stringify(session),
-        maxAge: 60 * 60 * 24 * 14,
-      });
-    }
+    response.cookies.set({
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      name: "rogo_session",
+      value: JSON.stringify(session),
+      maxAge: 60 * 60 * 24 * 14,
+    });
 
     return response;
   } catch (error) {
