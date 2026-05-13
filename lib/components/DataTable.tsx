@@ -29,8 +29,9 @@ export function DataTable<T>({
   caption,
   emptyTitle = "No records yet",
   emptyDescription = "The layout is ready for data once the API wiring lands.",
+  emptyAction,
 }: {
-  title: string;
+  title?: string;
   description?: string;
   columns: DataTableColumn<T>[];
   data: T[];
@@ -38,16 +39,21 @@ export function DataTable<T>({
   caption?: string;
   emptyTitle?: string;
   emptyDescription?: string;
+  emptyAction?: ReactNode;
 }) {
+  const hasHeader = title || description || toolbar;
+
   return (
     <Card className="rounded-xl border-neutral-200 shadow-sm">
-      <CardHeader className="p-5 gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="space-y-0.5">
-          <CardTitle className="text-[16px] font-bold text-neutral-900">{title}</CardTitle>
-          {description ? <CardDescription className="text-[13px]">{description}</CardDescription> : null}
-        </div>
-        {toolbar ? <div className="flex items-center gap-2">{toolbar}</div> : null}
-      </CardHeader>
+      {hasHeader && (
+        <CardHeader className="p-5 gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-0.5">
+            {title && <CardTitle className="text-[16px] font-bold text-neutral-900">{title}</CardTitle>}
+            {description ? <CardDescription className="text-[13px]">{description}</CardDescription> : null}
+          </div>
+          {toolbar ? <div className="flex items-center gap-2">{toolbar}</div> : null}
+        </CardHeader>
+      )}
       <CardContent className="px-0 pb-0">
         <div className="overflow-x-auto">
           <Table>
@@ -55,7 +61,13 @@ export function DataTable<T>({
             <TableHeader>
               <TableRow className="hover:bg-transparent border-neutral-100">
                 {columns.map((column) => (
-                  <TableHead key={column.id} className={cn("px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-neutral-400", column.headerClassName)}>
+                  <TableHead 
+                    key={column.id} 
+                    className={cn(
+                      "px-5 py-3 text-[12px] font-bold uppercase tracking-wider text-[#606060] leading-[18px] font-sans", 
+                      column.headerClassName
+                    )}
+                  >
                     {column.header}
                   </TableHead>
                 ))}
@@ -75,9 +87,12 @@ export function DataTable<T>({
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length} className="py-12">
-                    <div className="mx-auto flex max-w-md flex-col items-center gap-1.5 px-4 text-center">
-                      <p className="text-[14px] font-bold text-neutral-900">{emptyTitle}</p>
-                      <p className="text-[12px] text-neutral-500">{emptyDescription}</p>
+                    <div className="mx-auto flex max-w-md flex-col items-center gap-3 px-4 text-center">
+                      <div className="space-y-1.5">
+                        <p className="text-[14px] font-bold text-neutral-900">{emptyTitle}</p>
+                        <p className="text-[12px] text-neutral-500">{emptyDescription}</p>
+                      </div>
+                      {emptyAction}
                     </div>
                   </TableCell>
                 </TableRow>

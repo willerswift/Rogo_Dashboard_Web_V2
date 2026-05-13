@@ -198,14 +198,14 @@ export function ProductsPage() {
             <div className="overflow-x-auto">
               <table className="min-w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-zinc-200 text-zinc-500">
-                    <th className="pb-3 pr-4 font-medium">Model ID</th>
-                    <th className="pb-3 pr-4 font-medium">Name</th>
-                    <th className="pb-3 pr-4 font-medium">Category</th>
-                    <th className="pb-3 pr-4 font-medium">Release status</th>
-                    <th className="pb-3 pr-4 font-medium">Public</th>
-                    <th className="pb-3 pr-4 font-medium">OEM ready</th>
-                    <th className="pb-3 text-right font-medium">Action</th>
+                  <tr className="border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-[#606060] leading-[18px] font-sans">
+                    <th className="pb-3 pr-4 text-left">Model ID</th>
+                    <th className="pb-3 pr-4 text-left">Name</th>
+                    <th className="pb-3 pr-4 text-left">Category</th>
+                    <th className="pb-3 pr-4 text-left">Release status</th>
+                    <th className="pb-3 pr-4 text-left">Public</th>
+                    <th className="pb-3 pr-4 text-left">OEM ready</th>
+                    <th className="pb-3 text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody>

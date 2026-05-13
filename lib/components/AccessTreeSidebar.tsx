@@ -73,13 +73,13 @@ export function AccessTreeSidebar() {
   };
 
   const handleSelectOrg = (orgId: string) => {
-    router.push(`/overview?orgId=${orgId}`);
+    router.push(`${pathname}?orgId=${orgId}`);
   };
 
   const handleSelectProject = (projectId: string, orgId?: string) => {
     const url = orgId 
-      ? `/overview?orgId=${orgId}&projectId=${projectId}`
-      : `/overview?projectId=${projectId}`;
+      ? `${pathname}?orgId=${orgId}&projectId=${projectId}`
+      : `${pathname}?projectId=${projectId}`;
     router.push(url);
   };
 
@@ -87,11 +87,15 @@ export function AccessTreeSidebar() {
     <aside className="h-screen w-[280px] border-r border-neutral-100 bg-white overflow-hidden flex flex-col shadow-sm font-sans" style={{ fontFamily: 'SF Pro Display, sans-serif' }}>
       {/* 1. Partner Switcher */}
       <div className="p-4 border-b border-neutral-100">
-        <div className="flex h-[48px] items-center justify-between rounded-xl border border-neutral-200 bg-white px-4 py-2 hover:bg-neutral-50 cursor-pointer transition-all shadow-sm">
-          <span className="text-[14px] font-bold text-neutral-900 truncate" style={{ fontFamily: 'SF Pro Display, sans-serif' }}>
-            <span className="font-normal text-neutral-500 mr-2">Partner:</span>
-            {session.activePartnerId || "Rogo"}
-          </span>
+        <div className="flex h-[40px] items-center justify-between gap-2 rounded-[4px] border border-neutral-300 bg-neutral-100 px-4 hover:bg-neutral-50 cursor-pointer transition-all">
+          <div className="flex items-center gap-2 truncate">
+            <span className="text-[14px] font-normal text-secondary-400 leading-[21px]" style={{ fontFamily: 'SF Pro, SF Pro Display, sans-serif' }}>
+              Partner:
+            </span>
+            <span className="text-[14px] font-bold text-secondary-400 leading-[21px]" style={{ fontFamily: 'SF Pro, SF Pro Display, sans-serif' }}>
+              {session.activePartnerId || "Rogo"}
+            </span>
+          </div>
           <ChevronDown className="size-4 text-neutral-400 shrink-0" />
         </div>
       </div>

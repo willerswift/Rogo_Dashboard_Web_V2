@@ -3,10 +3,10 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
-import { UserPlus, Trash2, Pencil, UserMinus } from "lucide-react";
+import { UserPlus, Trash2, Pencil, UserMinus, Users, LayoutGrid } from "lucide-react";
 
-import { listProjects } from "@/lib/api/project";
-import { listOrganizations } from "@/lib/api/organization";
+import { listProjects, listProjectUsers } from "@/lib/api/project";
+import { listOrganizations, listOrganizationUsers } from "@/lib/api/organization";
 import { deletePartnerUser, listPartnerUsers } from "@/lib/api/user";
 import { listPermissionRecords } from "@/lib/api/permission";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
@@ -38,8 +38,13 @@ export function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [showGrantAccess, setShowGrantAccess] = useState(false);
 
-  const activeOrg = useMemo(() => orgs.find(o => o.orgId === orgId), [orgs, orgId]);
   const activeProject = useMemo(() => projects.find(p => p.uuid === projectId), [projects, projectId]);
+  const activeOrg = useMemo(() => {
+    if (activeProject?.orgId) {
+      return orgs.find(o => o.orgId === activeProject.orgId);
+    }
+    return orgs.find(o => o.orgId === orgId);
+  }, [orgs, orgId, activeProject]);
 
   const loadData = useCallback(async () => {
     if (!partnerId) {
@@ -49,22 +54,34 @@ export function UsersPage() {
 
     try {
       setLoading(true);
-      const [nextUsers, nextProjects, nextOrgs, nextPermissions] = await Promise.all([
-        listPartnerUsers(partnerId),
+      const [nextProjects, nextOrgs, nextPermissions] = await Promise.all([
         listProjects(partnerId),
         listOrganizations(partnerId),
         listPermissionRecords(partnerId),
       ]);
-      setUsers(nextUsers);
+
       setProjects(nextProjects);
       setOrgs(nextOrgs);
       setPermissionRecords(nextPermissions);
+
+      // Fetch filtered users based on context
+      let nextUsers: UserWithNumProject[] = [];
+      if (projectId) {
+        const prjUsers = await listProjectUsers(partnerId, projectId);
+        nextUsers = prjUsers.map(u => ({ user: u, numOfProject: 0 }));
+      } else if (orgId) {
+        const orgMembers = await listOrganizationUsers(partnerId, orgId);
+        nextUsers = orgMembers.map(m => ({ user: m.user!, numOfProject: 0 }));
+      } else {
+        nextUsers = await listPartnerUsers(partnerId);
+      }
+      setUsers(nextUsers);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to load users data.");
     } finally {
       setLoading(false);
     }
-  }, [partnerId]);
+  }, [partnerId, orgId, projectId]);
 
   useEffect(() => {
     const run = async () => {
@@ -259,54 +276,114 @@ export function UsersPage() {
         ),
       },
     ];
-  }, [accessScope, permissionRecords, canDelete]);
+  }, [accessScope, permissionRecords, canDelete, handleDeleteUser]);
 
-  const pageTitle = useMemo(() => {
-    if (activeProject) return `${activeOrg?.name || "Organization"} / ${activeProject.name}`;
-    if (activeOrg) return activeOrg.name;
+  const subTitle = useMemo(() => {
+    if (activeProject) return "Users with project access";
+    if (activeOrg) return "Users with access to this organization";
+    if (accessScope === "project") return "Users with project access";
     return "Partner Users";
-  }, [activeOrg, activeProject]);
+  }, [activeOrg, activeProject, accessScope]);
+
+  const rootName = useMemo(() => {
+    if (activeOrg) return activeOrg.name;
+    return session.activePartnerId || "Partner";
+  }, [activeOrg, session.activePartnerId]);
+
+  const displayId = useMemo(() => {
+    if (activeProject) return activeProject.uuid.slice(0, 8);
+    if (activeOrg) return activeOrg.orgId;
+    return session.activePartnerId;
+  }, [activeProject, activeOrg, session.activePartnerId]);
 
   return (
-    <div className="space-y-5 animate-in fade-in duration-500">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between border-b border-neutral-100 pb-5">
-        <div className="space-y-4">
-          <div>
-            <h1 className="text-[20px] font-bold text-neutral-900 tracking-tight font-heading">
-              {pageTitle}
-              {projectId && (
-                <span className="ml-2 inline-flex items-center rounded-full bg-primary-100/50 px-2 py-0.5 text-[10px] font-bold text-primary-300 font-sans">
-                  ID: {projectId.slice(0, 8)}
-                </span>
-              )}
+    <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Header Section */}
+      <div className="space-y-5">
+        {/* Top Tier: Root Context Info (Large) */}
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <h1 className="text-[28px] font-bold text-neutral-900 tracking-tight font-heading">
+              {rootName}
             </h1>
-            <p className="text-[13px] text-neutral-500 mt-0.5">Users with access to this {activeProject ? "project" : activeOrg ? "organization" : "partner"}.</p>
+            {displayId && (
+              <span className="inline-flex items-center rounded-md bg-[#F0F2FF] px-2 py-0.5 text-[10px] font-bold text-[#3B4AD0] uppercase">
+                ID: {displayId}
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Type Badge */}
+            {activeProject ? (
+              <span className="inline-flex items-center rounded-md bg-green-100/10 px-2 py-0.5 text-[10px] font-bold text-green-600">
+                PRJ
+              </span>
+            ) : activeOrg ? (
+              <span className="inline-flex items-center rounded-md bg-[#FFEBF0] px-2 py-0.5 text-[10px] font-bold text-[#FD3566]">
+                ORG
+              </span>
+            ) : (
+              <span className="inline-flex items-center rounded-md bg-primary-100/10 px-2 py-0.5 text-[10px] font-bold text-primary-300">
+                PARTNER
+              </span>
+            )}
+
+            {/* Stat Badges */}
+            <div className="flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 py-1 text-[11px] font-bold text-neutral-500 shadow-sm">
+              <Users className="size-3.5 text-neutral-400" />
+              {users.length} Members
+            </div>
+            
+            {(activeOrg || !projectId) && (
+              <div className="flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 py-1 text-[11px] font-bold text-neutral-500 shadow-sm">
+                <LayoutGrid className="size-3.5 text-neutral-400" />
+                {activeOrg 
+                  ? projects.filter(p => p.orgId === activeOrg.orgId).length
+                  : projects.length
+                } Projects
+              </div>
+            )}
           </div>
         </div>
 
-        {canAddUser && (
-          <div className="flex items-center gap-2 mt-2 sm:mt-0">
-            <PrimaryButton 
-              type="button" 
+        {/* Bottom Tier: Context Title & Action Button */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-[18px] font-bold text-neutral-900 tracking-tight font-heading">
+            {subTitle}
+          </h2>
+
+          {canAddUser && (
+            <PrimaryButton
+              type="button"
               onClick={() => setShowGrantAccess(true)}
-              className="shadow-md shadow-primary-300/20"
+              className="bg-[#FD3566] hover:bg-[#EA023B] shadow-md shadow-[#FD3566]/20 transition-all"
             >
               <UserPlus className="size-4" />
               Grant Access
             </PrimaryButton>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {loading ? (
         <LoadingBlock label="Loading users..." />
       ) : (
         <DataTable
-          title={accessScope === "partner" ? "Users with access" : "Users with project access"}
           columns={columns}
           data={users}
           emptyTitle="No users found"
-          emptyDescription="Add or attach a user to grant them access."
+          emptyDescription={projectId ? "This project doesn't have any specific user permissions yet." : "Add or attach a user to grant them access."}
+          emptyAction={projectId && (
+            <PrimaryButton
+              type="button"
+              onClick={() => setShowGrantAccess(true)}
+              className="bg-[#FD3566] hover:bg-[#EA023B] shadow-md shadow-[#FD3566]/20 transition-all mt-2"
+            >
+              <UserPlus className="size-4" />
+              Grant Permission
+            </PrimaryButton>
+          )}
         />
       )}
 
@@ -327,10 +404,10 @@ export function UsersPage() {
 function PermissionBadge({ label, isAdmin }: { label: string; isAdmin: boolean }) {
   return (
     <span className={cn(
-      "inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold tracking-tight border whitespace-nowrap transition-colors",
+      "inline-flex items-center rounded-full px-2 py-0.5 h-6 text-[10px] font-bold tracking-tight whitespace-nowrap transition-colors",
       isAdmin 
-        ? "bg-[#F5F3FF] text-[#7C3AED] border-[#DDD6FE]" // Purple for Admin/Edit/Full access
-        : "bg-neutral-100 text-neutral-600 border-neutral-200" // Neutral for View only
+        ? "bg-[#F3E8FF] text-[#7C3AED]" // Purple for Admin
+        : "bg-[#F3F4F6] text-neutral-600" // Standard for View only
     )}>
       {label}
     </span>

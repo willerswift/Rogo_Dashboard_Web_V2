@@ -92,12 +92,12 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
         <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
           <table className="w-full text-left text-sm border-collapse">
             <thead>
-              <tr className="bg-neutral-50/50 border-b border-neutral-100 text-[10px] font-bold uppercase tracking-[0.1em] text-neutral-400">
+              <tr className="bg-neutral-50/50 border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-[#606060] leading-[18px] font-sans">
                 <th className="px-8 py-5">Name</th>
                 <th className="px-8 py-5">Project ID</th>
                 <th className="px-8 py-5">Status</th>
                 <th className="px-8 py-5">Created</th>
-                <th className="px-8 py-5">Created</th>
+                <th className="px-8 py-5">Updated</th>
                 <th className="px-8 py-5 text-right">Actions</th>
               </tr>
             </thead>

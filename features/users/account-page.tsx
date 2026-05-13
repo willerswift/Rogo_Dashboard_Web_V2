@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils/cn";
 export function AccountPage() {
   const { session } = usePartnerContext();
   const displayName = session.email.split("@")[0];
-  const [jobTitle, setJobTitle] = useState("Senior IoT Architect");
+  const [username, setUsername] = useState(displayName);
   
   // Password states
   const [currentPassword, setCurrentPassword] = useState("");
@@ -74,9 +74,9 @@ export function AccountPage() {
               <div className="grid gap-5 sm:grid-cols-2">
                 <Field label="Username">
                   <TextInput
-                    value={displayName}
-                    readOnly
-                    className="w-full bg-neutral-50 text-neutral-400 cursor-not-allowed border-dashed"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full"
                   />
                 </Field>
                 <Field label="Email Address">
@@ -90,15 +90,6 @@ export function AccountPage() {
                   </div>
                 </Field>
               </div>
-              <Field label="Job Title">
-                <div className="max-w-sm">
-                  <TextInput
-                    value={jobTitle}
-                    onChange={(e) => setJobTitle(e.target.value)}
-                    className="w-full"
-                  />
-                </div>
-              </Field>
             </div>
           </div>
           <div className="mt-8 flex justify-end">

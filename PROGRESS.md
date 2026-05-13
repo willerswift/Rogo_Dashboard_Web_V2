@@ -2,9 +2,18 @@
 
 This file serves as a persistent record of work completed, current status, and pending tasks. It should be updated at the end of every working session to ensure continuity.
 
-## Latest Update: May 12, 2026
+## Latest Update: May 13, 2026
 
 ### Work Completed
+- **Standardized Table Header Styles**: Applied a global design standard to all table headers across the application for a synchronized look.
+    - Updated `DataTable.tsx` and manual table implementations (`organization-overview.tsx`, `organizations-page.tsx`, etc.) to use the specified typography: **SF Pro**, **12px font size**, **700 weight**, and **#606060 (Neutral 800) color**.
+- **Refined Permission Chips**: Updated the `PermissionBadge` component to match the requested visual specifications.
+    - Standardized height to **24px** with rounded-full corners and appropriate padding.
+    - Implemented a neutral background (`#F3F4F6`) for standard permissions and a distinct purple background (`#F3E8FF`) for Admin roles.
+- **Fixed Access Tree Navigation**: Resolved a navigation bug where clicking on organizations or projects in the sidebar would always redirect the user to the "Overview" page.
+- **Refined Hierarchical Headers**: Improved the `rootName` and `activeOrg` resolution logic in `UsersPage` to ensure the parent Organization is always prioritized in the top-tier header.
+- **Improved Empty States**: Enhanced the user table's empty state for project-specific views with a "Grant Permission" call to action.
+- **Standardized Hierarchical Page Headers**: Redesigned the "Users & Permissions" header to follow a consistent two-tiered structure across all access levels.
 - Created `doc/flow.md` providing a comprehensive overview of the application's architecture, auth flow, and navigation.
 - Established this `PROGRESS.md` file for session-to-session tracking.
 - Investigated project structure (Next.js 16, App Router, ABAC permissions).

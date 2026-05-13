@@ -241,13 +241,13 @@ export function GrantAccessDialog({
               <div className="flex-1 overflow-auto">
                 <table className="w-full text-left text-sm border-collapse">
                   <thead className="sticky top-0 bg-white shadow-[0_1px_0_0_#F5F5F5] z-10">
-                    <tr className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#1F244A]">
-                      <th className="px-6 py-4 w-12">ALL PROJECT</th>
-                      <th className="px-4 py-4">NAME</th>
-                      <th className="px-4 py-4">PROJECT ID</th>
-                      <th className="px-4 py-4">STATUS</th>
-                      <th className="px-4 py-4">CREATED</th>
-                      <th className="px-4 py-4">CREATED</th>
+                    <tr className="text-[12px] font-bold uppercase tracking-wider text-[#606060] leading-[18px] font-sans">
+                      <th className="px-6 py-4 w-12 text-left">ALL PROJECT</th>
+                      <th className="px-4 py-4 text-left">NAME</th>
+                      <th className="px-4 py-4 text-left">PROJECT ID</th>
+                      <th className="px-4 py-4 text-left">STATUS</th>
+                      <th className="px-4 py-4 text-left">CREATED</th>
+                      <th className="px-4 py-4 text-left">UPDATED</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-100">

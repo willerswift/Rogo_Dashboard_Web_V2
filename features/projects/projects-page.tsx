@@ -168,13 +168,13 @@ export function ProjectsPage() {
           <div className="overflow-x-auto">
             <table className="min-w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-zinc-200 text-zinc-500">
-                  <th className="pb-3 pr-4 font-medium">Name</th>
-                  <th className="pb-3 pr-4 font-medium">Project ID</th>
-                  <th className="pb-3 pr-4 font-medium">Organization</th>
-                  <th className="pb-3 pr-4 font-medium">Email verify</th>
-                  <th className="pb-3 pr-4 font-medium">Services</th>
-                  <th className="pb-3 text-right font-medium">Actions</th>
+                <tr className="border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-[#606060] leading-[18px] font-sans">
+                  <th className="pb-3 pr-4 text-left">Name</th>
+                  <th className="pb-3 pr-4 text-left">Project ID</th>
+                  <th className="pb-3 pr-4 text-left">Organization</th>
+                  <th className="pb-3 pr-4 text-left">Email verify</th>
+                  <th className="pb-3 pr-4 text-left">Services</th>
+                  <th className="pb-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
