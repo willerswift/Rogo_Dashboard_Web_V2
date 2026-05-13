@@ -12,7 +12,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { CreateOrganizationDialog } from "@/features/organizations/CreateOrganizationDialog";
 
 export function AccessTreeSidebar() {
-  const { session } = usePartnerContext();
+  const { session, accessScope, setAccessScope } = usePartnerContext();
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -23,7 +23,6 @@ export function AccessTreeSidebar() {
   const [expandedOrgs, setExpandedOrgs] = useState<Set<string>>(new Set());
   const [, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [accessScope, setAccessScope] = useState<"partner" | "user">("partner");
   const [showCreateOrg, setShowCreateOrg] = useState(false);
 
   const activeOrgId = searchParams.get("orgId");
@@ -120,12 +119,12 @@ export function AccessTreeSidebar() {
         {/* 4. Access Scope Toggle */}
         {!pathname.startsWith("/overview") && (
           <div className="px-6 py-2">
-            <p className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2" style={{ fontFamily: 'SF Pro Display, sans-serif' }}>ACCESS SCOPE</p>
-            <div className="flex p-1 bg-neutral-100 rounded-2xl">
+            <p className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-2" style={{ fontFamily: 'SF Pro Display, sans-serif' }}>ACCESS SCOPE</p>
+            <div className="flex p-1 justify-center items-start self-stretch gap-1 rounded-full bg-[#E8E8E8]">
               <button
                 onClick={() => setAccessScope("partner")}
                 className={cn(
-                  "flex-1 py-2 px-3 rounded-xl transition-all whitespace-nowrap",
+                  "flex-1 py-2 px-3 rounded-full transition-all whitespace-nowrap",
                   accessScope === "partner" ? "bg-[#FD3566] text-white shadow-sm" : "text-[#777777] hover:text-neutral-900"
                 )}
                 style={{ fontFamily: 'SF Pro Display, sans-serif', fontSize: '14px', fontWeight: 400 }}
@@ -133,14 +132,14 @@ export function AccessTreeSidebar() {
                 Partner View
               </button>
               <button
-                onClick={() => setAccessScope("user")}
+                onClick={() => setAccessScope("project")}
                 className={cn(
-                  "flex-1 py-2 px-3 rounded-xl transition-all whitespace-nowrap",
-                  accessScope === "user" ? "bg-[#FD3566] text-white shadow-sm" : "text-[#777777] hover:text-neutral-900"
+                  "flex-1 py-2 px-3 rounded-full transition-all whitespace-nowrap",
+                  accessScope === "project" ? "bg-[#FD3566] text-white shadow-sm" : "text-[#777777] hover:text-neutral-900"
                 )}
                 style={{ fontFamily: 'SF Pro Display, sans-serif', fontSize: '14px', fontWeight: 400 }}
               >
-                User View
+                Project view
               </button>
             </div>
           </div>
@@ -231,7 +230,7 @@ export function AccessTreeSidebar() {
 
             <button 
               onClick={() => setShowCreateOrg(true)}
-              className="flex w-full items-center gap-1.5 py-2 text-[16px] font-semibold text-[#FD3566] hover:bg-[#FD3566]/5 rounded-xl transition-colors mt-2 font-heading whitespace-nowrap"
+              className="flex w-full items-center gap-1.5 py-2 text-[14px] font-semibold text-[#FD3566] hover:bg-[#FD3566]/5 rounded-xl transition-colors mt-2 font-heading whitespace-nowrap"
             >
               <Plus className="size-5" />
               <span>Create New Organization</span>

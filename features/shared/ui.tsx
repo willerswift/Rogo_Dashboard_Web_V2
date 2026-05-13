@@ -45,7 +45,7 @@ export function Modal({
         )}
       >
         <div className="mb-5 flex items-start justify-between gap-4">
-          <h2 className="text-lg font-semibold text-neutral-900">{title}</h2>
+          <h5 className="text-[24px] font-bold text-[#1F244A] tracking-tight font-heading">{title}</h5>
           <button
             type="button"
             onClick={onClose}
@@ -160,7 +160,7 @@ export function SelectInput(
 }
 
 export function CheckboxInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} type="checkbox" className={cn("h-4 w-4 rounded border-neutral-300 text-primary-300 focus:ring-primary-300", props.className)} />;
+  return <input {...props} type="checkbox" className={cn("flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-primary-300 focus:ring-primary-300", props.className)} />;
 }
 
 export function PrimaryButton({
@@ -174,7 +174,7 @@ export function PrimaryButton({
       {...props}
       disabled={loading || props.disabled}
       className={cn(
-        "inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-primary-300 px-3 py-2 text-[16px] font-semibold text-white transition hover:bg-primary-400 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-300 font-heading",
+        "inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-primary-300 px-3 py-2 text-[14px] font-semibold text-white transition hover:bg-primary-400 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-300 font-heading",
         className,
       )}
     >
@@ -189,7 +189,7 @@ export function SecondaryButton(props: React.ButtonHTMLAttributes<HTMLButtonElem
     <button
       {...props}
       className={cn(
-        "inline-flex h-[40px] items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-2 text-[16px] font-semibold text-neutral-700 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60 font-heading",
+        "inline-flex h-[40px] items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-2 text-[14px] font-semibold text-neutral-700 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60 font-heading",
         props.className,
       )}
     />

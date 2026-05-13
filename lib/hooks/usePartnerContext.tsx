@@ -7,6 +7,8 @@ import type { PartnerSession } from "@/lib/types/partner";
 type PartnerContextValue = {
   session: PartnerSession;
   setSession: (session: PartnerSession) => void;
+  accessScope: "partner" | "project";
+  setAccessScope: (scope: "partner" | "project") => void;
 };
 
 const PartnerContext = createContext<PartnerContextValue | null>(null);
@@ -19,7 +21,9 @@ export function PartnerProvider({
   initialSession: PartnerSession;
 }) {
   const [session, setSession] = useState(initialSession);
-  const value = useMemo(() => ({ session, setSession }), [session]);
+  const [accessScope, setAccessScope] = useState<"partner" | "project">("partner");
+  
+  const value = useMemo(() => ({ session, setSession, accessScope, setAccessScope }), [session, accessScope]);
 
   return <PartnerContext.Provider value={value}>{children}</PartnerContext.Provider>;
 }

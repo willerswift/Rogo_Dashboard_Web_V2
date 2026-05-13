@@ -233,7 +233,7 @@ export function ProductDetailPage({ productId }: { productId: string }) {
               <TextInput invalid={Boolean(form.formState.errors.image)} {...form.register("image")} />
             </Field>
             <label className="inline-flex items-center gap-3 text-sm text-zinc-700">
-              <input type="checkbox" className="h-4 w-4 rounded border-zinc-300" {...form.register("isPublic")} />
+              <input type="checkbox" className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100" {...form.register("isPublic")} />
               Public model
             </label>
             <Field label="Release status input">

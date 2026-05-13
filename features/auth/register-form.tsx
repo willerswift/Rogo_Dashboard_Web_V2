@@ -190,7 +190,7 @@ export function RegisterForm() {
           type="checkbox"
           id="agreeToTerms"
           {...register("agreeToTerms")}
-          className="h-4 w-4 rounded border-zinc-300 text-primary-300 focus:ring-primary-300"
+          className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-primary-300 focus:ring-primary-300"
         />
         <label htmlFor="agreeToTerms" className="text-[13px] text-zinc-600 cursor-pointer">
           By signing up, you agree to our Terms
@@ -204,7 +204,7 @@ export function RegisterForm() {
         type="submit"
         disabled={isSubmitting}
         className={cn(
-          "w-full inline-flex h-[40px] px-3 py-2 gap-2 items-center justify-center rounded-full bg-primary-300 text-white text-[16px] font-semibold transition-all hover:bg-[#E62E5F] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-primary-300/20 font-heading"
+          "w-full inline-flex h-[40px] px-3 py-2 gap-2 items-center justify-center rounded-full bg-primary-300 text-white text-[14px] font-semibold transition-all hover:bg-[#E62E5F] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-primary-300/20 font-heading"
         )}
       >
         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}

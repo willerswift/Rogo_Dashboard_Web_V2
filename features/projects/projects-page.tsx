@@ -237,7 +237,7 @@ export function ProjectsPage() {
           </Field>
           <div className="flex items-center">
             <label className="inline-flex items-center gap-3 text-sm text-zinc-700">
-              <input type="checkbox" className="h-4 w-4 rounded border-zinc-300" {...editForm.register("needVerifyEmail")} />
+              <input type="checkbox" className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100" {...editForm.register("needVerifyEmail")} />
               Require email verification
             </label>
           </div>
