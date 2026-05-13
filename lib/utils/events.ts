@@ -23,3 +23,5 @@ class EventEmitter {
 }
 
 export const projectEvents = new EventEmitter();
+export const sessionEvents = new EventEmitter();
+

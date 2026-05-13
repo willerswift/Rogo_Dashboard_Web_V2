@@ -1,3 +1,4 @@
+import { sessionEvents } from "@/lib/utils/events";
 import type { ApiErrorShape } from "@/lib/types/partner";
 
 export class ApiClientError extends Error {
@@ -46,7 +47,14 @@ export async function apiClient<T>(path: string, options: RequestOptions = {}) {
       : error?.message || error?.error || response.statusText;
 
     if (response.status === 401 && typeof window !== "undefined") {
-      window.location.assign("/login");
+      // Don't throw for 401 on the client, as we're handling it with a logout redirect.
+      // This prevents unhandled promise rejections in the console.
+      // Call the logout API to clear server-side httpOnly cookies, then redirect.
+      fetch("/api/auth/logout", { method: "POST" }).finally(() => {
+        window.location.assign("/login");
+      });
+      // Return a pending promise that will never resolve to prevent further processing
+      return new Promise<T>(() => {});
     }
 
     throw new ApiClientError(message, response.status, payload);

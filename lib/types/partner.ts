@@ -95,10 +95,10 @@ export type Project = {
   appsdkLimit: number
   needVerifyEmail: boolean
   authorizedServices: Array<Record<string, JsonValue>>
-  description?: string
-  createdDate?: string
-  updatedDate?: string
-}
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  }
 
 export type ProjectKeyInfo = {
   pub?: string

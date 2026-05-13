@@ -1,10 +1,12 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import { PartnerProvider } from "@/lib/hooks/usePartnerContext";
 import type { PartnerSession } from "@/lib/types/partner";
+import { sessionEvents } from "@/lib/utils/events";
+import { SessionTimeoutDialog } from "./SessionTimeoutDialog";
 import { ThemeProvider } from "./ThemeProvider";
 
 export function Providers({
@@ -14,6 +16,23 @@ export function Providers({
   children: ReactNode;
   initialSession: PartnerSession;
 }) {
+  const [isTimeoutModalOpen, setIsTimeoutModalOpen] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = sessionEvents.on("sessionExpired", () => {
+      setIsTimeoutModalOpen(true);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogoutAndRedirect = () => {
+    setIsTimeoutModalOpen(false);
+    // Perform the logout action and then redirect
+    fetch("/api/auth/logout", { method: "POST" }).finally(() => {
+      window.location.assign("/login");
+    });
+  };
+
   return (
     <ThemeProvider>
       <PartnerProvider initialSession={initialSession}>
@@ -27,6 +46,7 @@ export function Providers({
             },
           }}
         />
+        <SessionTimeoutDialog open={isTimeoutModalOpen} onConfirm={handleLogoutAndRedirect} />
       </PartnerProvider>
     </ThemeProvider>
   );

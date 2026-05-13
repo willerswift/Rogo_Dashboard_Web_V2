@@ -1,30 +1,35 @@
-export function formatDate(value?: string | null) {
-  if (!value) {
-    return "—";
-  }
+import { format } from 'date-fns';
 
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
+/**
+ * Formats an ISO date string into HH:mm:ss-dd/MM/yyyy format in the user's local timezone.
+ * @param dateString The ISO date string (e.g., "2026-05-12T09:08:32.091Z")
+ * @returns The formatted date string or '—' if the input is invalid.
+ */
+export function formatCustomDateTime(dateString?: string): string {
+  if (!dateString) {
+    return '—';
   }
-
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
+  try {
+    // new Date() parses the ISO string (with 'Z' for UTC) and holds it.
+    // format() then displays this date in the browser's local timezone by default.
+    return format(new Date(dateString), 'HH:mm:ss-dd/MM/yyyy');
+  } catch (error) {
+    console.error("Invalid date string provided:", dateString, error);
+    return dateString; // Fallback to the original string if formatting fails
+  }
 }
 
-export function formatBoolean(value?: boolean | null) {
-  if (value === undefined || value === null) {
-    return "—";
-  }
-
-  return value ? "Yes" : "No";
+/**
+ * Legacy alias for formatCustomDateTime
+ */
+export function formatDate(dateString?: string): string {
+  return formatCustomDateTime(dateString);
 }
 
-export function formatOwnerEmail(owner?: { email?: string | null } | null, fallback?: string) {
-  return owner?.email || fallback || "—";
+/**
+ * Formats owner email with a fallback
+ */
+export function formatOwnerEmail(owner?: { email?: string; name?: string } | null, fallback: string = "—"): string {
+  return owner?.email ?? owner?.name ?? fallback;
 }
+
