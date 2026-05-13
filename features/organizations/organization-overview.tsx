@@ -134,8 +134,8 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                         Active
                       </div>
                     </td>
-                    <td className="px-8 py-5 text-[13px] font-medium text-neutral-500">{project.createdDate ? formatDate(project.createdDate) : "—"}</td>
-                    <td className="px-8 py-5 text-[13px] font-medium text-neutral-500">{project.updatedDate ? formatDate(project.updatedDate) : "—"}</td>
+                    <td className="px-8 py-5 text-[13px] font-medium text-neutral-500">{project.createdAt ? formatDate(project.createdAt) : "—"}</td>
+                    <td className="px-8 py-5 text-[13px] font-medium text-neutral-500">{project.updatedAt ? formatDate(project.updatedAt) : "—"}</td>
                     <td className="px-8 py-5 text-right">
                       <button className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-900 transition-all">
                         <MoreVertical className="size-4" />

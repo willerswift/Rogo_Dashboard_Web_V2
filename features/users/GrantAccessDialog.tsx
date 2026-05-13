@@ -110,8 +110,8 @@ export function GrantAccessDialog({
           {view === "permissions" ? (
             <>
               {/* Left Panel - Users */}
-              <div className="w-[280px] border-r border-neutral-100 flex flex-col bg-neutral-50/30">
-                <div className="p-4 shrink-0">
+              <div className="w-[240px] border-r border-neutral-100 flex flex-col bg-white shrink-0 p-6 gap-5 self-stretch items-start">
+                <div className="w-full shrink-0">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
                     <input
@@ -119,29 +119,32 @@ export function GrantAccessDialog({
                       placeholder="Search Username"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
-                      className="w-full h-10 rounded-xl border border-neutral-200 bg-white pl-9 pr-3 text-[14px] outline-none focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20 transition-all placeholder:text-neutral-400"
+                      className="w-full h-10 rounded-xl border border-neutral-200 bg-white pl-9 pr-3 text-[14px] outline-none focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20 transition-all placeholder:text-neutral-400 font-sans"
                     />
                   </div>
                 </div>
                 
-                <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
+                <div className="flex-1 w-full overflow-y-auto space-y-4 custom-scrollbar">
                   {filteredUsers.map(({ user }) => (
                     <button
                       key={user.ownerId}
                       onClick={() => setSelectedUserId(user.ownerId)}
                       className={cn(
-                        "w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left",
+                        "w-full flex items-center gap-3 p-1 rounded-xl transition-all text-left self-stretch",
                         selectedUserId === user.ownerId 
-                          ? "bg-[#E6E8F4] border border-[#393984]/10 shadow-sm" 
-                          : "hover:bg-white border border-transparent"
+                          ? "bg-[#E6E8F4] ring-1 ring-[#393984]/20 shadow-sm" 
+                          : "hover:bg-neutral-50"
                       )}
                     >
-                      <Avatar name={user.name} email={user.email} />
-                      <div className="overflow-hidden">
-                        <p className={cn("text-[14px] font-bold truncate", selectedUserId === user.ownerId ? "text-[#393984]" : "text-neutral-900")}>
+                      <Avatar name={user.name} email={user.email} className="size-10" />
+                      <div className="overflow-hidden flex-1">
+                        <p className={cn(
+                          "text-[16px] font-bold truncate leading-[24px] font-sans", 
+                          selectedUserId === user.ownerId ? "text-[#393984]" : "text-[#393984]"
+                        )}>
                           {user.name}
                         </p>
-                        <p className="text-[12px] text-neutral-500 truncate">{user.email}</p>
+                        <p className="text-[12px] text-[#777777] truncate leading-[18px] font-sans">{user.email}</p>
                       </div>
                     </button>
                   ))}
@@ -158,7 +161,7 @@ export function GrantAccessDialog({
                   <div className="space-y-6">
                     <div className="flex items-center justify-between bg-[#FFF1F4] rounded-xl p-4 border border-[#FD3566]/20">
                       <label className="flex items-center gap-3 cursor-pointer">
-                        <input type="checkbox" className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566]" />
+                        <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
                         <span className="text-[14px] font-medium text-neutral-900">Apply user to all Projects</span>
                       </label>
                       <button 
@@ -181,11 +184,11 @@ export function GrantAccessDialog({
                       <h6 className="text-[14px] font-medium text-[#393984]">(Optional) Project Development</h6>
                       <div className="space-y-3 pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <input type="checkbox" className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566]" />
+                          <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
                           <span className="text-[14px] text-neutral-700">Project Development Edit (Create/ Edit/ Delete)</span>
                         </label>
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <input type="checkbox" className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566]" />
+                          <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
                           <span className="text-[14px] text-neutral-700">Project Development View</span>
                         </label>
                       </div>
@@ -197,11 +200,11 @@ export function GrantAccessDialog({
                       <h6 className="text-[14px] font-medium text-[#393984]">(Optional) Project Authorization:</h6>
                       <div className="flex gap-8 pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <input type="checkbox" className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566]" />
+                          <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
                           <span className="text-[14px] text-neutral-700">Project Authorization Edit (Create/ Edit/ Delete)</span>
                         </label>
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <input type="checkbox" className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566]" />
+                          <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
                           <span className="text-[14px] text-neutral-700">Project Authorization View</span>
                         </label>
                       </div>
@@ -211,7 +214,7 @@ export function GrantAccessDialog({
                       <h6 className="text-[14px] font-medium text-[#393984]">(Optional) Project Report:</h6>
                       <div className="pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <input type="checkbox" className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566]" />
+                          <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
                           <span className="text-[14px] text-neutral-700">Report Project</span>
                         </label>
                       </div>
@@ -225,7 +228,7 @@ export function GrantAccessDialog({
               <div className="p-6 pb-4">
                 <div className="flex items-center justify-between bg-[#FFF1F4] rounded-xl p-4 border border-[#FD3566]/20 mb-6">
                   <label className="flex items-center gap-3 cursor-pointer">
-                    <input type="checkbox" className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566]" />
+                    <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
                     <span className="text-[14px] font-medium text-neutral-900">Apply user to all Projects</span>
                   </label>
                   <span className="text-[13px] font-bold text-[#1F244A] flex items-center gap-1.5">
@@ -261,7 +264,7 @@ export function GrantAccessDialog({
                       projects.map((project) => (
                         <tr key={project.uuid} className="hover:bg-neutral-50/50 transition-colors">
                           <td className="px-6 py-4">
-                            <input type="checkbox" className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566]" />
+                            <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
                           </td>
                           <td className="px-4 py-4 font-medium text-[#FD3566]">{project.name}</td>
                           <td className="px-4 py-4 font-mono text-[12px] text-neutral-600">{project.uuid.slice(0, 8)}</td>

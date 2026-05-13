@@ -5,6 +5,8 @@ This file serves as a persistent record of work completed, current status, and p
 ## Latest Update: May 13, 2026
 
 ### Work Completed
+- **Fixed Build Error (Missing Dependency)**: Resolved "Module not found: Can't resolve 'date-fns'" error by installing the missing dependency.
+- **Resolved TypeScript Type Errors**: Fixed property name mismatch in `organization-overview.tsx` where `createdDate` and `updatedDate` were used instead of the correctly typed `createdAt` and `updatedAt` for the `Project` type.
 - **Standardized Table Header Styles**: Applied a global design standard to all table headers across the application for a synchronized look.
     - Updated `DataTable.tsx` and manual table implementations (`organization-overview.tsx`, `organizations-page.tsx`, etc.) to use the specified typography: **SF Pro**, **12px font size**, **700 weight**, and **#606060 (Neutral 800) color**.
 - **Refined Permission Chips**: Updated the `PermissionBadge` component to match the requested visual specifications.
