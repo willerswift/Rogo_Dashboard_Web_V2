@@ -98,14 +98,14 @@ export function CreateOrganizationDialog({ open, onClose, onSuccess }: CreateOrg
             <button
               type="button"
               onClick={onClose}
-              className="h-[48px] rounded-full border border-neutral-300 bg-white px-8 text-[15px] font-bold text-[#1F244A] hover:bg-neutral-50 transition-all"
+              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-2 text-[16px] font-semibold text-[#1F244A] hover:bg-neutral-50 transition-all font-heading"
             >
               Close
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-[48px] rounded-full bg-[#FD3566] px-10 text-[15px] font-bold text-white shadow-md shadow-[#FD3566]/20 hover:bg-[#E62E5F] transition-all disabled:opacity-50"
+              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-[#FD3566] px-3 py-2 text-[16px] font-semibold text-white shadow-md shadow-[#FD3566]/20 hover:bg-[#E62E5F] transition-all disabled:opacity-50 font-heading"
             >
               Save
             </button>

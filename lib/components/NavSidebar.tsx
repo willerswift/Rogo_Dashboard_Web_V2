@@ -64,7 +64,7 @@ export function NavSidebar() {
               src={isCollapsed ? faviconUrl : logoUrl} 
               alt="Rogo" 
               fill 
-              className="object-contain object-left" 
+              className={cn("object-contain", isCollapsed ? "object-center" : "object-left")} 
               priority 
             />
           </div>

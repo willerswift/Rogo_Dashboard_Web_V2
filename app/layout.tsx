@@ -1,17 +1,10 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
 
 import { Providers } from "@/lib/components/providers";
 import { EMPTY_PARTNER_SESSION } from "@/lib/config/session";
 import { getSessionCookie } from "@/lib/server/session";
 
 import "./globals.css";
-
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin"],
-  weight: ["600", "700"],
-});
 
 export const metadata: Metadata = {
   title: {
@@ -34,7 +27,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${montserrat.variable} h-full antialiased`}
+      className="h-full antialiased"
     >
       <body className="min-h-full bg-white text-neutral-900">
         <Providers initialSession={session}>{children}</Providers>

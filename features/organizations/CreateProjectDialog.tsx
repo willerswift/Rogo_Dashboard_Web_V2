@@ -193,7 +193,7 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
                         setIsDropdownOpen(false);
                         setShowCreateOrg(true);
                       }}
-                      className="flex w-full items-center gap-2 border-t border-neutral-100 px-5 py-4 text-[15px] font-bold text-[#FD3566] transition-colors hover:bg-neutral-50"
+                      className="flex w-full items-center gap-2 border-t border-neutral-100 px-5 py-4 text-[16px] font-semibold text-[#FD3566] transition-colors hover:bg-neutral-50 font-heading"
                     >
                       <Plus className="size-4 stroke-[3px]" />
                       Create New Organization
@@ -226,14 +226,14 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
               <button
                 type="button"
                 onClick={onClose}
-                className="h-[48px] rounded-full border border-neutral-300 bg-white px-8 text-[15px] font-bold text-[#1F244A] hover:bg-neutral-50 transition-all"
+                className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-2 text-[16px] font-semibold text-[#1F244A] hover:bg-neutral-50 transition-all font-heading"
               >
                 Close
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="h-[48px] rounded-full bg-[#FD3566] px-10 text-[15px] font-bold text-white shadow-md shadow-[#FD3566]/20 hover:bg-[#E62E5F] transition-all disabled:opacity-50"
+                className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-[#FD3566] px-3 py-2 text-[16px] font-semibold text-white shadow-md shadow-[#FD3566]/20 hover:bg-[#E62E5F] transition-all disabled:opacity-50 font-heading"
               >
                 Save
               </button>

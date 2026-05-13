@@ -230,7 +230,7 @@ export function AccountPage() {
             </div>
           </div>
           <div className="pr-6">
-            <SecondaryButton className="h-10 px-6 text-[12px] border-primary-300 text-primary-300 hover:bg-primary-300 hover:text-white transition-all shadow-sm">
+            <SecondaryButton className="border-primary-300 text-primary-300 hover:bg-primary-300 hover:text-white transition-all shadow-sm">
               Request access change
             </SecondaryButton>
           </div>

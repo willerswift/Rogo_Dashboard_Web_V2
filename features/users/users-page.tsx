@@ -310,17 +310,17 @@ export function UsersPage() {
             <SecondaryButton 
               type="button" 
               onClick={() => setShowAttach(true)}
-              className="h-8 px-3 text-[12px] border-neutral-200 hover:border-neutral-300 shadow-sm"
+              className="border-neutral-200 hover:border-neutral-300 shadow-sm"
             >
-              <Plus className="mr-1.5 size-3" />
+              <Plus className="size-4" />
               Attach existing
             </SecondaryButton>
             <PrimaryButton 
               type="button" 
               onClick={() => setShowCreate(true)}
-              className="h-8 px-3 text-[12px] shadow-md shadow-primary-300/20"
+              className="shadow-md shadow-primary-300/20"
             >
-              <UserPlus className="mr-1.5 size-3" />
+              <UserPlus className="size-4" />
               Add user
             </PrimaryButton>
           </div>
@@ -365,10 +365,10 @@ export function UsersPage() {
             </SelectInput>
           </Field>
           <div className="md:col-span-2 flex justify-end gap-3 mt-4">
-            <SecondaryButton type="button" onClick={() => { setShowCreate(false); addUserForm.reset(); }} className="h-10 px-6">
+            <SecondaryButton type="button" onClick={() => { setShowCreate(false); addUserForm.reset(); }}>
               Cancel
             </SecondaryButton>
-            <PrimaryButton type="submit" loading={addUserForm.formState.isSubmitting} className="h-10 px-8">
+            <PrimaryButton type="submit" loading={addUserForm.formState.isSubmitting}>
               Create user
             </PrimaryButton>
           </div>
@@ -400,10 +400,10 @@ export function UsersPage() {
             </SelectInput>
           </Field>
           <div className="flex justify-end gap-3 mt-6">
-            <SecondaryButton type="button" onClick={() => { setShowAttach(false); attachUserForm.reset(); }} className="h-10 px-6">
+            <SecondaryButton type="button" onClick={() => { setShowAttach(false); attachUserForm.reset(); }}>
               Cancel
             </SecondaryButton>
-            <PrimaryButton type="submit" loading={attachUserForm.formState.isSubmitting} className="h-10 px-8">
+            <PrimaryButton type="submit" loading={attachUserForm.formState.isSubmitting}>
               Attach user
             </PrimaryButton>
           </div>

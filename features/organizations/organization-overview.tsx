@@ -82,9 +82,9 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
           <h3 className="text-xl font-bold font-heading text-neutral-900 tracking-tight">Project in Organization</h3>
           <PrimaryButton 
             onClick={() => setIsCreateOpen(true)}
-            className="h-10 rounded-full px-5 bg-[#FD3566] hover:bg-[#EA023B] shadow-md shadow-[#FD3566]/20 transition-all"
+            className="bg-[#FD3566] hover:bg-[#EA023B] shadow-md shadow-[#FD3566]/20 transition-all"
           >
-            <Plus className="mr-2 size-4 stroke-[3px]" />
+            <Plus className="size-4 stroke-[3px]" />
             Create Project
           </PrimaryButton>
         </div>

@@ -133,7 +133,7 @@ export function LoginForm() {
         type="submit"
         disabled={isSubmitting}
         className={cn(
-          "w-full h-12 flex items-center justify-center rounded-full bg-primary-300 text-white text-[16px] font-semibold transition-all hover:bg-primary-400 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-primary-300/20 font-heading"
+          "w-full inline-flex h-[40px] px-3 py-2 gap-2 items-center justify-center rounded-full bg-primary-300 text-white text-[16px] font-semibold transition-all hover:bg-primary-400 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-primary-300/20 font-heading"
         )}
       >
         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}
