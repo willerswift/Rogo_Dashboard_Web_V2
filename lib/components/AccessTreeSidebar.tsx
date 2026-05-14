@@ -19,9 +19,9 @@ export function AccessTreeSidebar() {
   const partnerId = session.activePartnerId;
 
   const [orgs, setOrgs] = useState<OrgWithOwner[]>([]);
-  const [standaloneProjects, setStandaloneProjects] = useState<Project[]>([]);
+  const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [expandedOrgs, setExpandedOrgs] = useState<Set<string>>(new Set());
-  const [, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showCreateOrg, setShowCreateOrg] = useState(false);
 
@@ -37,7 +37,7 @@ export function AccessTreeSidebar() {
         listProjects(partnerId),
       ]);
       setOrgs(nextOrgs);
-      setStandaloneProjects(nextProjects.filter(p => !p.orgId));
+      setAllProjects(nextProjects);
     } catch (error) {
       console.error("Failed to load access tree", error);
     } finally {
@@ -51,7 +51,43 @@ export function AccessTreeSidebar() {
       void loadTree();
     };
     void run();
+
+    // Listen for project creation events to refresh the tree
+    const unsubscribe = projectEvents.on("projectCreated", () => {
+      void loadTree();
+    });
+
+    return () => unsubscribe();
   }, [loadTree]);
+
+  // Handle search filtering and auto-expansion
+  const normalizedSearch = search.toLowerCase().trim();
+
+  const filteredOrgs = orgs.filter(org => {
+    if (!normalizedSearch) return true;
+    const matchesOrg = org.name.toLowerCase().includes(normalizedSearch);
+    const matchesAnyProject = allProjects.some(p => p.orgId === org.orgId && p.name.toLowerCase().includes(normalizedSearch));
+    return matchesOrg || matchesAnyProject;
+  });
+
+  const filteredStandaloneProjects = allProjects.filter(p => {
+    if (p.orgId) return false;
+    if (!normalizedSearch) return true;
+    return p.name.toLowerCase().includes(normalizedSearch);
+  });
+
+  useEffect(() => {
+    if (normalizedSearch) {
+      const nextExpanded = new Set(expandedOrgs);
+      orgs.forEach(org => {
+        const hasMatchingProject = allProjects.some(p => p.orgId === org.orgId && p.name.toLowerCase().includes(normalizedSearch));
+        if (hasMatchingProject) {
+          nextExpanded.add(org.orgId);
+        }
+      });
+      setExpandedOrgs(nextExpanded);
+    }
+  }, [normalizedSearch, orgs, allProjects]);
 
   // Auto-expand the active organization when it changes
   useEffect(() => {
@@ -77,7 +113,7 @@ export function AccessTreeSidebar() {
   };
 
   const handleSelectProject = (projectId: string, orgId?: string) => {
-    const url = orgId 
+    const url = orgId
       ? `${pathname}?orgId=${orgId}&projectId=${projectId}`
       : `${pathname}?projectId=${projectId}`;
     router.push(url);
@@ -112,7 +148,7 @@ export function AccessTreeSidebar() {
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
             <input
               type="text"
-              placeholder="Search partner, org, project"
+              placeholder="Search organization, project, ..."
               className="w-full h-[40px] rounded-xl border border-neutral-200 bg-white pl-9 pr-3 py-2 text-[14px] font-sans outline-none focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20 transition-all placeholder:text-neutral-400"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -151,22 +187,28 @@ export function AccessTreeSidebar() {
 
         {/* Tree Content */}
         <div className="mt-4 border-t border-neutral-200 pt-4 flex-1 overflow-y-auto px-4 custom-scrollbar font-sans">
-          <div className="space-y-1">
-            {/* Partner Root */}
-            <div className="flex items-center gap-4 py-2 text-[14px] font-normal text-[#777777] whitespace-nowrap px-2">
-              <FolderIcon className="size-5 text-[#777777] fill-current" />
-              <span>{session.activePartnerId || "Rogo"}</span>
+          {loading ? (
+            <div className="flex items-center justify-center py-8 text-sm text-neutral-400 italic">
+              Loading access tree...
             </div>
+          ) : (
+            <div className="space-y-1">
+              {/* Partner Root */}
+              <div className="flex items-center gap-4 py-2 text-[14px] font-normal text-[#777777] whitespace-nowrap px-2">
+                <FolderIcon className="size-5 text-[#777777] fill-current" />
+                <span>{session.activePartnerId || "Rogo"}</span>
+              </div>
 
-            {/* Organizations */}
-            <div className="pl-0.5 space-y-0">
-              {orgs.map((org) => {
-                const isExpanded = expandedOrgs.has(org.orgId);
-                const isActive = activeOrgId === org.orgId && !activeProjectId;
+              {/* Organizations */}
+              <div className="pl-0.5 space-y-0">
+                {filteredOrgs.map((org) => {
+                  const isExpanded = expandedOrgs.has(org.orgId);
+                  const isActive = activeOrgId === org.orgId && !activeProjectId;
+                  const orgProjects = allProjects.filter(p => p.orgId === org.orgId);
 
-                return (
+                  return (
                     <div key={org.orgId} className="space-y-0">
-                      <div 
+                      <div
                         className="group flex items-center pl-2 hover:bg-neutral-50 rounded-md cursor-pointer transition-colors"
                         onClick={() => toggleOrg(org.orgId)}
                       >
@@ -182,7 +224,7 @@ export function AccessTreeSidebar() {
                             "flex flex-1 items-center gap-3 rounded-md px-2 py-2 text-[14px] font-sans transition-all whitespace-nowrap outline-none",
                             isActive && "ring-2 ring-primary-300 ring-inset",
                             isExpanded || isActive
-                              ? "font-normal text-[#777777]" 
+                              ? "font-normal text-[#777777]"
                               : "font-normal text-[#777777] hover:text-neutral-900"
                           )}
                           style={{ fontFamily: 'SF Pro Display, sans-serif', fontSize: '14px', fontWeight: 400 }}
@@ -192,60 +234,62 @@ export function AccessTreeSidebar() {
                         </button>
                       </div>
 
-                      <div 
+                      <div
                         className={cn(
                           "grid transition-all duration-300 ease-in-out",
                           isExpanded ? "grid-rows-[1fr] opacity-100 mt-0" : "grid-rows-[0fr] opacity-0"
                         )}
                       >
                         <div className="overflow-hidden space-y-0">
-                          <OrgProjectsList 
-                            orgId={org.orgId} 
+                          <OrgProjectsList
+                            projects={orgProjects}
                             activeProjectId={activeProjectId}
                             onSelect={(pid) => handleSelectProject(pid, org.orgId)}
+                            searchQuery={normalizedSearch}
                           />
                         </div>
                       </div>
                     </div>
-                );
-              })}
+                  );
+                })}
 
-              {standaloneProjects.map((project) => (
-                <div key={project.uuid} className="pl-2">
-                  <button
-                    onClick={() => handleSelectProject(project.uuid)}
-                    className={cn(
-                      "flex w-full items-center gap-3 rounded-l-md rounded-r-none py-2 pl-1 pr-2 text-[14px] font-sans transition-all relative whitespace-nowrap",
-                      activeProjectId === project.uuid
-                        ? "bg-[#F3F4F6] font-normal text-[#777777]"
-                        : "font-normal text-[#777777] hover:bg-neutral-50 hover:text-neutral-900"
-                    )}
-                    style={{ fontFamily: 'SF Pro Display, sans-serif', fontSize: '14px', fontWeight: 400 }}
-                  >
-                    <Dot className="size-[18px] shrink-0 text-[#22C55E]" />
-                    <span className="truncate">{project.name}</span>
-                    {activeProjectId === project.uuid && (
-                      <div className="absolute right-0 top-0 h-full w-[4px] bg-[#393984]" />
-                    )}
-                  </button>
-                </div>
-              ))}
+                {filteredStandaloneProjects.map((project) => (
+                  <div key={project.uuid} className="pl-2">
+                    <button
+                      onClick={() => handleSelectProject(project.uuid)}
+                      className={cn(
+                        "flex w-full items-center gap-3 rounded-l-md rounded-r-none py-2 pl-1 pr-2 text-[14px] font-sans transition-all relative whitespace-nowrap",
+                        activeProjectId === project.uuid
+                          ? "bg-[#F3F4F6] font-normal text-[#777777]"
+                          : "font-normal text-[#777777] hover:bg-neutral-50 hover:text-neutral-900"
+                      )}
+                      style={{ fontFamily: 'SF Pro Display, sans-serif', fontSize: '14px', fontWeight: 400 }}
+                    >
+                      <Dot className="size-[18px] shrink-0 text-[#22C55E]" />
+                      <span className="truncate">{project.name}</span>
+                      {activeProjectId === project.uuid && (
+                        <div className="absolute right-0 top-0 h-full w-[4px] bg-[#393984]" />
+                      )}
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setShowCreateOrg(true)}
+                className="flex w-full items-center gap-1.5 py-2 text-[14px] font-semibold text-[#FD3566] hover:bg-[#FD3566]/5 rounded-xl transition-colors mt-2 font-heading whitespace-nowrap"
+              >
+                <Plus className="size-5" />
+                <span>Create New Organization</span>
+              </button>
             </div>
-
-            <button 
-              onClick={() => setShowCreateOrg(true)}
-              className="flex w-full items-center gap-1.5 py-2 text-[14px] font-semibold text-[#FD3566] hover:bg-[#FD3566]/5 rounded-xl transition-colors mt-2 font-heading whitespace-nowrap"
-            >
-              <Plus className="size-5" />
-              <span>Create New Organization</span>
-            </button>
-          </div>
+          )}
         </div>
       </div>
 
-      <CreateOrganizationDialog 
-        open={showCreateOrg} 
-        onClose={() => setShowCreateOrg(false)} 
+      <CreateOrganizationDialog
+        open={showCreateOrg}
+        onClose={() => setShowCreateOrg(false)}
         onSuccess={() => {
           void loadTree();
         }}
@@ -254,47 +298,20 @@ export function AccessTreeSidebar() {
   );
 }
 
-function OrgProjectsList({ orgId, activeProjectId, onSelect }: { 
-  orgId: string; 
+function OrgProjectsList({ projects, activeProjectId, onSelect, searchQuery }: {
+  projects: Project[];
   activeProjectId: string | null;
   onSelect: (pid: string) => void;
+  searchQuery: string;
 }) {
-  const { session } = usePartnerContext();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const load = useCallback(async () => {
-    if (!session.activePartnerId) return;
-    try {
-      const next = await listProjects(session.activePartnerId, orgId);
-      setProjects(next);
-    } finally {
-      setLoading(false);
-    }
-  }, [orgId, session.activePartnerId]);
-
-  useEffect(() => {
-    const run = async () => {
-      await Promise.resolve();
-      void load();
-    };
-    void run();
-
-    // Listen for project creation events to refresh the list
-    const unsubscribe = projectEvents.on("projectCreated", (createdOrgId) => {
-      if (createdOrgId === orgId) {
-        void load();
-      }
-    });
-
-    return () => unsubscribe();
-  }, [load, orgId]);
-
-  if (loading) return <div className="pl-4 py-1 text-[9px] text-neutral-400 italic font-bold">Loading...</div>;
+  const filteredProjects = projects.filter(p => {
+    if (!searchQuery) return true;
+    return p.name.toLowerCase().includes(searchQuery);
+  });
 
   return (
     <>
-      {projects.map((p) => (
+      {filteredProjects.map((p) => (
         <button
           key={p.uuid}
           onClick={() => onSelect(p.uuid)}
