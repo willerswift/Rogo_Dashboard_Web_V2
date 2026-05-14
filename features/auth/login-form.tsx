@@ -10,6 +10,7 @@ import { useState } from "react";
 
 import { login } from "@/lib/api/auth";
 import { cn } from "@/lib/utils/cn";
+import { CheckboxInput } from "@/features/shared/ui";
 
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email address."),
@@ -64,7 +65,7 @@ export function LoginForm() {
               placeholder="name@company.com"
               {...register("email")}
               className={cn(
-                "block w-full h-[46px] pl-11 pr-3 bg-white rounded-lg border border-zinc-200 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
+                "block w-full h-10 pl-11 pr-3 bg-white rounded-[6px] border border-[#E5E7EB] text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
                 "autofill:shadow-[0_0_0_30px_white_inset]",
                 errors.email && "border-red-500 focus:border-red-500 focus:ring-red-500/10"
               )}
@@ -90,7 +91,7 @@ export function LoginForm() {
               placeholder="••••••••"
               {...register("password")}
               className={cn(
-                "block w-full h-[46px] pl-11 pr-11 bg-white rounded-lg border border-zinc-200 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
+                "block w-full h-10 pl-11 pr-11 bg-white rounded-[6px] border border-[#E5E7EB] text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
                 "autofill:shadow-[0_0_0_30px_white_inset]",
                 errors.password && "border-red-500 focus:border-red-500 focus:ring-red-500/10"
               )}
@@ -115,16 +116,14 @@ export function LoginForm() {
 
       <div className="flex items-center justify-between">
         <label className="flex items-center gap-2 cursor-pointer group">
-          <input
-            type="checkbox"
+          <CheckboxInput
             {...register("rememberMe")}
-            className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-primary-300 focus:ring-primary-300"
           />
           <span className="text-[13px] font-medium text-zinc-600 group-hover:text-zinc-900 transition-colors">Remember me</span>
         </label>
         <Link
           href="/forgot-password"
-          className="text-[13px] font-bold text-[#fd3566] hover:opacity-80 transition-opacity" style={{ color: '#FF356A' }}
+          className="text-[14px] font-semibold text-[#fd3566] hover:opacity-80 transition-opacity font-heading" style={{ color: '#FF356A' }}
         >
           Forgot password?
         </Link>
@@ -137,13 +136,13 @@ export function LoginForm() {
         )}
       >
         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}
-        Sign in
+        Login
       </button>
 
       <div className="pt-4 text-center">
         <p className="text-[13px] text-zinc-600">
           Don't have an account?{" "}
-          <Link href="/register" className="font-bold text-primary-300 hover:underline" style={{ color: '#FF356A' }}>
+          <Link href="/register" className="text-[14px] font-semibold text-primary-300 hover:underline font-heading" style={{ color: '#FF356A' }}>
             Register
           </Link>
         </p>

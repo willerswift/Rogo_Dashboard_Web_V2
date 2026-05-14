@@ -64,7 +64,7 @@ export function DataTable<T>({
                   <TableHead 
                     key={column.id} 
                     className={cn(
-                      "px-5 py-3 text-[12px] font-bold uppercase tracking-wider text-[#606060] leading-[18px] font-sans", 
+                      "px-6 py-4 text-[12px] font-bold uppercase tracking-wider text-neutral-800 leading-[18px] font-sans", 
                       column.headerClassName
                     )}
                   >
@@ -78,7 +78,7 @@ export function DataTable<T>({
                 data.map((row, rowIndex) => (
                   <TableRow key={rowIndex} className="group hover:bg-neutral-50/50 border-neutral-50">
                     {columns.map((column) => (
-                      <TableCell key={column.id} className={cn("px-5 py-3 text-[13px]", column.className)}>
+                      <TableCell key={column.id} className={cn("px-6 py-4 text-[13px]", column.className)}>
                         {column.cell(row)}
                       </TableCell>
                     ))}

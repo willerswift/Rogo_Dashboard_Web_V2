@@ -127,53 +127,57 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
   return (
     <div className="space-y-6">
       <Panel title={detail.project.name} description={`Project ${projectId} in partner ${detail.project.partnerId}`}>
-        <dl className="grid gap-4 text-sm md:grid-cols-2 xl:grid-cols-4">
-          <div>
-            <dt className="text-zinc-500">UUID</dt>
-            <dd className="mt-1 font-medium text-zinc-900">{detail.project.uuid}</dd>
-          </div>
-          <div>
-            <dt className="text-zinc-500">Org ID</dt>
-            <dd className="mt-1 font-medium text-zinc-900">{detail.project.orgId ?? "—"}</dd>
-          </div>
-          <div>
-            <dt className="text-zinc-500">IP whitelist count</dt>
-            <dd className="mt-1 font-medium text-zinc-900">{detail.numOfIps}</dd>
-          </div>
-          <div>
-            <dt className="text-zinc-500">Need verify email</dt>
-            <dd className="mt-1 font-medium text-zinc-900">{detail.project.needVerifyEmail ? "Yes" : "No"}</dd>
-          </div>
-        </dl>
-        {detail.keyInfos ? (
-          <div className="mt-4 rounded-xl bg-zinc-50 p-4 text-sm text-zinc-600">
-            Existing key info: {detail.keyInfos.name ?? "Unnamed key"}
-          </div>
-        ) : null}
+        <div className="px-6 py-4">
+          <dl className="grid gap-4 text-sm md:grid-cols-2 xl:grid-cols-4">
+            <div>
+              <dt className="text-zinc-500">UUID</dt>
+              <dd className="mt-1 font-medium text-zinc-900">{detail.project.uuid}</dd>
+            </div>
+            <div>
+              <dt className="text-zinc-500">Org ID</dt>
+              <dd className="mt-1 font-medium text-zinc-900">{detail.project.orgId ?? "—"}</dd>
+            </div>
+            <div>
+              <dt className="text-zinc-500">IP whitelist count</dt>
+              <dd className="mt-1 font-medium text-zinc-900">{detail.numOfIps}</dd>
+            </div>
+            <div>
+              <dt className="text-zinc-500">Need verify email</dt>
+              <dd className="mt-1 font-medium text-zinc-900">{detail.project.needVerifyEmail ? "Yes" : "No"}</dd>
+            </div>
+          </dl>
+          {detail.keyInfos ? (
+            <div className="mt-4 rounded-xl bg-zinc-50 p-4 text-sm text-zinc-600">
+              Existing key info: {detail.keyInfos.name ?? "Unnamed key"}
+            </div>
+          ) : null}
+        </div>
       </Panel>
 
       <Panel title="Authorized services" description="PATCH /partner/project/edit/:partnerId/:projectId with { uuid } removes a service.">
-        {detail.project.authorizedServices?.length ? (
-          <div className="space-y-3">
-            {detail.project.authorizedServices.map((service, index) => {
-              const serviceUuid = typeof service.uuid === "string" ? service.uuid : null;
+        <div className="px-6 py-4">
+          {detail.project.authorizedServices?.length ? (
+            <div className="space-y-3">
+              {detail.project.authorizedServices.map((service, index) => {
+                const serviceUuid = typeof service.uuid === "string" ? service.uuid : null;
 
-              return (
-              <div key={String(service.uuid ?? index)} className="rounded-xl border border-zinc-200 p-4">
-                <JsonBlock value={service} />
-                {canEdit && serviceUuid ? (
-                  <div className="mt-3">
-                    <SecondaryButton type="button" onClick={() => void handleDeactivate(serviceUuid)}>
-                      Deactivate service
-                    </SecondaryButton>
-                  </div>
-                ) : null}
-              </div>
-            )})}
-          </div>
-        ) : (
-          <Notice>No active authorized services were returned for this project.</Notice>
-        )}
+                return (
+                <div key={String(service.uuid ?? index)} className="rounded-xl border border-zinc-200 p-4">
+                  <JsonBlock value={service} />
+                  {canEdit && serviceUuid ? (
+                    <div className="mt-3">
+                      <SecondaryButton type="button" onClick={() => void handleDeactivate(serviceUuid)}>
+                        Deactivate service
+                      </SecondaryButton>
+                    </div>
+                  ) : null}
+                </div>
+              )})}
+            </div>
+          ) : (
+            <Notice>No active authorized services were returned for this project.</Notice>
+          )}
+        </div>
       </Panel>
 
       {canEdit ? (
@@ -181,23 +185,25 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
           title="Generate key"
           description="The OpenAPI schema is empty here, so this dashboard sends the code-backed payload using the current project snapshot."
         >
-          <div className="flex flex-wrap gap-3">
-            <PrimaryButton type="button" loading={generatingKey} onClick={() => void handleGenerateKey()}>
-              Generate key JSON
-            </PrimaryButton>
-            <SecondaryButton type="button" onClick={() => void handleDelete()}>
-              Delete project
-            </SecondaryButton>
-          </div>
-
-          {generatedKey ? (
-            <div className="mt-4 space-y-3">
-              <JsonBlock value={generatedKey} />
-              <SecondaryButton type="button" onClick={handleDownload}>
-                Download JSON
+          <div className="px-6 py-4">
+            <div className="flex flex-wrap gap-3">
+              <PrimaryButton type="button" loading={generatingKey} onClick={() => void handleGenerateKey()}>
+                Generate key JSON
+              </PrimaryButton>
+              <SecondaryButton type="button" onClick={() => void handleDelete()}>
+                Delete project
               </SecondaryButton>
             </div>
-          ) : null}
+
+            {generatedKey ? (
+              <div className="mt-4 space-y-3">
+                <JsonBlock value={generatedKey} />
+                <SecondaryButton type="button" onClick={handleDownload}>
+                  Download JSON
+                </SecondaryButton>
+              </div>
+            ) : null}
+          </div>
         </Panel>
       ) : null}
     </div>

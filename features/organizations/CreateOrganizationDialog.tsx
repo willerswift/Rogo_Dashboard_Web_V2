@@ -10,6 +10,7 @@ import { createOrganization } from "@/lib/api/organization";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { slugify } from "@/lib/utils/parsing";
 import { cn } from "@/lib/utils/cn";
+import { TextInput } from "@/features/shared/ui";
 
 const orgSchema = z.object({
   name: z.string().min(1, "Enter Organization Name"),
@@ -81,13 +82,19 @@ export function CreateOrganizationDialog({ open, onClose, onSuccess }: CreateOrg
             <label className="text-[15px] font-bold text-[#1F244A]">
               Organization Name<span className="text-[#FD3566] ml-1">*</span>
             </label>
-            <input
+            <TextInput
               {...register("name")}
+<<<<<<< Updated upstream
               placeholder="Enter Organization name"
               className={cn(
                 "h-[52px] w-full rounded-xl border bg-white px-5 text-[15px] outline-none transition-all placeholder:text-neutral-300",
                 errors.name ? "border-[#FD3566]" : "border-neutral-200 focus:border-[#FD3566]"
               )}
+=======
+              placeholder="Enter Project name"
+              invalid={Boolean(errors.name)}
+              className="w-full"
+>>>>>>> Stashed changes
             />
             {errors.name && (
               <p className="text-[13px] font-bold text-[#FD3566]">{errors.name.message}</p>

@@ -166,37 +166,37 @@ export function OrganizationsPage() {
           <div className="overflow-x-auto">
             <table className="min-w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-[#606060] leading-[18px] font-sans">
-                  <th className="pb-3 pr-4 text-left">Name</th>
-                  <th className="pb-3 pr-4 text-left">Org ID</th>
-                  <th className="pb-3 pr-4 text-left">Status</th>
-                  <th className="pb-3 pr-4 text-left">Owner</th>
-                  <th className="pb-3 pr-4 text-left">Created</th>
-                  <th className="pb-3 text-right">Actions</th>
+                <tr className="border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-neutral-800 leading-[18px] font-sans">
+                  <th className="px-6 py-4 text-left">Name</th>
+                  <th className="px-6 py-4 text-left">Org ID</th>
+                  <th className="px-6 py-4 text-left">Status</th>
+                  <th className="px-6 py-4 text-left">Owner</th>
+                  <th className="px-6 py-4 text-left">Created</th>
+                  <th className="py-4 pr-6 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {sortedOrganizations.map((organization) => (
                   <tr key={organization.uuid ?? organization.orgId} className="border-b border-zinc-100 align-top">
-                    <td className="py-3 pr-4">
+                    <td className="px-6 py-4">
                       <div className="font-medium text-zinc-900">{organization.name}</div>
                       {organization.description ? (
                         <div className="mt-1 text-xs text-zinc-500">{organization.description}</div>
                       ) : null}
                     </td>
-                    <td className="py-3 pr-4 text-zinc-600">
+                    <td className="px-6 py-4 text-zinc-600">
                       <InlineCode value={organization.orgId} />
                     </td>
-                    <td className="py-3 pr-4">
+                    <td className="px-6 py-4">
                       <StatusBadge value={organization.status} />
                     </td>
-                    <td className="py-3 pr-4 text-zinc-600">
+                    <td className="px-6 py-4 text-zinc-600">
                       {formatOwnerEmail(organization.owner, "—")}
                     </td>
-                    <td className="py-3 pr-4 text-zinc-500 text-xs">
+                    <td className="px-6 py-4 text-zinc-500 text-xs">
                       {organization.createdDate ? new Date(organization.createdDate).toLocaleDateString() : "—"}
                     </td>
-                    <td className="py-3 text-right">
+                    <td className="py-4 pr-6 text-right">
                       <div className="flex justify-end gap-2">
                         <Link
                           href={`/organizations/${organization.orgId}`}

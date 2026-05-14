@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils/cn";
+import { CheckboxInput } from "@/features/shared/ui";
 
 const registerSchema = z.object({
   email: z.string().email("Enter a valid email address."),
@@ -73,7 +74,7 @@ export function RegisterForm() {
               placeholder="jane@company.com"
               {...register("email")}
               className={cn(
-                "block w-full h-[44px] pl-11 pr-3 bg-white rounded-lg border border-zinc-200 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
+                "block w-full h-10 pl-11 pr-3 bg-white rounded-[6px] border border-[#E5E7EB] text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
                 "autofill:shadow-[0_0_0_30px_white_inset]",
                 errors.email && "border-red-500 focus:border-red-500 focus:ring-red-500/10"
               )}
@@ -99,7 +100,7 @@ export function RegisterForm() {
               placeholder="Jane Doe"
               {...register("fullName")}
               className={cn(
-                "block w-full h-[44px] pl-11 pr-3 bg-white rounded-lg border border-zinc-200 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
+                "block w-full h-10 pl-11 pr-3 bg-white rounded-[6px] border border-[#E5E7EB] text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
                 "autofill:shadow-[0_0_0_30px_white_inset]",
                 errors.fullName && "border-red-500 focus:border-red-500 focus:ring-red-500/10"
               )}
@@ -125,7 +126,7 @@ export function RegisterForm() {
               placeholder="••••••••"
               {...register("password")}
               className={cn(
-                "block w-full h-[44px] pl-11 pr-11 bg-white rounded-lg border border-zinc-200 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
+                "block w-full h-10 pl-11 pr-11 bg-white rounded-[6px] border border-[#E5E7EB] text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
                 "autofill:shadow-[0_0_0_30px_white_inset]",
                 errors.password && "border-red-500 focus:border-red-500 focus:ring-red-500/10"
               )}
@@ -162,7 +163,7 @@ export function RegisterForm() {
               placeholder="••••••••"
               {...register("confirmPassword")}
               className={cn(
-                "block w-full h-[44px] pl-11 pr-11 bg-white rounded-lg border border-zinc-200 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
+                "block w-full h-10 pl-11 pr-11 bg-white rounded-[6px] border border-[#E5E7EB] text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
                 "autofill:shadow-[0_0_0_30px_white_inset]",
                 errors.confirmPassword && "border-red-500 focus:border-red-500 focus:ring-red-500/10"
               )}
@@ -186,11 +187,9 @@ export function RegisterForm() {
       </div>
 
       <div className="flex items-center gap-2">
-        <input
-          type="checkbox"
+        <CheckboxInput
           id="agreeToTerms"
           {...register("agreeToTerms")}
-          className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-primary-300 focus:ring-primary-300"
         />
         <label htmlFor="agreeToTerms" className="text-[13px] text-zinc-600 cursor-pointer">
           By signing up, you agree to our Terms
@@ -214,7 +213,7 @@ export function RegisterForm() {
       <div className="text-center">
         <p className="text-[13px] text-zinc-600">
           Already have an account?{" "}
-          <Link href="/login" className="font-bold text-primary-300 hover:underline" style={{ color: '#FF356A' }}>
+          <Link href="/login" className="text-[14px] font-semibold text-primary-300 hover:underline font-heading" style={{ color: '#FF356A' }}>
             Login
           </Link>
         </p>

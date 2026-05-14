@@ -55,7 +55,7 @@ export function ForgotPasswordForm() {
         </div>
         <Link
           href="/login"
-          className="inline-flex items-center gap-2 text-sm font-bold hover:opacity-80 transition-opacity"
+          className="inline-flex items-center gap-2 text-[14px] font-semibold hover:opacity-80 transition-opacity font-heading"
           style={{ color: '#393984' }}
         >
           <ArrowLeft className="h-4 w-4" />
@@ -82,7 +82,7 @@ export function ForgotPasswordForm() {
               placeholder="name@company.com"
               {...register("email")}
               className={cn(
-                "block w-full h-[46px] pl-11 pr-3 bg-white rounded-lg border border-zinc-200 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-rogo-pink/10 focus:border-rogo-pink transition-all",
+                "block w-full h-10 pl-11 pr-3 bg-white rounded-[6px] border border-[#E5E7EB] text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-rogo-pink/10 focus:border-rogo-pink transition-all",
                 "autofill:shadow-[0_0_0_30px_white_inset]",
                 errors.email && "border-red-500 focus:border-red-500 focus:ring-red-500/10"
               )}

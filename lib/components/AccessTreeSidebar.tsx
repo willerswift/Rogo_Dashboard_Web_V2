@@ -148,8 +148,13 @@ export function AccessTreeSidebar() {
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
             <input
               type="text"
+<<<<<<< Updated upstream
               placeholder="Search organization, project, ..."
               className="w-full h-[40px] rounded-xl border border-neutral-200 bg-white pl-9 pr-3 py-2 text-[14px] font-sans outline-none focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20 transition-all placeholder:text-neutral-400"
+=======
+              placeholder="Search partner, org, project"
+              className="w-full h-[40px] rounded-[6px] border border-[#E5E7EB] bg-white pl-9 pr-3 py-2 text-[14px] font-sans outline-none focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20 transition-all placeholder:text-neutral-400"
+>>>>>>> Stashed changes
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -165,7 +170,7 @@ export function AccessTreeSidebar() {
                 onClick={() => setAccessScope("partner")}
                 className={cn(
                   "flex-1 py-2 px-3 rounded-full transition-all whitespace-nowrap",
-                  accessScope === "partner" ? "bg-[#FD3566] text-white shadow-sm" : "text-[#777777] hover:text-neutral-900"
+                  accessScope === "partner" ? "bg-primary-300 text-white shadow-sm" : "text-[#777777] hover:text-neutral-900"
                 )}
                 style={{ fontFamily: 'SF Pro Display, sans-serif', fontSize: '14px', fontWeight: 400 }}
               >
@@ -175,7 +180,7 @@ export function AccessTreeSidebar() {
                 onClick={() => setAccessScope("project")}
                 className={cn(
                   "flex-1 py-2 px-3 rounded-full transition-all whitespace-nowrap",
-                  accessScope === "project" ? "bg-[#FD3566] text-white shadow-sm" : "text-[#777777] hover:text-neutral-900"
+                  accessScope === "project" ? "bg-primary-300 text-white shadow-sm" : "text-[#777777] hover:text-neutral-900"
                 )}
                 style={{ fontFamily: 'SF Pro Display, sans-serif', fontSize: '14px', fontWeight: 400 }}
               >

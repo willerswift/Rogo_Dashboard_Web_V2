@@ -65,37 +65,39 @@ export function AccountPage() {
           title="Account Information"
           action={<span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">ID: RO-8829-X</span>}
         >
-          <div className="flex flex-col gap-8 md:flex-row md:items-start">
-            <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-white text-2xl font-bold text-neutral-300 border border-neutral-100 shadow-sm">
-              JD
-            </div>
+          <div className="px-6 py-4">
+            <div className="flex flex-col gap-8 md:flex-row md:items-start">
+              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-white text-2xl font-bold text-neutral-300 border border-neutral-100 shadow-sm">
+                JD
+              </div>
 
-            <div className="flex-1 space-y-5">
-              <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="Username">
-                  <TextInput
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="w-full"
-                  />
-                </Field>
-                <Field label="Email Address">
-                  <div className="relative">
+              <div className="flex-1 space-y-5">
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <Field label="Username">
                     <TextInput
-                      value={session.email}
-                      readOnly
-                      className="w-full bg-neutral-50 pr-10 text-neutral-400 cursor-not-allowed border-dashed"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="w-full"
                     />
-                    <Mail className="absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-neutral-400" />
-                  </div>
-                </Field>
+                  </Field>
+                  <Field label="Email Address">
+                    <div className="relative">
+                      <TextInput
+                        value={session.email}
+                        readOnly
+                        className="w-full bg-neutral-50 pr-10 text-neutral-400 cursor-not-allowed border-dashed"
+                      />
+                      <Mail className="absolute right-3.5 top-1/2 -translate-y-1/2 size-4 text-neutral-400" />
+                    </div>
+                  </Field>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="mt-8 flex justify-end">
-            <PrimaryButton onClick={handleSaveAccountInfo}>
-              Save Changes
-            </PrimaryButton>
+            <div className="mt-8 flex justify-end">
+              <PrimaryButton onClick={handleSaveAccountInfo}>
+                Save Changes
+              </PrimaryButton>
+            </div>
           </div>
         </Panel>
 
@@ -109,7 +111,7 @@ export function AccountPage() {
             </div>
           }
         >
-          <div className="flex justify-between items-start">
+          <div className="px-6 py-4 flex justify-between items-start">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-400">Partner Agency</p>
               <p className="mt-1.5 text-[14px] font-bold text-neutral-900">Rogo Global</p>
@@ -128,7 +130,7 @@ export function AccountPage() {
           title="Security"
           action={<Shield className="size-5 text-neutral-300" />}
         >
-          <div className="space-y-5">
+          <div className="px-6 py-4 space-y-5">
             <Field label="Current Password">
               <TextInput
                 type="password"
@@ -191,16 +193,16 @@ export function AccountPage() {
                 className="w-full"
               />
             </Field>
-          </div>
 
-          <div className="mt-10 pt-6 border-t border-neutral-100 flex justify-end">
-            <PrimaryButton
-              onClick={handleSaveSecurity}
-              disabled={!isFormFilled}
-              className={cn(!isFormValid && isFormFilled && "opacity-50 cursor-not-allowed shadow-none")}
-            >
-              Save Changes
-            </PrimaryButton>
+            <div className="mt-10 pt-6 border-t border-neutral-100 flex justify-end">
+              <PrimaryButton
+                onClick={handleSaveSecurity}
+                disabled={!isFormFilled}
+                className={cn(!isFormValid && isFormFilled && "opacity-50 cursor-not-allowed shadow-none")}
+              >
+                Save Changes
+              </PrimaryButton>
+            </div>
           </div>
         </Panel>
       </div>

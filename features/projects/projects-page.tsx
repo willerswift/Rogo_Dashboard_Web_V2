@@ -16,6 +16,7 @@ import type { OrgWithOwner, Project } from "@/lib/types/partner";
 import { parseJsonInput, stringifyJson } from "@/lib/utils/parsing";
 import { CreateProjectDialog } from "@/features/organizations/CreateProjectDialog";
 import {
+  CheckboxInput,
   EmptyState,
   Field,
   InlineCode,
@@ -169,7 +170,7 @@ export function ProjectsPage() {
           ) : undefined
         }
       >
-        <div className="mb-4 max-w-sm">
+        <div className="px-6 py-4 max-w-sm">
           <Field label="Filter by organization">
             <SelectInput value={selectedOrgId} onChange={(event) => setSelectedOrgId(event.target.value)}>
               <option value="">All organizations</option>
@@ -183,25 +184,35 @@ export function ProjectsPage() {
         </div>
 
         {loading ? (
-          <LoadingBlock label="Loading projects..." />
+          <div className="px-6 py-4">
+            <LoadingBlock label="Loading projects..." />
+          </div>
         ) : visibleProjects.length === 0 ? (
-          <EmptyState title="No projects found" description="Create a project using the button above, or clear the organization filter." />
+          <div className="px-6 py-8 text-center border-t border-neutral-100">
+            <h3 className="font-bold text-neutral-900">No projects found</h3>
+            <p className="mt-2 text-sm text-neutral-500 max-w-sm mx-auto">Create a project using the button above, or clear the organization filter.</p>
+          </div>
         ) : (
+<<<<<<< Updated upstream
           <div className="overflow-visible">
+=======
+          <div className="overflow-x-auto border-t border-neutral-100">
+>>>>>>> Stashed changes
             <table className="min-w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-[#606060] leading-[18px] font-sans">
-                  <th className="pb-3 pr-4 text-left">Name</th>
-                  <th className="pb-3 pr-4 text-left">Project ID</th>
-                  <th className="pb-3 pr-4 text-left">Organization</th>
-                  <th className="pb-3 pr-4 text-left">Email verify</th>
-                  <th className="pb-3 pr-4 text-left">Services</th>
-                  <th className="pb-3 text-right">Actions</th>
+                <tr className="border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-neutral-800 leading-[18px] font-sans">
+                  <th className="px-6 py-4 text-left">Name</th>
+                  <th className="px-6 py-4 text-left">Project ID</th>
+                  <th className="px-6 py-4 text-left">Organization</th>
+                  <th className="px-6 py-4 text-left">Email verify</th>
+                  <th className="px-6 py-4 text-left">Services</th>
+                  <th className="py-4 pr-6 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {visibleProjects.map((project) => (
                   <tr key={project.uuid} className="border-b border-zinc-100 align-top">
+<<<<<<< Updated upstream
                     <td className="py-3 pr-4 font-medium text-zinc-900">{project.name}</td>
                     <td className="py-3 pr-4 text-zinc-600">
                       <div className="flex items-center gap-1.5 leading-none relative">
@@ -264,13 +275,18 @@ export function ProjectsPage() {
                           </div>
                         )}
                       </div>
+=======
+                    <td className="px-6 py-4 font-medium text-zinc-900">{project.name}</td>
+                    <td className="px-6 py-4 text-zinc-600">
+                      <InlineCode value={project.uuid} />
+>>>>>>> Stashed changes
                     </td>
-                    <td className="py-3 pr-4 text-zinc-600">
+                    <td className="px-6 py-4 text-zinc-600">
                       {project.orgId ? (orgNameById[project.orgId] ?? project.orgId) : "—"}
                     </td>
-                    <td className="py-3 pr-4 text-zinc-600">{project.needVerifyEmail ? "Required" : "Optional"}</td>
-                    <td className="py-3 pr-4 text-zinc-600">{project.authorizedServices?.length ?? 0}</td>
-                    <td className="py-3 text-right">
+                    <td className="px-6 py-4 text-zinc-600">{project.needVerifyEmail ? "Required" : "Optional"}</td>
+                    <td className="px-6 py-4 text-zinc-600">{project.authorizedServices?.length ?? 0}</td>
+                    <td className="py-4 pr-6 text-right">
                       <div className="flex justify-end gap-2">
                         <Link
                           href={`/projects/${project.uuid}`}
@@ -318,7 +334,7 @@ export function ProjectsPage() {
           </Field>
           <div className="flex items-center">
             <label className="inline-flex items-center gap-3 text-sm text-zinc-700">
-              <input type="checkbox" className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100" {...editForm.register("needVerifyEmail")} />
+              <CheckboxInput {...editForm.register("needVerifyEmail")} />
               Require email verification
             </label>
           </div>

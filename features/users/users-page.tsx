@@ -117,7 +117,7 @@ export function UsersPage() {
         {
           id: "user",
           header: "USER",
-          headerClassName: "text-[11px] font-bold text-neutral-400 uppercase tracking-wider",
+          headerClassName: "text-[11px] font-bold text-neutral-800 uppercase tracking-wider",
           cell: ({ user }) => (
             <div className="flex items-center gap-3">
               <Avatar name={user.name} email={user.email} />
@@ -131,7 +131,7 @@ export function UsersPage() {
         {
           id: "projects",
           header: "PROJECTS",
-          headerClassName: "text-[11px] font-bold text-neutral-400 uppercase tracking-wider",
+          headerClassName: "text-[11px] font-bold text-neutral-800 uppercase tracking-wider",
           cell: () => {
             // Stub data for UI verification
             const userProjects = [
@@ -163,14 +163,14 @@ export function UsersPage() {
         {
           id: "joined",
           header: "JOINED",
-          headerClassName: "text-[11px] font-bold text-neutral-400 uppercase tracking-wider",
+          headerClassName: "text-[11px] font-bold text-neutral-800 uppercase tracking-wider",
           cell: () => <span className="text-[13px] text-neutral-500">Oct 12, 2023</span>,
         },
         {
           id: "actions",
           header: "ACTIONS",
           className: "text-right",
-          headerClassName: "text-[11px] font-bold text-neutral-400 uppercase tracking-wider text-right",
+          headerClassName: "text-[11px] font-bold text-neutral-800 uppercase tracking-wider text-right",
           cell: () => (
             <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
               <button className="text-neutral-400 hover:text-neutral-900 transition-colors">
@@ -189,7 +189,7 @@ export function UsersPage() {
       {
         id: "user",
         header: "USER",
-        headerClassName: "text-[11px] font-bold text-neutral-400 uppercase tracking-wider",
+        headerClassName: "text-[11px] font-bold text-neutral-800 uppercase tracking-wider",
         cell: ({ user }) => (
           <div className="flex items-center gap-3">
             <Avatar name={user.name} email={user.email} />
@@ -203,7 +203,7 @@ export function UsersPage() {
       {
         id: "permissions",
         header: "PERMISSION",
-        headerClassName: "text-[11px] font-bold text-neutral-400 uppercase tracking-wider",
+        headerClassName: "text-[11px] font-bold text-neutral-800 uppercase tracking-wider",
         cell: ({ user }) => {
           const record = permissionRecords.find(r => r.ownerId === user.ownerId);
           if (!record || !record.abac || !record.abac.length) return <span className="text-neutral-300 text-[12px] italic">No permissions</span>;

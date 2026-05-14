@@ -14,6 +14,7 @@ import type { OrgWithOwner } from "@/lib/types/partner";
 import { cn } from "@/lib/utils/cn";
 import { projectEvents } from "@/lib/utils/events";
 import { CreateOrganizationDialog } from "./CreateOrganizationDialog";
+import { TextInput } from "@/features/shared/ui";
 
 const projectSchema = z.object({
   name: z.string().min(1, "Enter Project Name"),
@@ -143,7 +144,7 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
                 <button
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex h-[52px] w-full items-center justify-between rounded-xl border border-neutral-200 bg-white px-5 text-[15px] transition-all hover:border-neutral-300"
+                  className="flex h-10 w-full items-center justify-between rounded-[6px] border border-[#E5E7EB] bg-white px-5 text-[15px] transition-all hover:border-neutral-300"
                 >
                   <div className="flex items-center gap-1">
                     <span className="text-neutral-500">Organization:</span>
@@ -208,13 +209,11 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
               <label className="text-[15px] font-bold text-[#1F244A]">
                 Project Name<span className="text-[#FD3566] ml-1">*</span>
               </label>
-              <input
+            <TextInput
                 {...register("name")}
                 placeholder="Enter Project name"
-                className={cn(
-                  "h-[52px] w-full rounded-xl border bg-white px-5 text-[15px] outline-none transition-all placeholder:text-neutral-300",
-                  errors.name ? "border-[#FD3566]" : "border-neutral-200 focus:border-[#FD3566]"
-                )}
+                invalid={Boolean(errors.name)}
+                className="w-full"
               />
               {errors.name && (
                 <p className="text-[13px] font-bold text-[#FD3566]">{errors.name.message}</p>

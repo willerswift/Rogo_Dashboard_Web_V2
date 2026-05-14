@@ -84,7 +84,7 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
             <input 
               value={color}
               onChange={handleHexChange}
-              className="w-full h-11 rounded-xl border border-neutral-200 bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
+              className="w-full h-10 rounded-[6px] border border-[#E5E7EB] bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
             />
           </div>
           <div className="space-y-1.5">
@@ -92,7 +92,7 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
             <input 
               value={rgb.r}
               onChange={(e) => handleRgbChange("r", e.target.value)}
-              className="w-full h-11 rounded-xl border border-neutral-200 bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
+              className="w-full h-10 rounded-[6px] border border-[#E5E7EB] bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
             />
           </div>
           <div className="space-y-1.5">
@@ -100,7 +100,7 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
             <input 
               value={rgb.g}
               onChange={(e) => handleRgbChange("g", e.target.value)}
-              className="w-full h-11 rounded-xl border border-neutral-200 bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
+              className="w-full h-10 rounded-[6px] border border-[#E5E7EB] bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
             />
           </div>
           <div className="space-y-1.5">
@@ -108,7 +108,7 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
             <input 
               value={rgb.b}
               onChange={(e) => handleRgbChange("b", e.target.value)}
-              className="w-full h-11 rounded-xl border border-neutral-200 bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
+              className="w-full h-10 rounded-[6px] border border-[#E5E7EB] bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
             />
           </div>
         </div>

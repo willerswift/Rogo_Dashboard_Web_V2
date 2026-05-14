@@ -5,7 +5,7 @@ import { X, Search } from "lucide-react";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import type { UserWithNumProject, OrgWithOwner, Project } from "@/lib/types/partner";
 import { Avatar } from "@/lib/components/ui/avatar";
-import { PrimaryButton, SecondaryButton } from "@/features/shared/ui";
+import { CheckboxInput, PrimaryButton, SecondaryButton } from "@/features/shared/ui";
 import { cn } from "@/lib/utils/cn";
 
 interface GrantAccessDialogProps {
@@ -119,7 +119,7 @@ export function GrantAccessDialog({
                       placeholder="Search Username"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
-                      className="w-full h-10 rounded-xl border border-neutral-200 bg-white pl-9 pr-3 text-[14px] outline-none focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20 transition-all placeholder:text-neutral-400 font-sans"
+                      className="w-full h-10 rounded-[6px] border border-[#E5E7EB] bg-white pl-9 pr-3 text-[14px] outline-none focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20 transition-all placeholder:text-neutral-400 font-sans"
                     />
                   </div>
                 </div>
@@ -161,7 +161,7 @@ export function GrantAccessDialog({
                   <div className="space-y-6">
                     <div className="flex items-center justify-between bg-[#FFF1F4] rounded-xl p-4 border border-[#FD3566]/20">
                       <label className="flex items-center gap-3 cursor-pointer">
-                        <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
+                        <CheckboxInput />
                         <span className="text-[14px] font-medium text-neutral-900">Apply user to all Projects</span>
                       </label>
                       <button 
@@ -184,11 +184,11 @@ export function GrantAccessDialog({
                       <h6 className="text-[14px] font-medium text-[#393984]">(Optional) Project Development</h6>
                       <div className="space-y-3 pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
+                          <CheckboxInput />
                           <span className="text-[14px] text-neutral-700">Project Development Edit (Create/ Edit/ Delete)</span>
                         </label>
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
+                          <CheckboxInput />
                           <span className="text-[14px] text-neutral-700">Project Development View</span>
                         </label>
                       </div>
@@ -200,11 +200,11 @@ export function GrantAccessDialog({
                       <h6 className="text-[14px] font-medium text-[#393984]">(Optional) Project Authorization:</h6>
                       <div className="flex gap-8 pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
+                          <CheckboxInput />
                           <span className="text-[14px] text-neutral-700">Project Authorization Edit (Create/ Edit/ Delete)</span>
                         </label>
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
+                          <CheckboxInput />
                           <span className="text-[14px] text-neutral-700">Project Authorization View</span>
                         </label>
                       </div>
@@ -214,7 +214,7 @@ export function GrantAccessDialog({
                       <h6 className="text-[14px] font-medium text-[#393984]">(Optional) Project Report:</h6>
                       <div className="pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
+                          <CheckboxInput />
                           <span className="text-[14px] text-neutral-700">Report Project</span>
                         </label>
                       </div>
@@ -228,7 +228,7 @@ export function GrantAccessDialog({
               <div className="p-6 pb-4">
                 <div className="flex items-center justify-between bg-[#FFF1F4] rounded-xl p-4 border border-[#FD3566]/20 mb-6">
                   <label className="flex items-center gap-3 cursor-pointer">
-                    <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
+                    <CheckboxInput />
                     <span className="text-[14px] font-medium text-neutral-900">Apply user to all Projects</span>
                   </label>
                   <span className="text-[13px] font-bold text-[#1F244A] flex items-center gap-1.5">
@@ -241,16 +241,16 @@ export function GrantAccessDialog({
                   </span>
                 </div>
               </div>
-              <div className="flex-1 overflow-auto">
+              <div className="flex-1 overflow-auto border-t border-neutral-100">
                 <table className="w-full text-left text-sm border-collapse">
                   <thead className="sticky top-0 bg-white shadow-[0_1px_0_0_#F5F5F5] z-10">
-                    <tr className="text-[12px] font-bold uppercase tracking-wider text-[#606060] leading-[18px] font-sans">
+                    <tr className="text-[12px] font-bold uppercase tracking-wider text-neutral-800 leading-[18px] font-sans">
                       <th className="px-6 py-4 w-12 text-left">ALL PROJECT</th>
-                      <th className="px-4 py-4 text-left">NAME</th>
-                      <th className="px-4 py-4 text-left">PROJECT ID</th>
-                      <th className="px-4 py-4 text-left">STATUS</th>
-                      <th className="px-4 py-4 text-left">CREATED</th>
-                      <th className="px-4 py-4 text-left">UPDATED</th>
+                      <th className="px-6 py-4 text-left">NAME</th>
+                      <th className="px-6 py-4 text-left">PROJECT ID</th>
+                      <th className="px-6 py-4 text-left">STATUS</th>
+                      <th className="px-6 py-4 text-left">CREATED</th>
+                      <th className="px-6 py-4 text-left">UPDATED</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-100">
@@ -264,18 +264,18 @@ export function GrantAccessDialog({
                       projects.map((project) => (
                         <tr key={project.uuid} className="hover:bg-neutral-50/50 transition-colors">
                           <td className="px-6 py-4">
-                            <input type="checkbox" className="w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-[#FD3566] focus:ring-[#FD3566] appearance-none checked:bg-[#FD3566] checked:border-transparent transition-all cursor-pointer flex shrink-0" />
+                            <CheckboxInput />
                           </td>
-                          <td className="px-4 py-4 font-medium text-[#FD3566]">{project.name}</td>
-                          <td className="px-4 py-4 font-mono text-[12px] text-neutral-600">{project.uuid.slice(0, 8)}</td>
-                          <td className="px-4 py-4">
+                          <td className="px-6 py-4 font-medium text-[#FD3566]">{project.name}</td>
+                          <td className="px-6 py-4 font-mono text-[12px] text-neutral-600">{project.uuid.slice(0, 8)}</td>
+                          <td className="px-6 py-4">
                             <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#1FC16B] bg-[#1FC16B]/10 px-2 py-0.5 rounded-full w-fit">
                               <div className="h-1.5 w-1.5 rounded-full bg-[#1FC16B]" />
                               ACTIVE
                             </div>
                           </td>
-                          <td className="px-4 py-4 text-[13px] text-neutral-500">Oct 24, 2023</td>
-                          <td className="px-4 py-4 text-[13px] text-neutral-500">Jun 21, 2025</td>
+                          <td className="px-6 py-4 text-[13px] text-neutral-500">Oct 24, 2023</td>
+                          <td className="px-6 py-4 text-[13px] text-neutral-500">Jun 21, 2025</td>
                         </tr>
                       ))
                     )}

@@ -120,6 +120,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
           </PrimaryButton>
         </div>
         
+<<<<<<< Updated upstream
         <div className="overflow-visible rounded-2xl border border-neutral-200 bg-white shadow-sm">
           <table className="w-full text-left text-sm border-collapse">
             <thead>
@@ -130,12 +131,24 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                 <th className="px-8 py-5">CREATED</th>
                 <th className="px-8 py-5">UPDATED</th>
                 <th className="px-8 py-5 text-right">ACTIONS</th>
+=======
+        <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
+          <table className="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr className="bg-neutral-50/50 border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-neutral-800 leading-[18px] font-sans">
+                <th className="px-6 py-4">Name</th>
+                <th className="px-6 py-4">Project ID</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Created</th>
+                <th className="px-6 py-4">Updated</th>
+                <th className="px-6 py-4 text-right">Actions</th>
+>>>>>>> Stashed changes
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-50">
               {projects.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-8 py-20 text-center text-neutral-400 font-medium">
+                  <td colSpan={6} className="px-6 py-20 text-center text-neutral-400 font-medium">
                     No projects found in this organization.
                   </td>
                 </tr>
@@ -146,14 +159,20 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                     idx % 2 === 1 ? "bg-neutral-50/30" : "bg-white",
                     "hover:bg-[#FFEBF0]/30"
                   )}>
+<<<<<<< Updated upstream
                     <td className="px-8 py-5">
                       <Link
+=======
+                    <td className="px-6 py-4">
+                      <Link 
+>>>>>>> Stashed changes
                         href={`/overview?orgId=${orgId}&projectId=${project.uuid}`}
                         className="font-bold text-[#FD3566] hover:underline transition-all"
                       >
                         {project.name}
                       </Link>
                     </td>
+<<<<<<< Updated upstream
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-1.5 leading-none relative">
                         <span className="font-mono text-[12px] font-bold text-neutral-400 tracking-tight uppercase leading-none">
@@ -217,11 +236,20 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                           </div>
                         )}                      </div>
                     </td>                    <td className="px-8 py-5">
+=======
+                    <td className="px-6 py-4">
+                      <span className="font-mono text-[12px] font-bold text-neutral-400 tracking-tight uppercase">
+                        {project.uuid.slice(0, 8)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+>>>>>>> Stashed changes
                       <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#1FC16B] uppercase tracking-wide">
                         <div className="h-2 w-2 rounded-full bg-[#1FC16B]" />
                         Active
                       </div>
                     </td>
+<<<<<<< Updated upstream
                     <td className="px-8 py-5 text-[13px] font-medium text-neutral-500">{project.createdAt ? formatDate(project.createdAt) : "—"}</td>
                     <td className="px-8 py-5 text-[13px] font-medium text-neutral-500">{project.updatedAt ? formatDate(project.updatedAt) : "—"}</td>
                     <td className="px-8 py-5 text-right">
@@ -266,6 +294,14 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                           </div>
                         )}
                       </div>
+=======
+                    <td className="px-6 py-4 text-[13px] font-medium text-neutral-500">{project.createdAt ? formatDate(project.createdAt) : "—"}</td>
+                    <td className="px-6 py-4 text-[13px] font-medium text-neutral-500">{project.updatedAt ? formatDate(project.updatedAt) : "—"}</td>
+                    <td className="px-6 py-4 text-right">
+                      <button className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-900 transition-all">
+                        <MoreVertical className="size-4" />
+                      </button>
+>>>>>>> Stashed changes
                     </td>
                   </tr>
                 ))
@@ -273,7 +309,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
             </tbody>
           </table>
           
-          <div className="flex items-center justify-between bg-white border-t border-neutral-100 px-8 py-5">
+          <div className="flex items-center justify-between bg-white border-t border-neutral-100 px-6 py-4">
             <div className="text-[13px] font-medium text-neutral-400">
               Showing <span className="text-neutral-900 font-bold">1</span> to <span className="text-neutral-900 font-bold">{projects.length}</span> of <span className="text-neutral-900 font-bold">{projects.length}</span> entries
             </div>

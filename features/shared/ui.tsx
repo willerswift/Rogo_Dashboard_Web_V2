@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Loader2, X } from "lucide-react";
+import { Loader2, X, Check } from "lucide-react";
 
 import { cn } from "@/lib/utils/cn";
 
@@ -74,15 +74,17 @@ export function Panel({
   action?: React.ReactNode;
 }) {
   return (
-    <section className={cn("rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm", className)}>
-      <div className="mb-6 flex items-start justify-between gap-4">
+    <section className={cn("rounded-xl border border-neutral-200 bg-white shadow-sm overflow-hidden", className)}>
+      <div className="flex items-start justify-between gap-4 px-6 py-4 border-b border-neutral-100">
         <div className="space-y-1">
           <h2 className="text-[18px] font-bold text-neutral-900">{title}</h2>
           {description ? <p className="text-sm text-neutral-500">{description}</p> : null}
         </div>
         {action ? <div className="shrink-0">{action}</div> : null}
       </div>
-      {children}
+      <div>
+        {children}
+      </div>
     </section>
   );
 }
@@ -117,7 +119,7 @@ export function TextInput(
     <input
       {...inputProps}
       className={cn(
-        "h-10 rounded-xl border border-neutral-200 bg-white px-4 text-[14px] text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20",
+        "h-10 rounded-[6px] border border-[#E5E7EB] bg-white px-[var(--Spacing-2,8px)] text-[14px] text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20",
         invalid && "border-red-200 focus:border-red-200 focus:ring-red-100/20",
         className,
       )}
@@ -134,7 +136,7 @@ export function TextArea(
     <textarea
       {...textareaProps}
       className={cn(
-        "min-h-28 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-[14px] text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20",
+        "min-h-28 rounded-[6px] border border-[#E5E7EB] bg-white px-[var(--Spacing-2,8px)] py-[var(--Spacing-2,8px)] text-[14px] text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20",
         invalid && "border-red-200 focus:border-red-200 focus:ring-red-100/20",
         className,
       )}
@@ -151,7 +153,7 @@ export function SelectInput(
     <select
       {...selectProps}
       className={cn(
-        "h-10 rounded-xl border border-neutral-200 bg-white px-4 text-[14px] text-neutral-900 outline-none transition focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20",
+        "h-10 rounded-[6px] border border-[#E5E7EB] bg-white px-[var(--Spacing-2,8px)] text-[14px] text-neutral-900 outline-none transition focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20",
         invalid && "border-red-200 focus:border-red-200 focus:ring-red-100/20",
         className,
       )}
@@ -160,7 +162,21 @@ export function SelectInput(
 }
 
 export function CheckboxInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} type="checkbox" className={cn("flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100 text-primary-300 focus:ring-primary-300", props.className)} />;
+  const { className, ...inputProps } = props;
+  return (
+    <div className={cn("relative size-6 shrink-0", className)}>
+      <input
+        {...inputProps}
+        type="checkbox"
+        className="peer size-6 appearance-none rounded-[8px] border border-neutral-500 bg-neutral-100 transition-all checked:bg-primary-300 checked:border-primary-300 cursor-pointer"
+      />
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-white opacity-0 peer-checked:opacity-100 transition-opacity">
+        <div className="flex size-[22px] flex-col items-center justify-center">
+          <Check className="size-3.5" strokeWidth={4} />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function PrimaryButton({

@@ -19,6 +19,7 @@ import { usePermission } from "@/lib/hooks/usePermission";
 import type { DeviceListResponse, Model, UpdateModelInput } from "@/lib/types/partner";
 import { parseJsonInput, parseNumberList, stringifyJson } from "@/lib/utils/parsing";
 import {
+  CheckboxInput,
   Field,
   JsonBlock,
   LoadingBlock,
@@ -217,7 +218,9 @@ export function ProductDetailPage({ productId }: { productId: string }) {
   return (
     <div className="space-y-6">
       <Panel title={product.name} description={`Product ${product.modelId}`}>
-        <JsonBlock value={product} />
+        <div className="px-6 py-4">
+          <JsonBlock value={product} />
+        </div>
       </Panel>
 
       {canEdit ? (
@@ -225,108 +228,112 @@ export function ProductDetailPage({ productId }: { productId: string }) {
           title="Edit product"
           description="UpdateModelDto requires partnerId and modelId, then accepts a partial subset of product metadata fields."
         >
-          <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSave}>
-            <Field label="Name" error={form.formState.errors.name?.message}>
-              <TextInput invalid={Boolean(form.formState.errors.name)} {...form.register("name")} />
-            </Field>
-            <Field label="Image" error={form.formState.errors.image?.message}>
-              <TextInput invalid={Boolean(form.formState.errors.image)} {...form.register("image")} />
-            </Field>
-            <label className="inline-flex items-center gap-3 text-sm text-zinc-700">
-              <input type="checkbox" className="flex flex-col items-center justify-center w-[22px] h-[22px] rounded-[8px] border border-neutral-500 bg-neutral-100" {...form.register("isPublic")} />
-              Public model
-            </label>
-            <Field label="Release status input">
-              <TextInput {...form.register("releaseStatus")} />
-            </Field>
-            <div className="md:col-span-2">
-              <Field label="Description">
-                <TextArea rows={3} {...form.register("description")} />
+          <div className="px-6 py-4 space-y-4">
+            <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSave}>
+              <Field label="Name" error={form.formState.errors.name?.message}>
+                <TextInput invalid={Boolean(form.formState.errors.name)} {...form.register("name")} />
               </Field>
-            </div>
-            <Field label="Brand">
-              <TextInput {...form.register("brand")} />
-            </Field>
-            <Field label="Ownership">
-              <TextInput {...form.register("ownership")} />
-            </Field>
-            <Field label="baseInfo (comma-separated ints)">
-              <TextInput {...form.register("baseInfo")} />
-            </Field>
-            <Field label="wrapFeatures (comma-separated ints)">
-              <TextInput {...form.register("wrapFeatures")} />
-            </Field>
-            <Field label="addressType">
-              <TextInput {...form.register("addressType")} />
-            </Field>
-            <Field label="typeIdentify">
-              <TextInput {...form.register("typeIdentify")} />
-            </Field>
-            <Field label="msgDecoder">
-              <TextInput {...form.register("msgDecoder")} />
-            </Field>
-            <Field label="msgEncoder">
-              <TextInput {...form.register("msgEncoder")} />
-            </Field>
-            <Field label="urlImg">
-              <TextInput {...form.register("urlImg")} />
-            </Field>
-            <Field label="urlIcon">
-              <TextInput {...form.register("urlIcon")} />
-            </Field>
-            <Field label="urlIconDark">
-              <TextInput {...form.register("urlIconDark")} />
-            </Field>
-            <div className="md:col-span-2">
-              <Field label="extraInfo JSON">
-                <TextArea rows={8} {...form.register("extraInfo")} />
+              <Field label="Image" error={form.formState.errors.image?.message}>
+                <TextInput invalid={Boolean(form.formState.errors.image)} {...form.register("image")} />
               </Field>
-            </div>
-            <div className="md:col-span-2">
-              <Field label="developmentInfo JSON">
-                <TextArea rows={8} {...form.register("developmentInfo")} />
+              <label className="inline-flex items-center gap-3 text-sm text-zinc-700">
+                <CheckboxInput {...form.register("isPublic")} />
+                Public model
+              </label>
+              <Field label="Release status input">
+                <TextInput {...form.register("releaseStatus")} />
               </Field>
-            </div>
-            <div className="md:col-span-2">
-              <Field label="metaData JSON">
-                <TextArea rows={8} {...form.register("metaData")} />
+              <div className="md:col-span-2">
+                <Field label="Description">
+                  <TextArea rows={3} {...form.register("description")} />
+                </Field>
+              </div>
+              <Field label="Brand">
+                <TextInput {...form.register("brand")} />
               </Field>
-            </div>
-            <div className="md:col-span-2 flex flex-wrap gap-2">
-              <PrimaryButton type="submit" loading={form.formState.isSubmitting}>
-                Save product
-              </PrimaryButton>
-              <SecondaryButton type="button" onClick={() => void handleRelease()}>
-                Invoke release endpoint
-              </SecondaryButton>
-              <SecondaryButton type="button" onClick={() => void handleDelete()}>
-                Delete product
-              </SecondaryButton>
-            </div>
-          </form>
-          <Notice tone="warn">
-            The backend currently ignores the provided releaseStatus and coerces release calls toward a released state. This UI keeps the input visible so you can verify that mismatch directly.
-          </Notice>
+              <Field label="Ownership">
+                <TextInput {...form.register("ownership")} />
+              </Field>
+              <Field label="baseInfo (comma-separated ints)">
+                <TextInput {...form.register("baseInfo")} />
+              </Field>
+              <Field label="wrapFeatures (comma-separated ints)">
+                <TextInput {...form.register("wrapFeatures")} />
+              </Field>
+              <Field label="addressType">
+                <TextInput {...form.register("addressType")} />
+              </Field>
+              <Field label="typeIdentify">
+                <TextInput {...form.register("typeIdentify")} />
+              </Field>
+              <Field label="msgDecoder">
+                <TextInput {...form.register("msgDecoder")} />
+              </Field>
+              <Field label="msgEncoder">
+                <TextInput {...form.register("msgEncoder")} />
+              </Field>
+              <Field label="urlImg">
+                <TextInput {...form.register("urlImg")} />
+              </Field>
+              <Field label="urlIcon">
+                <TextInput {...form.register("urlIcon")} />
+              </Field>
+              <Field label="urlIconDark">
+                <TextInput {...form.register("urlIconDark")} />
+              </Field>
+              <div className="md:col-span-2">
+                <Field label="extraInfo JSON">
+                  <TextArea rows={8} {...form.register("extraInfo")} />
+                </Field>
+              </div>
+              <div className="md:col-span-2">
+                <Field label="developmentInfo JSON">
+                  <TextArea rows={8} {...form.register("developmentInfo")} />
+                </Field>
+              </div>
+              <div className="md:col-span-2">
+                <Field label="metaData JSON">
+                  <TextArea rows={8} {...form.register("metaData")} />
+                </Field>
+              </div>
+              <div className="md:col-span-2 flex flex-wrap gap-2">
+                <PrimaryButton type="submit" loading={form.formState.isSubmitting}>
+                  Save product
+                </PrimaryButton>
+                <SecondaryButton type="button" onClick={() => void handleRelease()}>
+                  Invoke release endpoint
+                </SecondaryButton>
+                <SecondaryButton type="button" onClick={() => void handleDelete()}>
+                  Delete product
+                </SecondaryButton>
+              </div>
+            </form>
+            <Notice tone="warn">
+              The backend currently ignores the provided releaseStatus and coerces release calls toward a released state. This UI keeps the input visible so you can verify that mismatch directly.
+            </Notice>
+          </div>
         </Panel>
       ) : null}
 
       <Panel title="Registered devices" description="GET /partner/product-admin/modeldevices/:partnerId/:productId">
-        {devices?.data?.length ? <JsonBlock value={devices.data} /> : <Notice>No devices were returned for this product.</Notice>}
-        <div className="mt-4 flex items-center justify-between text-sm text-zinc-500">
-          <span>
-            Page {devices?.page ?? devicePage} of {devices?.totalPage ?? 1}
-          </span>
-          <div className="flex gap-2">
-            <SecondaryButton type="button" disabled={devicePage <= 1} onClick={() => setDevicePage((current) => current - 1)}>
-              Previous
-            </SecondaryButton>
-            <SecondaryButton
-              type="button"
-              disabled={Boolean(devices && devicePage >= (devices.totalPage || 1))}
-              onClick={() => setDevicePage((current) => current + 1)}
-            >
-              Next
-            </SecondaryButton>
+        <div className="px-6 py-4">
+          {devices?.data?.length ? <JsonBlock value={devices.data} /> : <Notice>No devices were returned for this product.</Notice>}
+          <div className="mt-4 flex items-center justify-between text-sm text-zinc-500">
+            <span>
+              Page {devices?.page ?? devicePage} of {devices?.totalPage ?? 1}
+            </span>
+            <div className="flex gap-2">
+              <SecondaryButton type="button" disabled={devicePage <= 1} onClick={() => setDevicePage((current) => current - 1)}>
+                Previous
+              </SecondaryButton>
+              <SecondaryButton
+                type="button"
+                disabled={Boolean(devices && devicePage >= (devices.totalPage || 1))}
+                onClick={() => setDevicePage((current) => current + 1)}
+              >
+                Next
+              </SecondaryButton>
+            </div>
           </div>
         </div>
       </Panel>

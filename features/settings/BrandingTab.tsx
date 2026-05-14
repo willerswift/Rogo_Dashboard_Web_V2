@@ -27,7 +27,7 @@ export function BrandingTab() {
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
       <div className="space-y-8">
         <Panel title="LOGO ASSETS">
-          <div className="space-y-6">
+          <div className="px-6 py-4 space-y-6">
             <LogoAssetUpload
               label="Primary Logo"
               description="Recommended size: 400x100px. Used in top navigation and email headers."
@@ -47,7 +47,7 @@ export function BrandingTab() {
         </Panel>
 
         <Panel title="BRAND COLORS">
-          <div className="space-y-4">
+          <div className="px-6 py-4 space-y-4">
             <div className="space-y-1">
               <span className="text-sm font-bold text-neutral-800">Primary Color</span>
               <p className="text-[13px] text-neutral-500">

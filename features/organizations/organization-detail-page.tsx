@@ -143,32 +143,34 @@ export function OrganizationDetailPage({ orgId }: { orgId: string }) {
   return (
     <div className="space-y-6">
       <Panel title={organization.name} description={organization.description ?? `Organization · ${organization.orgId}`}>
-        <dl className="grid gap-4 text-sm md:grid-cols-2 xl:grid-cols-4">
-          <div>
-            <dt className="text-zinc-500">Org ID</dt>
-            <dd className="mt-1">
-              <InlineCode value={organization.orgId} />
-            </dd>
-          </div>
-          <div>
-            <dt className="text-zinc-500">Status</dt>
-            <dd className="mt-1">
-              <StatusBadge value={organization.status} />
-            </dd>
-          </div>
-          <div>
-            <dt className="text-zinc-500">Owner</dt>
-            <dd className="mt-1 font-medium text-zinc-900">
-              {organization.owner?.email ?? organization.owner?.name ?? "—"}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-zinc-500">Created</dt>
-            <dd className="mt-1 font-medium text-zinc-900">
-              {organization.createdDate ? new Date(organization.createdDate).toLocaleDateString() : "—"}
-            </dd>
-          </div>
-        </dl>
+        <div className="px-6 py-4">
+          <dl className="grid gap-4 text-sm md:grid-cols-2 xl:grid-cols-4">
+            <div>
+              <dt className="text-zinc-500">Org ID</dt>
+              <dd className="mt-1">
+                <InlineCode value={organization.orgId} />
+              </dd>
+            </div>
+            <div>
+              <dt className="text-zinc-500">Status</dt>
+              <dd className="mt-1">
+                <StatusBadge value={organization.status} />
+              </dd>
+            </div>
+            <div>
+              <dt className="text-zinc-500">Owner</dt>
+              <dd className="mt-1 font-medium text-zinc-900">
+                {organization.owner?.email ?? organization.owner?.name ?? "—"}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-zinc-500">Created</dt>
+              <dd className="mt-1 font-medium text-zinc-900">
+                {organization.createdDate ? new Date(organization.createdDate).toLocaleDateString() : "—"}
+              </dd>
+            </div>
+          </dl>
+        </div>
       </Panel>
 
       <Panel
@@ -182,40 +184,42 @@ export function OrganizationDetailPage({ orgId }: { orgId: string }) {
           ) : undefined
         }
       >
-        {members.length === 0 ? (
-          <EmptyState title="No members yet" description="Add a user by email using the button above." />
-        ) : (
-          <div className="space-y-3">
-            {members.map((member) => (
-              <div
-                key={member.uuid ?? member.userId}
-                className="flex flex-col gap-3 rounded-xl border border-zinc-200 px-4 py-3 md:flex-row md:items-center md:justify-between"
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-zinc-900">{member.user?.email ?? member.user?.name ?? "Unknown user"}</span>
-                    {member.isOwner ? (
-                      <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">Owner</span>
-                    ) : null}
+        <div className="px-6 py-4">
+          {members.length === 0 ? (
+            <EmptyState title="No members yet" description="Add a user by email using the button above." />
+          ) : (
+            <div className="space-y-3">
+              {members.map((member) => (
+                <div
+                  key={member.uuid ?? member.userId}
+                  className="flex flex-col gap-3 rounded-xl border border-zinc-200 px-4 py-3 md:flex-row md:items-center md:justify-between"
+                >
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-zinc-900">{member.user?.email ?? member.user?.name ?? "Unknown user"}</span>
+                      {member.isOwner ? (
+                        <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">Owner</span>
+                      ) : null}
+                    </div>
+                    <div className="mt-1 text-xs text-zinc-500">
+                      Joined {formatDate(member.joinedAt)}
+                    </div>
                   </div>
-                  <div className="mt-1 text-xs text-zinc-500">
-                    Joined {formatDate(member.joinedAt)}
-                  </div>
+                  {canEdit && !member.isOwner ? (
+                    <div className="flex gap-2">
+                      <SecondaryButton type="button" onClick={() => void handleTransferOwner(member.userId)}>
+                        Make owner
+                      </SecondaryButton>
+                      <SecondaryButton type="button" onClick={() => void handleRemove(member.userId)}>
+                        Remove
+                      </SecondaryButton>
+                    </div>
+                  ) : null}
                 </div>
-                {canEdit && !member.isOwner ? (
-                  <div className="flex gap-2">
-                    <SecondaryButton type="button" onClick={() => void handleTransferOwner(member.userId)}>
-                      Make owner
-                    </SecondaryButton>
-                    <SecondaryButton type="button" onClick={() => void handleRemove(member.userId)}>
-                      Remove
-                    </SecondaryButton>
-                  </div>
-                ) : null}
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </Panel>
 
       <Modal
