@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { toast } from "sonner";
-import { Plus, MoreVertical, Users, LayoutDashboard, Pencil, Trash2 } from "lucide-react";
+import { Plus, MoreVertical, Users, LayoutDashboard, Pencil, Trash2, Info, Copy, Check } from "lucide-react";
 import Link from "next/link";
 
 import { getOrganization, listOrganizationUsers } from "@/lib/api/organization";
@@ -30,7 +30,10 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [openUuidId, setOpenUuidId] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const uuidRef = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async () => {
     if (!partnerId || !orgId) return;
@@ -55,16 +58,25 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
     void load();
   }, [load]);
 
-  // Handle outside click for dropdown menu
+  // Handle outside click for dropdown menu and UUID popover
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setOpenMenuId(null);
       }
+      if (uuidRef.current && !uuidRef.current.contains(event.target as Node)) {
+        setOpenUuidId(null);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleCopy = (uuid: string) => {
+    void navigator.clipboard.writeText(uuid);
+    setCopiedId(uuid);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
   if (loading) return <LoadingBlock label="Loading organization..." />;
   if (!org) return <EmptyState title="Not found" description="Select an organization from the tree." />;
@@ -108,7 +120,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
           </PrimaryButton>
         </div>
         
-        <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
+        <div className="overflow-visible rounded-2xl border border-neutral-200 bg-white shadow-sm">
           <table className="w-full text-left text-sm border-collapse">
             <thead>
               <tr className="bg-neutral-50/50 border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-[#606060] leading-[18px] font-sans">
@@ -135,7 +147,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                     "hover:bg-[#FFEBF0]/30"
                   )}>
                     <td className="px-8 py-5">
-                      <Link 
+                      <Link
                         href={`/overview?orgId=${orgId}&projectId=${project.uuid}`}
                         className="font-bold text-[#FD3566] hover:underline transition-all"
                       >
@@ -143,11 +155,68 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                       </Link>
                     </td>
                     <td className="px-8 py-5">
-                      <span className="font-mono text-[12px] font-bold text-neutral-400 tracking-tight uppercase">
-                        {project.uuid.slice(0, 8)}
-                      </span>
-                    </td>
-                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-1.5 leading-none relative">
+                        <span className="font-mono text-[12px] font-bold text-neutral-400 tracking-tight uppercase leading-none">
+                          {project.uuid.slice(0, 8)}
+                        </span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenUuidId(openUuidId === project.uuid ? null : project.uuid);
+                          }}
+                          className={cn(
+                            "flex items-center justify-center transition-colors shrink-0 p-0 outline-none -mt-[1px]",
+                            openUuidId === project.uuid ? "text-[#FD3566]" : "text-neutral-300 hover:text-[#FD3566]"
+                          )}
+                          title="View full ID"
+                        >
+                          <Info size={13} strokeWidth={2.5} />
+                        </button>
+
+                        {openUuidId === project.uuid && (
+                          <div 
+                            ref={uuidRef}
+                            className="absolute bottom-full mb-3 left-0 z-[100] w-[280px] rounded-xl border border-neutral-200 bg-white p-3 shadow-2xl animate-in fade-in zoom-in duration-200"
+                          >
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between gap-2">
+                                <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest leading-none">
+                                  Project ID
+                                </span>
+                                <button
+                                  onClick={() => handleCopy(project.uuid)}
+                                  className={cn(
+                                    "flex h-6 items-center gap-1.5 rounded-md px-2 text-[10px] font-bold transition-all shrink-0",
+                                    copiedId === project.uuid
+                                      ? "bg-[#FD3566]/10 text-[#FD3566]"
+                                      : "bg-[#FD3566] text-white hover:bg-[#EA023B]"
+                                  )}
+                                >
+                                  {copiedId === project.uuid ? (
+                                    <>
+                                      <Check size={11} strokeWidth={3} />
+                                      <span>Copied</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Copy size={11} strokeWidth={3} />
+                                      <span>Copy</span>
+                                    </>
+                                  )}
+                                </button>
+                              </div>
+
+                              <div className="rounded-lg border border-[#E6E8F4] bg-[#E6E8F4]/30 p-2">
+                                <div className="text-[12px] font-medium text-[#393984] break-all leading-relaxed font-mono tracking-tight">
+                                  {project.uuid}
+                                </div>
+                              </div>
+                            </div>
+                            {/* Little arrow */}
+                            <div className="absolute top-full left-3 -mt-1.5 h-3 w-3 rotate-45 border-b border-r border-neutral-200 bg-white" />
+                          </div>
+                        )}                      </div>
+                    </td>                    <td className="px-8 py-5">
                       <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#1FC16B] uppercase tracking-wide">
                         <div className="h-2 w-2 rounded-full bg-[#1FC16B]" />
                         Active

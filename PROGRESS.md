@@ -19,6 +19,10 @@ This file serves as a persistent record of work completed, current status, and p
     - Identified that `pnpm-lock.yaml` was outdated and causing `ERR_PNPM_OUTDATED_LOCKFILE` on Vercel.
     - Removed `pnpm-lock.yaml` to force Vercel to use `npm`.
     - Fixed a TypeScript error in `RenameProjectDialog.tsx` where `authorizedServices` was being mapped incorrectly, causing `next build` to fail.
+- **Enhanced UI/UX**:
+    - Implemented search functionality for the Access Tree sidebar with auto-expanding organizations.
+    - Truncated Project IDs in the project list to improve readability.
+    - Added an info icon next to Project IDs that displays the full UUID and provides a "Copy" action via a toast notification.
 - **Resolved Environment Issues**:
     - Fixed "Module not found: Can't resolve 'tailwindcss'" by explicitly setting `turbopack.root` in `next.config.ts`.
     - Fixed "Module not found: Can't resolve 'date-fns'" by ensuring all dependencies are installed via `npm install`.
