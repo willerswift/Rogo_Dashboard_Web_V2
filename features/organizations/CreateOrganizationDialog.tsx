@@ -83,7 +83,7 @@ export function CreateOrganizationDialog({ open, onClose, onSuccess }: CreateOrg
             </label>
             <input
               {...register("name")}
-              placeholder="Enter Project name"
+              placeholder="Enter Organization name"
               className={cn(
                 "h-[52px] w-full rounded-xl border bg-white px-5 text-[15px] outline-none transition-all placeholder:text-neutral-300",
                 errors.name ? "border-[#FD3566]" : "border-neutral-200 focus:border-[#FD3566]"

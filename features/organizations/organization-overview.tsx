@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { toast } from "sonner";
-import { Plus, MoreVertical, Users, LayoutDashboard } from "lucide-react";
+import { Plus, MoreVertical, Users, LayoutDashboard, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 import { getOrganization, listOrganizationUsers } from "@/lib/api/organization";
@@ -13,6 +13,8 @@ import { LoadingBlock, EmptyState, PrimaryButton } from "@/features/shared/ui";
 import { cn } from "@/lib/utils/cn";
 import { formatDate } from "@/lib/utils/format";
 import { CreateProjectDialog } from "./CreateProjectDialog";
+import { RenameProjectDialog } from "./RenameProjectDialog";
+import { DeleteProjectDialog } from "./DeleteProjectDialog";
 
 export function OrganizationOverview({ orgId }: { orgId: string }) {
   const { session } = usePartnerContext();
@@ -22,7 +24,13 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [loading, setLoading] = useState(true);
+  
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isRenameOpen, setIsRenameOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async () => {
     if (!partnerId || !orgId) return;
@@ -46,6 +54,17 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Handle outside click for dropdown menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpenMenuId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   if (loading) return <LoadingBlock label="Loading organization..." />;
   if (!org) return <EmptyState title="Not found" description="Select an organization from the tree." />;
@@ -79,7 +98,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
       {/* Projects Section */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold font-heading text-neutral-900 tracking-tight">Project in Organization</h3>
+          <h3 className="text-xl font-bold font-heading text-neutral-900 tracking-tight">Projects in Organization</h3>
           <PrimaryButton 
             onClick={() => setIsCreateOpen(true)}
             className="bg-[#FD3566] hover:bg-[#EA023B] shadow-md shadow-[#FD3566]/20 transition-all"
@@ -93,12 +112,12 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
           <table className="w-full text-left text-sm border-collapse">
             <thead>
               <tr className="bg-neutral-50/50 border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-[#606060] leading-[18px] font-sans">
-                <th className="px-8 py-5">Name</th>
-                <th className="px-8 py-5">Project ID</th>
-                <th className="px-8 py-5">Status</th>
-                <th className="px-8 py-5">Created</th>
-                <th className="px-8 py-5">Updated</th>
-                <th className="px-8 py-5 text-right">Actions</th>
+                <th className="px-8 py-5">NAME</th>
+                <th className="px-8 py-5">PROJECT ID</th>
+                <th className="px-8 py-5">STATUS</th>
+                <th className="px-8 py-5">CREATED</th>
+                <th className="px-8 py-5">UPDATED</th>
+                <th className="px-8 py-5 text-right">ACTIONS</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-50">
@@ -137,9 +156,47 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                     <td className="px-8 py-5 text-[13px] font-medium text-neutral-500">{project.createdAt ? formatDate(project.createdAt) : "—"}</td>
                     <td className="px-8 py-5 text-[13px] font-medium text-neutral-500">{project.updatedAt ? formatDate(project.updatedAt) : "—"}</td>
                     <td className="px-8 py-5 text-right">
-                      <button className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-900 transition-all">
-                        <MoreVertical className="size-4" />
-                      </button>
+                      <div className="relative inline-block text-left">
+                        <button 
+                          onClick={() => setOpenMenuId(openMenuId === project.uuid ? null : project.uuid)}
+                          className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-900 transition-all"
+                        >
+                          <MoreVertical className="size-4" />
+                        </button>
+
+                        {openMenuId === project.uuid && (
+                          <div 
+                            ref={menuRef}
+                            className="absolute right-0 top-full z-20 mt-1 w-48 origin-top-right overflow-hidden rounded-xl border border-neutral-100 bg-white shadow-xl animate-in fade-in zoom-in-95 duration-150"
+                          >
+                            <div className="py-1">
+                              <button
+                                onClick={() => {
+                                  setSelectedProject(project);
+                                  setIsRenameOpen(true);
+                                  setOpenMenuId(null);
+                                }}
+                                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-[14px] font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors"
+                              >
+                                <Pencil className="size-4" />
+                                Rename Project
+                              </button>
+                              <div className="h-px bg-neutral-100" />
+                              <button
+                                onClick={() => {
+                                  setSelectedProject(project);
+                                  setIsDeleteOpen(true);
+                                  setOpenMenuId(null);
+                                }}
+                                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-[14px] font-semibold text-[#FD3566] hover:bg-neutral-50 transition-colors"
+                              >
+                                <Trash2 className="size-4" />
+                                Delete Project
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -164,6 +221,26 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
         onClose={() => setIsCreateOpen(false)} 
         onSuccess={load}
         initialOrgId={orgId}
+      />
+
+      <RenameProjectDialog
+        open={isRenameOpen}
+        onClose={() => {
+          setIsRenameOpen(false);
+          setSelectedProject(null);
+        }}
+        onSuccess={load}
+        project={selectedProject}
+      />
+
+      <DeleteProjectDialog
+        open={isDeleteOpen}
+        onClose={() => {
+          setIsDeleteOpen(false);
+          setSelectedProject(null);
+        }}
+        onSuccess={load}
+        project={selectedProject}
       />
     </div>
   );
