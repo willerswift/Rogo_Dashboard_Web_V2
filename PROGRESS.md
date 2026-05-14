@@ -17,7 +17,8 @@ This file serves as a persistent record of work completed, current status, and p
 - **Fixed Organization Create Placeholder**: Corrected the placeholder text in `CreateOrganizationDialog.tsx`.
 - **Resolved Vercel Build Failure**:
     - Identified that `pnpm-lock.yaml` was outdated and causing `ERR_PNPM_OUTDATED_LOCKFILE` on Vercel.
-    - Removed `pnpm-lock.yaml` to force Vercel to use `npm` (which is the project's primary package manager as indicated by `package-lock.json` and previous logs).
+    - Removed `pnpm-lock.yaml` to force Vercel to use `npm`.
+    - Fixed a TypeScript error in `RenameProjectDialog.tsx` where `authorizedServices` was being mapped incorrectly, causing `next build` to fail.
 - **Resolved Environment Issues**:
     - Fixed "Module not found: Can't resolve 'tailwindcss'" by explicitly setting `turbopack.root` in `next.config.ts`.
     - Fixed "Module not found: Can't resolve 'date-fns'" by ensuring all dependencies are installed via `npm install`.

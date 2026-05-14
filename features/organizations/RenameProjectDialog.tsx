@@ -59,7 +59,6 @@ export function RenameProjectDialog({ open, onClose, onSuccess, project }: Renam
     try {
       await updateProject(partnerId, project.uuid, {
         name: values.name,
-        authorizedServices: project.authorizedServices?.map(s => s.uuid) || [],
       });
       toast.success("Project renamed successfully.");
       
