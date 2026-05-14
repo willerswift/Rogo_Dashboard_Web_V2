@@ -11,7 +11,7 @@ import { deletePartnerUser, listPartnerUsers } from "@/lib/api/user";
 import { listPermissionRecords, grantPermissions } from "@/lib/api/permission";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { usePermission } from "@/lib/hooks/usePermission";
-import type { PermissionRecord, Project, UserWithNumProject, OrgWithOwner } from "@/lib/types/partner";
+import type { PermissionRecord, Project, UserWithNumProject, OrgWithOwner, UserPartner, AbacV2Entry } from "@/lib/types/partner";
 import {
   LoadingBlock,
   PrimaryButton,
