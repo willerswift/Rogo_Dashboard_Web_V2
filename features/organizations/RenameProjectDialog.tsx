@@ -57,7 +57,13 @@ export function RenameProjectDialog({ open, onClose, onSuccess, project }: Renam
     }
 
     try {
-      await updateProject(partnerId, project.uuid, {
+      const projectId = project.uuid || (project as any)._id;
+      if (!projectId) {
+         toast.error("Project ID is missing.");
+         return;
+      }
+      
+      await updateProject(partnerId, projectId, {
         name: values.name,
       });
       toast.success("Project renamed successfully.");

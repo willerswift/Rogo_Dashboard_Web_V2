@@ -8,13 +8,15 @@ import { UserPlus, Trash2, Pencil, UserMinus, Users, LayoutGrid } from "lucide-r
 import { listProjects, listProjectUsers } from "@/lib/api/project";
 import { listOrganizations, listOrganizationUsers } from "@/lib/api/organization";
 import { deletePartnerUser, listPartnerUsers } from "@/lib/api/user";
-import { listPermissionRecords } from "@/lib/api/permission";
+import { listPermissionRecords, grantPermissions } from "@/lib/api/permission";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { usePermission } from "@/lib/hooks/usePermission";
 import type { PermissionRecord, Project, UserWithNumProject, OrgWithOwner } from "@/lib/types/partner";
 import {
   LoadingBlock,
   PrimaryButton,
+  Modal,
+  InlineCode,
 } from "@/features/shared/ui";
 import { DataTable, type DataTableColumn } from "@/lib/components/DataTable";
 import { Avatar } from "@/lib/components/ui/avatar";
@@ -37,6 +39,7 @@ export function UsersPage() {
   const [permissionRecords, setPermissionRecords] = useState<PermissionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showGrantAccess, setShowGrantAccess] = useState(false);
+  const [viewingProjectsFor, setViewingProjectsFor] = useState<{user: UserPartner, projects: Project[]} | null>(null);
 
   const activeProject = useMemo(() => projects.find(p => p.uuid === projectId), [projects, projectId]);
   const activeOrg = useMemo(() => {
@@ -105,10 +108,32 @@ export function UsersPage() {
     }
   }, [partnerId, loadData]);
 
-  const handleGrantAccess = async (userId: string, permissions: string[]) => {
-    console.log("Granting access for", userId, permissions);
-    toast.success("Access granted (stub).");
-    await loadData();
+  const handleGrantAccess = async (userId: string, projectIds: string[], permissions: string[]) => {
+    console.log("Granting access for", userId, "projects:", projectIds, "permissions:", permissions);
+    if (!partnerId) return;
+    try {
+      // Build ABAC entries from the selected projects
+      // Currently, the UI stubs the permissions. In the future, we would map the checkboxes to `actions`.
+      // For now, we grant full 'edit' access to the selected projects as a sensible default for the stub.
+      const entries: AbacV2Entry[] = [];
+      if (projectIds.length > 0) {
+        entries.push({
+          resources: projectIds.map(id => `project:${id}`),
+          actions: ["projectDev:edit", "projectDev:view", "report:edit", "report:view"] 
+        });
+      }
+
+      await grantPermissions({
+        ownerId: userId,
+        partnerId,
+        entries
+      });
+
+      toast.success("Access granted.");
+      await loadData();
+    } catch (error) {
+       toast.error(error instanceof Error ? error.message : "Failed to grant access.");
+    }
   };
 
   const columns = useMemo<DataTableColumn<UserWithNumProject>[]>(() => {
@@ -132,30 +157,44 @@ export function UsersPage() {
           id: "projects",
           header: "PROJECTS",
           headerClassName: "text-[11px] font-bold text-neutral-800 uppercase tracking-wider",
-          cell: () => {
-            // Stub data for UI verification
-            const userProjects = [
-              { name: "Sensor Integration", id: "PRJ-001" },
-              { name: "Alpha Project", id: "PRJ-002" },
-              { name: "Sample Project", id: "PRJ-003" },
-            ];
+          cell: ({ user }) => {
+            // Restore demo data temporarily
+            const actualProjects = [
+              { name: "Sensor Integration", uuid: "PRJ-001" },
+              { name: "Alpha Project", uuid: "PRJ-002" },
+              { name: "Sample Project", uuid: "PRJ-003" },
+              { name: "Beta Project", uuid: "PRJ-004" },
+              { name: "Gamma Project", uuid: "PRJ-005" },
+            ] as unknown as Project[]; // Mocking data for UI verification
+
+            const displayProjects = actualProjects.slice(0, 3);
+            const extraCount = actualProjects.length - 3;
             
+            if (actualProjects.length === 0) {
+              return <span className="text-neutral-400 italic text-[12px]">No projects</span>;
+            }
+
             return (
               <div className="flex flex-col gap-2 py-1">
                 <div className="flex flex-wrap gap-2">
-                  {userProjects.map((p) => (
-                    <div key={p.id} className="flex h-[28px] items-center justify-center gap-2 rounded-full bg-[#1FC16B]/10 px-2 py-0.5">
+                  {displayProjects.map((p) => (
+                    <div key={p.uuid} className="flex h-[28px] items-center justify-center gap-2 rounded-full bg-[#1FC16B]/10 px-2 py-0.5">
                       <span className="text-[12px] font-bold text-[#1F244A] tracking-tight">{p.name}</span>
-                      <span className="text-[11px] font-bold text-[#3B4AD0]">{p.id}</span>
+                      <span className="text-[11px] font-bold text-[#3B4AD0]">{p.uuid.slice(0, 8)}</span>
                     </div>
                   ))}
                 </div>
-                <button className="text-[13px] font-bold text-[#FD3566] text-left hover:underline flex items-center gap-1 w-fit">
-                  View 2 more Projects
-                  <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
+                {extraCount > 0 && (
+                  <button
+                    onClick={() => setViewingProjectsFor({ user, projects: actualProjects })}
+                    className="text-[13px] font-bold text-[#FD3566] text-left hover:underline flex items-center gap-1 w-fit"
+                  >
+                    View {extraCount} more Project{extraCount !== 1 ? 's' : ''}
+                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                )}
               </div>
             );
           },
@@ -397,6 +436,35 @@ export function UsersPage() {
         activeProjectId={projectId}
         onGrant={handleGrantAccess}
       />
+
+      <Modal
+        open={viewingProjectsFor !== null}
+        onClose={() => setViewingProjectsFor(null)}
+        title={`Projects for ${viewingProjectsFor?.user.name}`}
+      >
+        <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+          {viewingProjectsFor?.projects.length === 0 ? (
+            <p className="text-sm text-neutral-500 text-center py-4">No projects found.</p>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {viewingProjectsFor?.projects.map((p) => (
+                <div key={p.uuid} className="flex items-center justify-between rounded-xl border border-neutral-200 p-3">
+                  <div>
+                    <p className="text-sm font-bold text-neutral-900">{p.name}</p>
+                    <p className="text-xs text-neutral-500 mt-1">
+                      <InlineCode value={p.uuid} />
+                    </p>
+                  </div>
+                  <div className="flex h-6 items-center gap-1.5 rounded-full bg-[#1FC16B]/10 px-2.5 text-[10px] font-bold tracking-wider text-[#1FC16B]">
+                    <div className="h-1.5 w-1.5 rounded-full bg-[#1FC16B]" />
+                    ACTIVE
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </Modal>
     </div>
   );
 }

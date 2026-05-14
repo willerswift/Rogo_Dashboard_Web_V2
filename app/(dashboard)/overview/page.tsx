@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { OrganizationOverview } from "@/features/organizations/organization-overview";
+import { ProjectOverview } from "@/features/projects/project-overview";
 import { EmptyState } from "@/features/shared/ui";
 import { Suspense } from "react";
 
@@ -23,12 +24,7 @@ function OverviewContent() {
   }
 
   if (projectId) {
-    return (
-      <EmptyState 
-        title="Project Detail" 
-        description={`Displaying details for Project ID: ${projectId}. (Implementation pending)`} 
-      />
-    );
+    return <ProjectOverview projectId={projectId} />;
   }
 
   return (

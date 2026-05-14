@@ -7,6 +7,7 @@ import type { UserWithNumProject, OrgWithOwner, Project } from "@/lib/types/part
 import { Avatar } from "@/lib/components/ui/avatar";
 import { CheckboxInput, PrimaryButton, SecondaryButton } from "@/features/shared/ui";
 import { cn } from "@/lib/utils/cn";
+import { formatDate } from "@/lib/utils/format";
 
 interface GrantAccessDialogProps {
   open: boolean;
@@ -16,7 +17,7 @@ interface GrantAccessDialogProps {
   users: UserWithNumProject[];
   activeOrgId?: string | null;
   activeProjectId?: string | null;
-  onGrant?: (userId: string, permissions: string[]) => Promise<void>;
+  onGrant?: (userId: string, projectIds: string[], permissions: string[]) => Promise<void>;
 }
 
 export function GrantAccessDialog({
@@ -30,9 +31,54 @@ export function GrantAccessDialog({
   onGrant
 }: GrantAccessDialogProps) {
   const [search, setSearch] = useState("");
+  const [projectSearch, setProjectSearch] = useState("");
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [view, setView] = useState<"permissions" | "projectList">("permissions");
+
+  const filteredProjects = useMemo(() => {
+    return projects.filter(project => {
+      const query = projectSearch.toLowerCase();
+      const matchName = project.name?.toLowerCase().includes(query);
+      const matchId = project.uuid?.toLowerCase().includes(query);
+      const matchCreated = project.createdAt && formatDate(project.createdAt).toLowerCase().includes(query);
+      const matchUpdated = project.updatedAt && formatDate(project.updatedAt).toLowerCase().includes(query);
+      return matchName || matchId || matchCreated || matchUpdated;
+    });
+  }, [projects, projectSearch]);
+
+  const isAllSelected = filteredProjects.length > 0 && filteredProjects.every(p => selectedProjects.has(p.uuid));
+
+  const handleToggleAllProjects = () => {
+    if (isAllSelected) {
+      // If all are selected, unselect the currently filtered ones
+      setSelectedProjects(prev => {
+        const next = new Set(prev);
+        filteredProjects.forEach(p => next.delete(p.uuid));
+        return next;
+      });
+    } else {
+      // Select all currently filtered ones
+      setSelectedProjects(prev => {
+        const next = new Set(prev);
+        filteredProjects.forEach(p => next.add(p.uuid));
+        return next;
+      });
+    }
+  };
+
+  const handleToggleProject = (uuid: string) => {
+    setSelectedProjects(prev => {
+      const next = new Set(prev);
+      if (next.has(uuid)) {
+        next.delete(uuid);
+      } else {
+        next.add(uuid);
+      }
+      return next;
+    });
+  };
 
   // Dialog Title Logic
   const title = useMemo(() => {
@@ -68,7 +114,8 @@ export function GrantAccessDialog({
     setIsSubmitting(true);
     try {
       if (onGrant) {
-        await onGrant(selectedUserId, ["example:permission"]);
+        // Collect actual permission state later. For now pass stub permissions.
+        await onGrant(selectedUserId, Array.from(selectedProjects), ["example:permission"]);
       }
       onClose();
     } finally {
@@ -83,26 +130,43 @@ export function GrantAccessDialog({
       <div className="relative w-full max-w-[800px] h-[600px] flex flex-col rounded-[24px] bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex items-start justify-between p-6 border-b border-neutral-100 shrink-0">
-          <div>
-            <div className="flex items-center gap-2">
-              {view === "projectList" && (
-                <button onClick={() => setView("permissions")} className="text-neutral-400 hover:text-neutral-900 transition-colors">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              )}
-              <h5 className="text-[24px] font-bold text-[#1F244A] tracking-tight font-heading">{title}</h5>
+        <div className="relative p-6 pb-7 border-b border-neutral-100 shrink-0">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                {view === "projectList" && (
+                  <button onClick={() => setView("permissions")} className="text-neutral-400 hover:text-neutral-900 transition-colors">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                )}
+                <h5 className="text-[24px] font-bold text-[#1F244A] tracking-tight font-heading">{title}</h5>
+              </div>
+              <p className="text-[13px] text-neutral-500 mt-1">Manage who has access to this organization and their roles.</p>
             </div>
-            <p className="text-[13px] text-neutral-500 mt-1">Manage who has access to this organization and their roles.</p>
+            <button
+              onClick={onClose}
+              className="rounded-full p-1.5 text-neutral-400 hover:bg-neutral-50 transition-colors -mt-1 -mr-1"
+            >
+              <X className="size-5" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="rounded-full p-1.5 text-neutral-400 hover:bg-neutral-50 transition-colors"
-          >
-            <X className="size-5" />
-          </button>
+          
+          {view === "projectList" && (
+            <div className="absolute right-6 bottom-4 w-[280px]">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-neutral-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search projects..."
+                value={projectSearch}
+                onChange={(e) => setProjectSearch(e.target.value)}
+                className="h-9 pl-9 pr-4 w-full rounded-full border border-neutral-200 bg-white text-sm outline-none transition-all placeholder:text-neutral-400 focus:border-[#FD3566] focus:ring-4 focus:ring-[#FD3566]/10"
+              />
+            </div>
+          )}
         </div>
 
         {/* Body */}
@@ -161,7 +225,7 @@ export function GrantAccessDialog({
                   <div className="space-y-6">
                     <div className="flex items-center justify-between bg-[#FFF1F4] rounded-xl p-4 border border-[#FD3566]/20">
                       <label className="flex items-center gap-3 cursor-pointer">
-                        <CheckboxInput />
+                        <CheckboxInput checked={isAllSelected} onChange={handleToggleAllProjects} />
                         <span className="text-[14px] font-medium text-neutral-900">Apply user to all Projects</span>
                       </label>
                       <button 
@@ -226,9 +290,9 @@ export function GrantAccessDialog({
           ) : (
             <div className="flex-1 flex flex-col h-full bg-white overflow-hidden">
               <div className="p-6 pb-4">
-                <div className="flex items-center justify-between bg-[#FFF1F4] rounded-xl p-4 border border-[#FD3566]/20 mb-6">
+                <div className="flex items-center justify-between bg-[#FFF1F4] rounded-xl p-4 border border-[#FD3566]/20">
                   <label className="flex items-center gap-3 cursor-pointer">
-                    <CheckboxInput />
+                    <CheckboxInput checked={isAllSelected} onChange={handleToggleAllProjects} />
                     <span className="text-[14px] font-medium text-neutral-900">Apply user to all Projects</span>
                   </label>
                   <span className="text-[13px] font-bold text-[#1F244A] flex items-center gap-1.5">
@@ -237,7 +301,7 @@ export function GrantAccessDialog({
                       <path d="M1 10L7 13L13 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                       <path d="M1 7L7 10L13 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
-                    {projects.length} Projects
+                    {filteredProjects.length} Projects
                   </span>
                 </div>
               </div>
@@ -254,17 +318,17 @@ export function GrantAccessDialog({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-100">
-                    {projects.length === 0 ? (
+                    {filteredProjects.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="px-6 py-10 text-center text-neutral-400 font-medium">
-                          No projects available.
+                          {projectSearch ? "No projects found matching your search." : "No projects available."}
                         </td>
                       </tr>
                     ) : (
-                      projects.map((project) => (
+                      filteredProjects.map((project) => (
                         <tr key={project.uuid} className="hover:bg-neutral-50/50 transition-colors">
                           <td className="px-6 py-4">
-                            <CheckboxInput />
+                            <CheckboxInput checked={selectedProjects.has(project.uuid)} onChange={() => handleToggleProject(project.uuid)} />
                           </td>
                           <td className="px-6 py-4 font-medium text-[#FD3566]">{project.name}</td>
                           <td className="px-6 py-4 font-mono text-[12px] text-neutral-600">{project.uuid.slice(0, 8)}</td>
@@ -274,8 +338,8 @@ export function GrantAccessDialog({
                               ACTIVE
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-[13px] text-neutral-500">Oct 24, 2023</td>
-                          <td className="px-6 py-4 text-[13px] text-neutral-500">Jun 21, 2025</td>
+                          <td className="px-6 py-4 text-[13px] text-neutral-500">{project.createdAt ? formatDate(project.createdAt) : "—"}</td>
+                          <td className="px-6 py-4 text-[13px] text-neutral-500">{project.updatedAt ? formatDate(project.updatedAt) : "—"}</td>
                         </tr>
                       ))
                     )}
@@ -284,7 +348,7 @@ export function GrantAccessDialog({
               </div>
               <div className="flex items-center justify-between border-t border-neutral-100 px-6 py-4 bg-white">
                 <span className="text-[13px] text-neutral-500">
-                  Showing 1 to {projects.length} of {projects.length} entries
+                  Showing 1 to {filteredProjects.length} of {filteredProjects.length} entries
                 </span>
                 <div className="flex gap-2">
                   <SecondaryButton disabled className="h-8 text-[13px] px-3 font-sans opacity-50 cursor-not-allowed">Previous</SecondaryButton>

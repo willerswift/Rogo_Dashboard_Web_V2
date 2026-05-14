@@ -29,7 +29,13 @@ export function DeleteProjectDialog({ open, onClose, onSuccess, project }: Delet
 
     try {
       setIsDeleting(true);
-      await deleteProject(partnerId, project.uuid);
+      const projectId = project.uuid || (project as any)._id;
+      if (!projectId) {
+         toast.error("Project ID is missing.");
+         return;
+      }
+
+      await deleteProject(partnerId, projectId);
       toast.success("Project deleted successfully.");
 
       // Notify components that a project was deleted in this organization

@@ -26,7 +26,7 @@ export default async function LoginPage() {
         />
         {/* Lighter, more vibrant blue overlay to bring out the glowing lines */}
         <div className="absolute inset-0 bg-blue-900/10" />
-        
+
         <div className="relative z-10 flex h-full w-full flex-col justify-between p-14 text-white">
           <div className="space-y-16">
             <div className="flex items-center">
@@ -38,7 +38,7 @@ export default async function LoginPage() {
                 className="h-auto w-auto"
               />
             </div>
-            
+
             <div className="max-w-md space-y-7">
               <h1 className="text-[40px] font-bold leading-[1.1] tracking-tight text-white">
                 Manage your partner ecosystem with precision.
@@ -50,7 +50,7 @@ export default async function LoginPage() {
           </div>
 
           <div className="flex items-center gap-4 text-[11px] font-bold tracking-[0.2em] text-white/40 uppercase">
-            <span>© 2024 ROGO PLATFORM</span>
+            <span>© 2026 ROGO PLATFORM</span>
             <div className="flex gap-4 ml-auto items-center">
               <Image src="/icon1.svg" alt="Icon 1" width={16} height={16} className="opacity-60" />
               <Image src="/icon2.svg" alt="Icon 2" width={18} height={18} className="opacity-60" />
@@ -68,7 +68,7 @@ export default async function LoginPage() {
               Enter your credentials to access your dashboard.
             </p>
           </div>
-          
+
           <LoginForm />
         </div>
       </div>

@@ -84,17 +84,9 @@ export function CreateOrganizationDialog({ open, onClose, onSuccess }: CreateOrg
             </label>
             <TextInput
               {...register("name")}
-<<<<<<< Updated upstream
               placeholder="Enter Organization name"
-              className={cn(
-                "h-[52px] w-full rounded-xl border bg-white px-5 text-[15px] outline-none transition-all placeholder:text-neutral-300",
-                errors.name ? "border-[#FD3566]" : "border-neutral-200 focus:border-[#FD3566]"
-              )}
-=======
-              placeholder="Enter Project name"
               invalid={Boolean(errors.name)}
               className="w-full"
->>>>>>> Stashed changes
             />
             {errors.name && (
               <p className="text-[13px] font-bold text-[#FD3566]">{errors.name.message}</p>

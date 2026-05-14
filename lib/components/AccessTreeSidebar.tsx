@@ -148,13 +148,8 @@ export function AccessTreeSidebar() {
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
             <input
               type="text"
-<<<<<<< Updated upstream
               placeholder="Search organization, project, ..."
-              className="w-full h-[40px] rounded-xl border border-neutral-200 bg-white pl-9 pr-3 py-2 text-[14px] font-sans outline-none focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20 transition-all placeholder:text-neutral-400"
-=======
-              placeholder="Search partner, org, project"
               className="w-full h-[40px] rounded-[6px] border border-[#E5E7EB] bg-white pl-9 pr-3 py-2 text-[14px] font-sans outline-none focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20 transition-all placeholder:text-neutral-400"
->>>>>>> Stashed changes
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />

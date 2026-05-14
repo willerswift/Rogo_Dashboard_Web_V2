@@ -193,11 +193,7 @@ export function ProjectsPage() {
             <p className="mt-2 text-sm text-neutral-500 max-w-sm mx-auto">Create a project using the button above, or clear the organization filter.</p>
           </div>
         ) : (
-<<<<<<< Updated upstream
-          <div className="overflow-visible">
-=======
-          <div className="overflow-x-auto border-t border-neutral-100">
->>>>>>> Stashed changes
+          <div className="overflow-visible border-t border-neutral-100">
             <table className="min-w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-neutral-800 leading-[18px] font-sans">
@@ -212,9 +208,8 @@ export function ProjectsPage() {
               <tbody>
                 {visibleProjects.map((project) => (
                   <tr key={project.uuid} className="border-b border-zinc-100 align-top">
-<<<<<<< Updated upstream
-                    <td className="py-3 pr-4 font-medium text-zinc-900">{project.name}</td>
-                    <td className="py-3 pr-4 text-zinc-600">
+                    <td className="px-6 py-4 font-medium text-zinc-900">{project.name}</td>
+                    <td className="px-6 py-4 text-zinc-600">
                       <div className="flex items-center gap-1.5 leading-none relative">
                         <InlineCode value={project.uuid.slice(0, 8)} />
                         <button
@@ -275,11 +270,6 @@ export function ProjectsPage() {
                           </div>
                         )}
                       </div>
-=======
-                    <td className="px-6 py-4 font-medium text-zinc-900">{project.name}</td>
-                    <td className="px-6 py-4 text-zinc-600">
-                      <InlineCode value={project.uuid} />
->>>>>>> Stashed changes
                     </td>
                     <td className="px-6 py-4 text-zinc-600">
                       {project.orgId ? (orgNameById[project.orgId] ?? project.orgId) : "—"}

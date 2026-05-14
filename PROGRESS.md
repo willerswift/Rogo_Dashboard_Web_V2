@@ -5,7 +5,6 @@ This file serves as a persistent record of work completed, current status, and p
 ## Latest Update: May 14, 2026
 
 ### Work Completed
-<<<<<<< Updated upstream
 - **Implemented Project Action Menu**: Added a three-dot dropdown menu for each project in the organization overview table.
     - Features "Rename Project" and "Delete Project" actions.
     - Implemented `RenameProjectDialog` and `DeleteProjectDialog` components with appropriate form validation and API integration.
@@ -27,12 +26,6 @@ This file serves as a persistent record of work completed, current status, and p
 - **Resolved Environment Issues**:
     - Fixed "Module not found: Can't resolve 'tailwindcss'" by explicitly setting `turbopack.root` in `next.config.ts`.
     - Fixed "Module not found: Can't resolve 'date-fns'" by ensuring all dependencies are installed via `npm install`.
-
-### Current Status
-- Dashboard shell is fully functional with project management capabilities (Create, Rename, Delete).
-- UI is localized to English across major organization and project views.
-- Dev environment is stabilized.
-=======
 - **Standardized Checkbox Design Globally**: Updated all tickboxes across the application to match the new design system.
     - Redesigned `CheckboxInput` in `features/shared/ui.tsx` to include a required **24x24px size**, **8px border-radius**, and a **checkmark icon** for the ticked state.
     - Implemented specific flexbox styling for the icon container (`size-[22px]`, `flex-col`, `items-center`, `justify-center`) to ensure precise alignment.
@@ -47,12 +40,24 @@ This file serves as a persistent record of work completed, current status, and p
     - Updated manual input implementations in `LoginForm.tsx`, `RegisterForm.tsx`, `ForgotPasswordForm.tsx`, `GrantAccessDialog.tsx`, and `AccessTreeSidebar.tsx` to match the new design.
     - Refactored `CreateOrganizationDialog.tsx` and `CreateProjectDialog.tsx` to use the standardized `TextInput` component and updated their custom styles.
     - Updated the `Input` UI component in `lib/components/ui/input.tsx` for system-wide consistency.
-- **Improved UI Component Reusability**: Refactored various features to use the shared `CheckboxInput` and `TextInput` components instead of hardcoded Tailwind classes.
+- **Resolved Runtime TypeError & Missing ID in Project Overview**:
+    - Added a safeguard to check for `project.uuid` before calling `.slice(0, 8)` in `project-overview.tsx`.
+    - Implemented a fallback to the `projectId` prop for the ID display, ensuring the correct ID is always shown even if the API detail response is incomplete.
+- **Resolved Critical Git Conflicts & Restored Build**: Successfully resolved multiple git conflict markers across `organization-overview.tsx`, `CreateOrganizationDialog.tsx`, `projects-page.tsx`, and `AccessTreeSidebar.tsx`.
+    - Merged new functional features (Project Action Menu, Project ID tooltip/copy, English localization) with the updated design system.
+    - Standardized table headers to use **neutral-800** text color and **px-6 py-4** padding.
+    - Applied the new **6px border-radius** and **standardized TextInput** components across affected dialogs.
+    - Verified the fix with a successful `npm run build` (Next.js/Turbopack).
+- **Stabilized UI/UX**:
+    - Ensured consistent behavior of the Project ID copy feature in both Organization Overview and Projects Page.
+    - Restored the Project Action Menu (Rename/Delete) in the organization table.
+    - Cleaned up duplicate code segments caused by improper merge resolution.
 
 ### Current Status
-- Dashboard shell and core UI components are functional and follow the updated design system.
-- Global checkbox and input components are now standardized for all forms.
->>>>>>> Stashed changes
+- Dashboard shell and core UI components are fully functional and standardized.
+- UI is localized to English across all major views.
+- Build is stable and passing production checks.
+- Dev environment is stabilized.
 
 ### Pending Tasks
 1. [ ] Implement real staging credentials verification (as noted in `NEXT_SESSION.md`).

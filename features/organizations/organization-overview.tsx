@@ -24,8 +24,8 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [loading, setLoading] = useState(true);
-  
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isRenameOpen, setIsRenameOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -78,6 +78,18 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const filteredProjects = projects.filter(
+    (project) => {
+      const query = searchQuery.toLowerCase();
+      const matchName = project.name.toLowerCase().includes(query);
+      const matchId = project.uuid.toLowerCase().includes(query);
+      const matchCreated = project.createdAt && formatDate(project.createdAt).toLowerCase().includes(query);
+      const matchUpdated = project.updatedAt && formatDate(project.updatedAt).toLowerCase().includes(query);
+
+      return matchName || matchId || matchCreated || matchUpdated;
+    }
+  );
+
   if (loading) return <LoadingBlock label="Loading organization..." />;
   if (!org) return <EmptyState title="Not found" description="Select an organization from the tree." />;
 
@@ -91,7 +103,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
             ID: {org.orgId}
           </div>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <div className="flex items-center h-7 px-3 rounded-full bg-[#FFEBF0] text-[10px] font-bold text-[#FD3566] uppercase tracking-wider">
             ORG
@@ -111,28 +123,32 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold font-heading text-neutral-900 tracking-tight">Projects in Organization</h3>
-          <PrimaryButton 
-            onClick={() => setIsCreateOpen(true)}
-            className="bg-[#FD3566] hover:bg-[#EA023B] shadow-md shadow-[#FD3566]/20 transition-all"
-          >
-            <Plus className="size-4 stroke-[3px]" />
-            Create Project
-          </PrimaryButton>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg className="h-4 w-4 text-neutral-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <input
+                type="text"
+                placeholder="Search projects, id, time..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-10 pl-9 pr-4 rounded-full border border-neutral-200 bg-white text-sm outline-none transition-all placeholder:text-neutral-400 focus:border-[#FD3566] focus:ring-4 focus:ring-[#FD3566]/10 w-[240px]"
+              />
+            </div>
+            <PrimaryButton
+              onClick={() => setIsCreateOpen(true)}
+              className="bg-[#FD3566] hover:bg-[#EA023B] shadow-md shadow-[#FD3566]/20 transition-all"
+            >
+              <Plus className="size-4 stroke-[3px]" />
+              Create Project
+            </PrimaryButton>
+          </div>
         </div>
-        
-<<<<<<< Updated upstream
+
         <div className="overflow-visible rounded-2xl border border-neutral-200 bg-white shadow-sm">
-          <table className="w-full text-left text-sm border-collapse">
-            <thead>
-              <tr className="bg-neutral-50/50 border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-[#606060] leading-[18px] font-sans">
-                <th className="px-8 py-5">NAME</th>
-                <th className="px-8 py-5">PROJECT ID</th>
-                <th className="px-8 py-5">STATUS</th>
-                <th className="px-8 py-5">CREATED</th>
-                <th className="px-8 py-5">UPDATED</th>
-                <th className="px-8 py-5 text-right">ACTIONS</th>
-=======
-        <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
           <table className="w-full text-left text-sm border-collapse">
             <thead>
               <tr className="bg-neutral-50/50 border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-neutral-800 leading-[18px] font-sans">
@@ -142,38 +158,31 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                 <th className="px-6 py-4">Created</th>
                 <th className="px-6 py-4">Updated</th>
                 <th className="px-6 py-4 text-right">Actions</th>
->>>>>>> Stashed changes
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-50">
-              {projects.length === 0 ? (
+              {filteredProjects.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-20 text-center text-neutral-400 font-medium">
-                    No projects found in this organization.
+                    {searchQuery ? "No projects found matching your search." : "No projects found in this organization."}
                   </td>
                 </tr>
               ) : (
-                projects.map((project, idx) => (
+                filteredProjects.map((project, idx) => (
                   <tr key={project.uuid} className={cn(
                     "group transition-colors",
                     idx % 2 === 1 ? "bg-neutral-50/30" : "bg-white",
                     "hover:bg-[#FFEBF0]/30"
                   )}>
-<<<<<<< Updated upstream
-                    <td className="px-8 py-5">
-                      <Link
-=======
                     <td className="px-6 py-4">
-                      <Link 
->>>>>>> Stashed changes
+                      <Link
                         href={`/overview?orgId=${orgId}&projectId=${project.uuid}`}
                         className="font-bold text-[#FD3566] hover:underline transition-all"
                       >
                         {project.name}
                       </Link>
                     </td>
-<<<<<<< Updated upstream
-                    <td className="px-8 py-5">
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5 leading-none relative">
                         <span className="font-mono text-[12px] font-bold text-neutral-400 tracking-tight uppercase leading-none">
                           {project.uuid.slice(0, 8)}
@@ -193,7 +202,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                         </button>
 
                         {openUuidId === project.uuid && (
-                          <div 
+                          <div
                             ref={uuidRef}
                             className="absolute bottom-full mb-3 left-0 z-[100] w-[280px] rounded-xl border border-neutral-200 bg-white p-3 shadow-2xl animate-in fade-in zoom-in duration-200"
                           >
@@ -234,27 +243,20 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                             {/* Little arrow */}
                             <div className="absolute top-full left-3 -mt-1.5 h-3 w-3 rotate-45 border-b border-r border-neutral-200 bg-white" />
                           </div>
-                        )}                      </div>
-                    </td>                    <td className="px-8 py-5">
-=======
-                    <td className="px-6 py-4">
-                      <span className="font-mono text-[12px] font-bold text-neutral-400 tracking-tight uppercase">
-                        {project.uuid.slice(0, 8)}
-                      </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
->>>>>>> Stashed changes
                       <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#1FC16B] uppercase tracking-wide">
                         <div className="h-2 w-2 rounded-full bg-[#1FC16B]" />
                         Active
                       </div>
                     </td>
-<<<<<<< Updated upstream
-                    <td className="px-8 py-5 text-[13px] font-medium text-neutral-500">{project.createdAt ? formatDate(project.createdAt) : "—"}</td>
-                    <td className="px-8 py-5 text-[13px] font-medium text-neutral-500">{project.updatedAt ? formatDate(project.updatedAt) : "—"}</td>
-                    <td className="px-8 py-5 text-right">
+                    <td className="px-6 py-4 text-[13px] font-medium text-neutral-500">{project.createdAt ? formatDate(project.createdAt) : "—"}</td>
+                    <td className="px-6 py-4 text-[13px] font-medium text-neutral-500">{project.updatedAt ? formatDate(project.updatedAt) : "—"}</td>
+                    <td className="px-6 py-4 text-right">
                       <div className="relative inline-block text-left">
-                        <button 
+                        <button
                           onClick={() => setOpenMenuId(openMenuId === project.uuid ? null : project.uuid)}
                           className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-900 transition-all"
                         >
@@ -262,7 +264,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                         </button>
 
                         {openMenuId === project.uuid && (
-                          <div 
+                          <div
                             ref={menuRef}
                             className="absolute right-0 top-full z-20 mt-1 w-48 origin-top-right overflow-hidden rounded-xl border border-neutral-100 bg-white shadow-xl animate-in fade-in zoom-in-95 duration-150"
                           >
@@ -294,21 +296,13 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                           </div>
                         )}
                       </div>
-=======
-                    <td className="px-6 py-4 text-[13px] font-medium text-neutral-500">{project.createdAt ? formatDate(project.createdAt) : "—"}</td>
-                    <td className="px-6 py-4 text-[13px] font-medium text-neutral-500">{project.updatedAt ? formatDate(project.updatedAt) : "—"}</td>
-                    <td className="px-6 py-4 text-right">
-                      <button className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-900 transition-all">
-                        <MoreVertical className="size-4" />
-                      </button>
->>>>>>> Stashed changes
                     </td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
-          
+
           <div className="flex items-center justify-between bg-white border-t border-neutral-100 px-6 py-4">
             <div className="text-[13px] font-medium text-neutral-400">
               Showing <span className="text-neutral-900 font-bold">1</span> to <span className="text-neutral-900 font-bold">{projects.length}</span> of <span className="text-neutral-900 font-bold">{projects.length}</span> entries
@@ -321,9 +315,9 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
         </div>
       </div>
 
-      <CreateProjectDialog 
-        open={isCreateOpen} 
-        onClose={() => setIsCreateOpen(false)} 
+      <CreateProjectDialog
+        open={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
         onSuccess={load}
         initialOrgId={orgId}
       />
