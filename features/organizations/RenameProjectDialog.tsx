@@ -89,10 +89,10 @@ export function RenameProjectDialog({ open, onClose, onSuccess, project }: Renam
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4">
-      <div className="relative w-full max-w-[480px] rounded-[24px] bg-white p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-        <div className="mb-8 flex items-center justify-between">
+      <div className="relative w-full max-w-[480px] rounded-[var(--Radius-6,12px)] bg-white border border-dialog-border shadow-dialog animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
+        <div className="px-8 py-[var(--Spacing-5,20px)] flex items-center justify-between">
           <h5 className="text-[24px] font-bold text-[#1F244A] tracking-tight font-heading">
-            Rename Project <span className="text-[#FD3566]">{project.name}</span>
+            Rename Project <span className="text-[var(--brand-primary)]">{project.name}</span>
           </h5>
           <button
             onClick={onClose}
@@ -102,21 +102,21 @@ export function RenameProjectDialog({ open, onClose, onSuccess, project }: Renam
           </button>
         </div>
 
-        <form onSubmit={onSubmit} className="space-y-8">
+        <form onSubmit={onSubmit} className="px-8 pb-8 space-y-8">
           <div className="space-y-3">
             <label className="text-[15px] font-bold text-[#1F244A]">
-              Project Name<span className="text-[#FD3566] ml-1">*</span>
+              Project Name<span className="text-[var(--brand-primary)] ml-1">*</span>
             </label>
             <input
               {...register("name")}
               placeholder="Project Name"
               className={cn(
                 "h-[52px] w-full rounded-xl border bg-white px-5 text-[15px] outline-none transition-all placeholder:text-neutral-300",
-                errors.name ? "border-[#FD3566]" : "border-neutral-200 focus:border-[#FD3566]"
+                errors.name ? "border-[var(--brand-primary)]" : "border-neutral-200 focus:border-[var(--brand-primary)]"
               )}
             />
             {errors.name && (
-              <p className="text-[13px] font-bold text-[#FD3566]">{errors.name.message}</p>
+              <p className="text-[13px] font-bold text-[var(--brand-primary)]">{errors.name.message}</p>
             )}
           </div>
 
@@ -131,7 +131,7 @@ export function RenameProjectDialog({ open, onClose, onSuccess, project }: Renam
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-[#FD3566] px-8 py-2 text-[14px] font-semibold text-white shadow-md shadow-[#FD3566]/20 hover:bg-[#E62E5F] transition-all disabled:opacity-50 font-heading"
+              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-[var(--brand-primary)] px-8 py-2 text-[14px] font-semibold text-white shadow-md shadow-[var(--brand-primary)]/20 hover:bg-[var(--brand-primary-hover)] transition-all disabled:opacity-50 font-heading"
             >
               Save
             </button>

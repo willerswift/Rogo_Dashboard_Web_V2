@@ -147,7 +147,7 @@ export function UsersPage() {
             <div className="flex items-center gap-3">
               <Avatar name={user.name} email={user.email} />
               <div className="flex flex-col">
-                <span className="text-[14px] font-bold text-neutral-900 leading-tight">{user.name}</span>
+                <span className="text-[14px] font-bold text-[#1F244A] leading-tight">{user.name}</span>
                 <span className="text-[12px] text-neutral-500 leading-tight mt-0.5">{user.email}</span>
               </div>
             </div>
@@ -187,7 +187,7 @@ export function UsersPage() {
                 {extraCount > 0 && (
                   <button
                     onClick={() => setViewingProjectsFor({ user, projects: actualProjects })}
-                    className="text-[13px] font-bold text-[#FD3566] text-left hover:underline flex items-center gap-1 w-fit"
+                    className="text-[13px] font-bold text-neutral-500 text-left hover:text-neutral-900 transition-colors flex items-center gap-1 w-fit"
                   >
                     View {extraCount} more Project{extraCount !== 1 ? 's' : ''}
                     <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -215,7 +215,7 @@ export function UsersPage() {
               <button className="text-neutral-400 hover:text-neutral-900 transition-colors">
                 <Pencil className="size-4" />
               </button>
-              <button className="text-neutral-400 hover:text-[#FD3566] transition-colors">
+              <button className="text-neutral-400 hover:text-primary-300 transition-colors">
                 <UserMinus className="size-4" />
               </button>
             </div>
@@ -233,7 +233,7 @@ export function UsersPage() {
           <div className="flex items-center gap-3">
             <Avatar name={user.name} email={user.email} />
             <div className="flex flex-col">
-              <span className="text-[14px] font-bold text-neutral-900 leading-tight">{user.name}</span>
+              <span className="text-[14px] font-bold text-[#1F244A] leading-tight">{user.name}</span>
               <span className="text-[12px] text-neutral-500 leading-tight mt-0.5">{user.email}</span>
             </div>
           </div>
@@ -359,7 +359,7 @@ export function UsersPage() {
                 PRJ
               </span>
             ) : activeOrg ? (
-              <span className="inline-flex items-center rounded-md bg-[#FFEBF0] px-2 py-0.5 text-[10px] font-bold text-[#FD3566]">
+              <span className="inline-flex items-center rounded-md bg-primary-100 px-2 py-0.5 text-[10px] font-bold text-primary-300">
                 ORG
               </span>
             ) : (
@@ -396,7 +396,7 @@ export function UsersPage() {
             <PrimaryButton
               type="button"
               onClick={() => setShowGrantAccess(true)}
-              className="bg-[#FD3566] hover:bg-[#EA023B] shadow-md shadow-[#FD3566]/20 transition-all"
+              className="shadow-md shadow-primary-300/20 transition-all"
             >
               <UserPlus className="size-4" />
               Grant Access
@@ -417,7 +417,7 @@ export function UsersPage() {
             <PrimaryButton
               type="button"
               onClick={() => setShowGrantAccess(true)}
-              className="bg-[#FD3566] hover:bg-[#EA023B] shadow-md shadow-[#FD3566]/20 transition-all mt-2"
+              className="shadow-md shadow-primary-300/20 transition-all mt-2"
             >
               <UserPlus className="size-4" />
               Grant Permission

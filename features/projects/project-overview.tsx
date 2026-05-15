@@ -75,7 +75,7 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center size-10 rounded-xl bg-gradient-to-br from-[#FD3566] to-[#EA023B] text-white shadow-sm shadow-[#FD3566]/20">
+            <div className="flex items-center justify-center size-10 rounded-xl bg-gradient-to-br from-[var(--brand-primary)] to-[color-mix(in srgb, var(--brand-primary), black 10%)] text-white shadow-sm shadow-[var(--brand-primary)]/20">
               <LayoutDashboard className="size-5" />
             </div>
             <h1 className="text-[32px] font-bold font-heading text-neutral-1000 tracking-tight leading-none">{project.name}</h1>

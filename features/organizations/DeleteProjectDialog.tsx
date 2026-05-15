@@ -61,10 +61,10 @@ export function DeleteProjectDialog({ open, onClose, onSuccess, project }: Delet
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4">
-      <div className="relative w-full max-w-[480px] rounded-[24px] bg-white p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-        <div className="mb-6 flex items-center justify-between">
+      <div className="relative w-full max-w-[480px] rounded-[var(--Radius-6,12px)] bg-white border border-dialog-border shadow-dialog animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
+        <div className="px-8 py-[var(--Spacing-5,20px)] flex items-center justify-between">
           <h5 className="text-[24px] font-bold text-[#1F244A] tracking-tight font-heading">
-            Delete Project <span className="text-[#FD3566]">{project.name}</span>
+            Delete Project <span className="text-[var(--brand-primary)]">{project.name}</span>
           </h5>
           <button
             onClick={onClose}
@@ -74,28 +74,30 @@ export function DeleteProjectDialog({ open, onClose, onSuccess, project }: Delet
           </button>
         </div>
 
-        <div className="mb-10">
-          <p className="text-[17px] text-[#FD3566] font-medium leading-relaxed">
-            This action cannot be undone.
-          </p>
-        </div>
+        <div className="px-8 pb-8">
+          <div className="mb-10">
+            <p className="text-[17px] text-[var(--brand-primary)] font-medium leading-relaxed">
+              This action cannot be undone.
+            </p>
+          </div>
 
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-8 py-2 text-[14px] font-semibold text-[#1F244A] hover:bg-neutral-50 transition-all font-heading"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={isDeleting}
-            className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-[#FD3566] px-6 py-2 text-[14px] font-semibold text-white shadow-md shadow-[#FD3566]/20 hover:bg-[#E62E5F] transition-all disabled:opacity-50 font-heading"
-          >
-            Confirm Delete
-          </button>
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-8 py-2 text-[14px] font-semibold text-[#1F244A] hover:bg-neutral-50 transition-all font-heading"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-[var(--brand-primary)] px-6 py-2 text-[14px] font-semibold text-white shadow-md shadow-[var(--brand-primary)]/20 hover:bg-[var(--brand-primary-hover)] transition-all disabled:opacity-50 font-heading"
+            >
+              Confirm Delete
+            </button>
+          </div>
         </div>
       </div>
     </div>

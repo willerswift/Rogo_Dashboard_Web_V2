@@ -241,8 +241,8 @@ export function ProjectsPage() {
                                   className={cn(
                                     "flex h-6 items-center gap-1.5 rounded-md px-2 text-[10px] font-bold transition-all shrink-0",
                                     copiedId === project.uuid
-                                      ? "bg-[#FD3566]/10 text-[#FD3566]"
-                                      : "bg-[#FD3566] text-white hover:bg-[#EA023B]"
+                                      ? "bg-[var(--brand-primary)]/10 text-[var(--brand-primary)]"
+                                      : "bg-[var(--brand-primary)] text-white hover:bg-[color-mix(in srgb, var(--brand-primary), black 10%)]"
                                   )}
                                 >
                                   {copiedId === project.uuid ? (
@@ -260,7 +260,7 @@ export function ProjectsPage() {
                               </div>
 
                               <div className="rounded-lg border border-[#E6E8F4] bg-[#E6E8F4]/30 p-2">
-                                <div className="text-[12px] font-medium text-[#393984] break-all leading-relaxed font-mono tracking-tight">
+                                <div className="text-[12px] font-medium text-[var(--brand-primary)] break-all leading-relaxed font-mono tracking-tight">
                                   {project.uuid}
                                 </div>
                               </div>

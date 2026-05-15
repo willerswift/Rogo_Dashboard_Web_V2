@@ -5,7 +5,7 @@ import { X, Search } from "lucide-react";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import type { UserWithNumProject, OrgWithOwner, Project } from "@/lib/types/partner";
 import { Avatar } from "@/lib/components/ui/avatar";
-import { CheckboxInput, PrimaryButton, SecondaryButton } from "@/features/shared/ui";
+import { CheckboxInput, PrimaryButton, SecondaryButton, SearchInput } from "@/features/shared/ui";
 import { cn } from "@/lib/utils/cn";
 import { formatDate } from "@/lib/utils/format";
 
@@ -127,10 +127,10 @@ export function GrantAccessDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4">
-      <div className="relative w-full max-w-[800px] h-[600px] flex flex-col rounded-[24px] bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-[800px] h-[600px] flex flex-col rounded-[var(--Radius-6,12px)] bg-white border border-dialog-border shadow-dialog animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
         
         {/* Header */}
-        <div className="relative p-6 pb-7 border-b border-neutral-100 shrink-0">
+        <div className="relative px-8 py-[var(--Spacing-5,20px)] border-b border-neutral-100 shrink-0">
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-2">
@@ -154,16 +154,11 @@ export function GrantAccessDialog({
           </div>
           
           {view === "projectList" && (
-            <div className="absolute right-6 bottom-4 w-[280px]">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-neutral-400" />
-              </div>
-              <input
-                type="text"
+            <div className="absolute right-8 bottom-[var(--Spacing-5,20px)] w-[280px]">
+              <SearchInput
                 placeholder="Search projects..."
                 value={projectSearch}
                 onChange={(e) => setProjectSearch(e.target.value)}
-                className="h-9 pl-9 pr-4 w-full rounded-full border border-neutral-200 bg-white text-sm outline-none transition-all placeholder:text-neutral-400 focus:border-[#FD3566] focus:ring-4 focus:ring-[#FD3566]/10"
               />
             </div>
           )}
@@ -176,16 +171,12 @@ export function GrantAccessDialog({
               {/* Left Panel - Users */}
               <div className="w-[240px] border-r border-neutral-100 flex flex-col bg-white shrink-0 p-6 gap-5 self-stretch items-start">
                 <div className="w-full shrink-0">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
-                    <input
-                      type="text"
-                      placeholder="Search Username"
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      className="w-full h-10 rounded-[6px] border border-[#E5E7EB] bg-white pl-9 pr-3 text-[14px] outline-none focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20 transition-all placeholder:text-neutral-400 font-sans"
-                    />
-                  </div>
+                  <SearchInput
+                    placeholder="Search Username"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="w-full"
+                  />
                 </div>
                 
                 <div className="flex-1 w-full overflow-y-auto space-y-4 custom-scrollbar">
@@ -196,7 +187,7 @@ export function GrantAccessDialog({
                       className={cn(
                         "w-full flex items-center gap-3 p-1 rounded-xl transition-all text-left self-stretch",
                         selectedUserId === user.ownerId 
-                          ? "bg-[#E6E8F4] ring-1 ring-[#393984]/20 shadow-sm" 
+                          ? "bg-primary-100 ring-1 ring-primary-300/20 shadow-sm" 
                           : "hover:bg-neutral-50"
                       )}
                     >
@@ -204,7 +195,7 @@ export function GrantAccessDialog({
                       <div className="overflow-hidden flex-1">
                         <p className={cn(
                           "text-[16px] font-bold truncate leading-[24px] font-sans", 
-                          selectedUserId === user.ownerId ? "text-[#393984]" : "text-[#393984]"
+                          selectedUserId === user.ownerId ? "text-[#1F244A]" : "text-[#1F244A]"
                         )}>
                           {user.name}
                         </p>
@@ -223,14 +214,14 @@ export function GrantAccessDialog({
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    <div className="flex items-center justify-between bg-[#FFF1F4] rounded-xl p-4 border border-[#FD3566]/20">
+                    <div className="flex items-center justify-between bg-primary-100/30 rounded-xl p-4 border border-primary-300/20">
                       <label className="flex items-center gap-3 cursor-pointer">
                         <CheckboxInput checked={isAllSelected} onChange={handleToggleAllProjects} />
                         <span className="text-[14px] font-medium text-neutral-900">Apply user to all Projects</span>
                       </label>
                       <button 
                         onClick={() => setView("projectList")}
-                        className="text-[13px] font-bold text-[#1F244A] flex items-center gap-1.5 hover:text-[#FD3566] transition-colors"
+                        className="text-[13px] font-bold text-[#1F244A] flex items-center gap-1.5 hover:text-primary-300 transition-colors"
                       >
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M7 1L1 4L7 7L13 4L7 1Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -245,7 +236,7 @@ export function GrantAccessDialog({
                     </div>
 
                     <div className="space-y-4">
-                      <h6 className="text-[14px] font-medium text-[#393984]">(Optional) Project Development</h6>
+                      <h6 className="text-[14px] font-medium text-primary-300">(Optional) Project Development</h6>
                       <div className="space-y-3 pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
                           <CheckboxInput />
@@ -261,7 +252,7 @@ export function GrantAccessDialog({
                     <div className="w-full h-px bg-neutral-200 border-t border-dashed" />
 
                     <div className="space-y-4">
-                      <h6 className="text-[14px] font-medium text-[#393984]">(Optional) Project Authorization:</h6>
+                      <h6 className="text-[14px] font-medium text-primary-300">(Optional) Project Authorization:</h6>
                       <div className="flex gap-8 pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
                           <CheckboxInput />
@@ -275,7 +266,7 @@ export function GrantAccessDialog({
                     </div>
 
                      <div className="space-y-4">
-                      <h6 className="text-[14px] font-medium text-[#393984]">(Optional) Project Report:</h6>
+                      <h6 className="text-[14px] font-medium text-primary-300">(Optional) Project Report:</h6>
                       <div className="pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
                           <CheckboxInput />
@@ -290,7 +281,7 @@ export function GrantAccessDialog({
           ) : (
             <div className="flex-1 flex flex-col h-full bg-white overflow-hidden">
               <div className="p-6 pb-4">
-                <div className="flex items-center justify-between bg-[#FFF1F4] rounded-xl p-4 border border-[#FD3566]/20">
+                <div className="flex items-center justify-between bg-primary-100/30 rounded-xl p-4 border border-primary-300/20">
                   <label className="flex items-center gap-3 cursor-pointer">
                     <CheckboxInput checked={isAllSelected} onChange={handleToggleAllProjects} />
                     <span className="text-[14px] font-medium text-neutral-900">Apply user to all Projects</span>
@@ -330,7 +321,7 @@ export function GrantAccessDialog({
                           <td className="px-6 py-4">
                             <CheckboxInput checked={selectedProjects.has(project.uuid)} onChange={() => handleToggleProject(project.uuid)} />
                           </td>
-                          <td className="px-6 py-4 font-medium text-[#FD3566]">{project.name}</td>
+                          <td className="px-6 py-4 font-medium text-primary-300">{project.name}</td>
                           <td className="px-6 py-4 font-mono text-[12px] text-neutral-600">{project.uuid.slice(0, 8)}</td>
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#1FC16B] bg-[#1FC16B]/10 px-2 py-0.5 rounded-full w-fit">
@@ -360,11 +351,11 @@ export function GrantAccessDialog({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-neutral-100 flex justify-end gap-3 shrink-0 bg-white rounded-b-[24px]">
+        <div className="p-4 border-t border-neutral-100 flex justify-end gap-3 shrink-0 bg-white rounded-b-[var(--Radius-6,12px)]">
           <SecondaryButton onClick={onClose} className="px-6 border-neutral-300 text-neutral-700">
             Close
           </SecondaryButton>
-          <PrimaryButton onClick={handleSubmit} disabled={!selectedUserId || isSubmitting} className="px-8 shadow-md">
+          <PrimaryButton onClick={handleSubmit} disabled={!selectedUserId || isSubmitting} className="px-8 shadow-md shadow-primary-300/20">
             Save
           </PrimaryButton>
         </div>

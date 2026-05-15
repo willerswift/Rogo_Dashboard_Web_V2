@@ -125,8 +125,8 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4">
-        <div className="relative w-full max-w-[720px] rounded-[24px] bg-white p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-          <div className="mb-8 flex items-center justify-between">
+        <div className="relative w-full max-w-[720px] rounded-[var(--Radius-6,12px)] bg-white border border-dialog-border shadow-dialog animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
+          <div className="px-8 py-[var(--Spacing-5,20px)] flex items-center justify-between">
             <h5 className="text-[24px] font-bold text-[#1F244A] tracking-tight font-heading">Create New Project</h5>
             <button
               onClick={onClose}
@@ -136,7 +136,7 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
             </button>
           </div>
 
-          <form onSubmit={onSubmit} className="space-y-8">
+          <form onSubmit={onSubmit} className="px-8 pb-8 space-y-8">
             {/* Organization Selector */}
             <div className="flex items-center gap-4">
               <span className="text-[17px] font-medium text-neutral-500">Add project to</span>
@@ -166,7 +166,7 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
                         }}
                         className={cn(
                           "flex w-full px-5 py-3 text-left text-[15px] transition-colors hover:bg-neutral-50",
-                          !selectedOrgId ? "font-bold text-[#FD3566]" : "text-neutral-700"
+                          !selectedOrgId ? "font-bold text-primary-300" : "text-neutral-700"
                         )}
                       >
                         No Organization
@@ -181,7 +181,7 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
                           }}
                           className={cn(
                             "flex w-full px-5 py-3 text-left text-[15px] transition-colors hover:bg-neutral-50",
-                            selectedOrgId === org.orgId ? "font-bold text-[#FD3566]" : "text-neutral-700"
+                            selectedOrgId === org.orgId ? "font-bold text-primary-300" : "text-neutral-700"
                           )}
                         >
                           {org.name}
@@ -194,7 +194,7 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
                         setIsDropdownOpen(false);
                         setShowCreateOrg(true);
                       }}
-                      className="flex w-full items-center gap-2 border-t border-neutral-100 px-5 py-4 text-[16px] font-semibold text-[#FD3566] transition-colors hover:bg-neutral-50 font-heading"
+                      className="flex w-full items-center gap-2 border-t border-neutral-100 px-5 py-4 text-[16px] font-semibold text-primary-300 transition-colors hover:bg-neutral-50 font-heading"
                     >
                       <Plus className="size-4 stroke-[3px]" />
                       Create New Organization
@@ -207,7 +207,7 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
             {/* Project Name Input */}
             <div className="space-y-3">
               <label className="text-[15px] font-bold text-[#1F244A]">
-                Project Name<span className="text-[#FD3566] ml-1">*</span>
+                Project Name<span className="text-primary-300 ml-1">*</span>
               </label>
             <TextInput
                 {...register("name")}
@@ -216,7 +216,7 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
                 className="w-full"
               />
               {errors.name && (
-                <p className="text-[13px] font-bold text-[#FD3566]">{errors.name.message}</p>
+                <p className="text-[13px] font-bold text-primary-300">{errors.name.message}</p>
               )}
             </div>
 
@@ -232,7 +232,7 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-[#FD3566] px-3 py-2 text-[14px] font-semibold text-white shadow-md shadow-[#FD3566]/20 hover:bg-[#E62E5F] transition-all disabled:opacity-50 font-heading"
+                className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-primary-300 px-3 py-2 text-[14px] font-semibold text-white shadow-md shadow-primary-300/20 hover:bg-primary-400 transition-all disabled:opacity-50 font-heading"
               >
                 Save
               </button>

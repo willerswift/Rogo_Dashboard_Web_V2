@@ -66,14 +66,14 @@
   --brand-primary: #fd3566;
   --brand-primary-hover: color-mix(in srgb, var(--brand-primary), black 10%);
   
-  /* Primary - Rogo Pink (Legacy/Internal) */
-  --primary-100: #febccc;
-  --primary-200: #fe7899;
+  /* Primary - Derived from --brand-primary */
+  --primary-100: color-mix(in srgb, var(--brand-primary), white 80%);
+  --primary-200: color-mix(in srgb, var(--brand-primary), white 40%);
   --primary-300: var(--brand-primary);
   --primary-400: var(--brand-primary-hover);
-  --primary-500: #a40229;
+  --primary-500: color-mix(in srgb, var(--brand-primary), black 25%);
 
-  /* Secondary - Navy */
+  /* Secondary - Navy (can also be tied to brand if needed, but keeping for now) */
   --secondary-100: #8f8fce;
   --secondary-200: #5757b6;
   --secondary-300: #393984;
@@ -101,8 +101,12 @@
   --green-200: #1fc16b;
 
   --radius: 0.5rem;
+  --Radius-6: 12px;
   --Spacing-2: 8px;
+  --Spacing-5: 20px;
   --panel-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --dialog-shadow: 0 10px 20px 0 rgba(33, 33, 76, 0.08);
+  --dialog-border: #F3F4F6;
 }
 
 @theme inline {
@@ -148,7 +152,9 @@
   --radius-full: 9999px;
   
   --shadow-panel: var(--panel-shadow);
-  --color-rogo-pink: #FF356A;
+  --shadow-dialog: var(--dialog-shadow);
+  --color-rogo-pink: var(--brand-primary);
+  --color-dialog-border: var(--dialog-border);
 }
 
 * {

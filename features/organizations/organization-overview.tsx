@@ -9,7 +9,7 @@ import { getOrganization, listOrganizationUsers } from "@/lib/api/organization";
 import { listProjects } from "@/lib/api/project";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import type { OrgWithOwner, Project, OrganizationMember } from "@/lib/types/partner";
-import { LoadingBlock, EmptyState, PrimaryButton } from "@/features/shared/ui";
+import { LoadingBlock, EmptyState, PrimaryButton, SearchInput } from "@/features/shared/ui";
 import { cn } from "@/lib/utils/cn";
 import { formatDate } from "@/lib/utils/format";
 import { CreateProjectDialog } from "./CreateProjectDialog";
@@ -99,13 +99,13 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <h1 className="text-[32px] font-bold font-heading text-neutral-1000 tracking-tight">{org.name}</h1>
-          <div className="flex items-center h-6 px-2.5 rounded-lg bg-[#E6E8F4] text-[11px] font-bold text-[#393984] uppercase">
+          <div className="flex items-center h-6 px-2.5 rounded-lg bg-primary-100 text-[11px] font-bold text-primary-300 uppercase">
             ID: {org.orgId}
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center h-7 px-3 rounded-full bg-[#FFEBF0] text-[10px] font-bold text-[#FD3566] uppercase tracking-wider">
+          <div className="flex items-center h-7 px-3 rounded-full bg-primary-100 text-[10px] font-bold text-primary-300 uppercase tracking-wider">
             ORG
           </div>
           <div className="flex items-center h-7 px-3 rounded-full bg-neutral-100 text-[12px] font-bold text-neutral-600 gap-1.5">
@@ -124,23 +124,15 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold font-heading text-neutral-900 tracking-tight">Projects in Organization</h3>
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="h-4 w-4 text-neutral-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <input
-                type="text"
-                placeholder="Search projects, id, time..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-10 pl-9 pr-4 rounded-full border border-neutral-200 bg-white text-sm outline-none transition-all placeholder:text-neutral-400 focus:border-[#FD3566] focus:ring-4 focus:ring-[#FD3566]/10 w-[240px]"
-              />
-            </div>
+            <SearchInput
+              placeholder="Search projects, id, time..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-[240px]"
+            />
             <PrimaryButton
               onClick={() => setIsCreateOpen(true)}
-              className="bg-[#FD3566] hover:bg-[#EA023B] shadow-md shadow-[#FD3566]/20 transition-all"
+              className="shadow-md shadow-primary-300/20 transition-all"
             >
               <Plus className="size-4 stroke-[3px]" />
               Create Project
@@ -172,12 +164,12 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                   <tr key={project.uuid} className={cn(
                     "group transition-colors",
                     idx % 2 === 1 ? "bg-neutral-50/30" : "bg-white",
-                    "hover:bg-[#FFEBF0]/30"
+                    "hover:bg-primary-100/30"
                   )}>
                     <td className="px-6 py-4">
                       <Link
                         href={`/overview?orgId=${orgId}&projectId=${project.uuid}`}
-                        className="font-bold text-[#FD3566] hover:underline transition-all"
+                        className="font-bold text-primary-300 hover:underline transition-all"
                       >
                         {project.name}
                       </Link>
@@ -194,7 +186,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                           }}
                           className={cn(
                             "flex items-center justify-center transition-colors shrink-0 p-0 outline-none -mt-[1px]",
-                            openUuidId === project.uuid ? "text-[#FD3566]" : "text-neutral-300 hover:text-[#FD3566]"
+                            openUuidId === project.uuid ? "text-primary-300" : "text-neutral-300 hover:text-primary-300"
                           )}
                           title="View full ID"
                         >
@@ -216,8 +208,8 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                                   className={cn(
                                     "flex h-6 items-center gap-1.5 rounded-md px-2 text-[10px] font-bold transition-all shrink-0",
                                     copiedId === project.uuid
-                                      ? "bg-[#FD3566]/10 text-[#FD3566]"
-                                      : "bg-[#FD3566] text-white hover:bg-[#EA023B]"
+                                      ? "bg-primary-300/10 text-primary-300"
+                                      : "bg-primary-300 text-white hover:bg-primary-400"
                                   )}
                                 >
                                   {copiedId === project.uuid ? (
@@ -234,8 +226,8 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                                 </button>
                               </div>
 
-                              <div className="rounded-lg border border-[#E6E8F4] bg-[#E6E8F4]/30 p-2">
-                                <div className="text-[12px] font-medium text-[#393984] break-all leading-relaxed font-mono tracking-tight">
+                              <div className="rounded-lg border border-primary-100 bg-primary-100/30 p-2">
+                                <div className="text-[12px] font-medium text-primary-300 break-all leading-relaxed font-mono tracking-tight">
                                   {project.uuid}
                                 </div>
                               </div>
@@ -287,7 +279,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                                   setIsDeleteOpen(true);
                                   setOpenMenuId(null);
                                 }}
-                                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-[14px] font-semibold text-[#FD3566] hover:bg-neutral-50 transition-colors"
+                                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-[14px] font-semibold text-primary-300 hover:bg-neutral-50 transition-colors"
                               >
                                 <Trash2 className="size-4" />
                                 Delete Project

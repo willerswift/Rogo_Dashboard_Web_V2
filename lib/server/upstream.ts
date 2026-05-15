@@ -109,7 +109,7 @@ export async function withUpstreamAuthRetry(input: {
     });
   };
 
-  let response = await perform(accessToken);
+  const response = await perform(accessToken);
 
   if (response.status === 401) {
     const unauthorizedResponse = NextResponse.json(

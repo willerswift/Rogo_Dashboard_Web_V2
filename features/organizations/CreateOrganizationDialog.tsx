@@ -66,8 +66,8 @@ export function CreateOrganizationDialog({ open, onClose, onSuccess }: CreateOrg
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-black/40 p-4">
-      <div className="relative w-full max-w-[640px] rounded-[24px] bg-white p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-        <div className="mb-8 flex items-center justify-between">
+      <div className="relative w-full max-w-[640px] rounded-[var(--Radius-6,12px)] bg-white border border-dialog-border shadow-dialog animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
+        <div className="px-8 py-[var(--Spacing-5,20px)] flex items-center justify-between">
           <h5 className="text-[24px] font-bold text-[#1F244A] tracking-tight font-heading">Create New Organization</h5>
           <button
             onClick={onClose}
@@ -77,10 +77,10 @@ export function CreateOrganizationDialog({ open, onClose, onSuccess }: CreateOrg
           </button>
         </div>
 
-        <form onSubmit={onSubmit} className="space-y-8">
+        <form onSubmit={onSubmit} className="px-8 pb-8 space-y-8">
           <div className="space-y-3">
             <label className="text-[15px] font-bold text-[#1F244A]">
-              Organization Name<span className="text-[#FD3566] ml-1">*</span>
+              Organization Name<span className="text-primary-300 ml-1">*</span>
             </label>
             <TextInput
               {...register("name")}
@@ -89,7 +89,7 @@ export function CreateOrganizationDialog({ open, onClose, onSuccess }: CreateOrg
               className="w-full"
             />
             {errors.name && (
-              <p className="text-[13px] font-bold text-[#FD3566]">{errors.name.message}</p>
+              <p className="text-[13px] font-bold text-primary-300">{errors.name.message}</p>
             )}
           </div>
 
@@ -104,7 +104,7 @@ export function CreateOrganizationDialog({ open, onClose, onSuccess }: CreateOrg
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-[#FD3566] px-3 py-2 text-[14px] font-semibold text-white shadow-md shadow-[#FD3566]/20 hover:bg-[#E62E5F] transition-all disabled:opacity-50 font-heading"
+              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-primary-300 px-3 py-2 text-[14px] font-semibold text-white shadow-md shadow-primary-300/20 hover:bg-primary-400 transition-all disabled:opacity-50 font-heading"
             >
               Save
             </button>

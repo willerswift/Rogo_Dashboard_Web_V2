@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Loader2, X, Check } from "lucide-react";
+import { Loader2, X, Check, Search } from "lucide-react";
 
 import { cn } from "@/lib/utils/cn";
 
@@ -40,11 +40,12 @@ export function Modal({
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative z-10 mx-4 w-full rounded-2xl bg-white p-6 shadow-2xl border border-neutral-200",
+          "relative z-10 mx-4 w-full bg-white shadow-dialog border border-dialog-border",
+          "rounded-[var(--Radius-6,12px)]",
           wide ? "max-w-2xl" : "max-w-lg",
         )}
       >
-        <div className="mb-5 flex items-start justify-between gap-4">
+        <div className="flex justify-between items-start self-stretch px-8 py-[var(--Spacing-5,20px)]">
           <h5 className="text-[24px] font-bold text-[#1F244A] tracking-tight font-heading">{title}</h5>
           <button
             type="button"
@@ -54,7 +55,9 @@ export function Modal({
             <X className="h-5 w-5" />
           </button>
         </div>
-        {children}
+        <div className="px-8 pb-8">
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -124,6 +127,26 @@ export function TextInput(
         className,
       )}
     />
+  );
+}
+
+export function SearchInput(
+  props: React.InputHTMLAttributes<HTMLInputElement>,
+) {
+  const { className, ...inputProps } = props;
+
+  return (
+    <div className={cn("relative", className)}>
+      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg className="h-4 w-4 text-neutral-400" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+        </svg>
+      </div>
+      <input
+        {...inputProps}
+        className="h-10 w-full rounded-[6px] border border-[#E5E7EB] bg-white pl-9 pr-[var(--Spacing-2,8px)] text-[14px] text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20"
+      />
+    </div>
   );
 }
 

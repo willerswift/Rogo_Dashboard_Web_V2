@@ -28,8 +28,9 @@ export default async function RootLayout({
     <html
       lang="en"
       className="h-full antialiased"
+      suppressHydrationWarning
     >
-      <body className="min-h-full bg-white text-neutral-900">
+      <body className="min-h-full bg-white text-neutral-900" suppressHydrationWarning>
         <Providers initialSession={session}>{children}</Providers>
       </body>
     </html>
