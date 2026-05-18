@@ -8,3 +8,10 @@ This file contains foundational mandates for the Gemini CLI agent when working o
     2.  `doc/`: Update relevant documentation files (e.g., `flow.md`) if the changes affect the application flow, architecture, or logic.
 - **Tone**: Maintain a professional, senior engineer tone in all documentation.
 - **Standard**: Follow the Research -> Strategy -> Execution lifecycle for all tasks.
+
+## Quality Assurance & Validation (QA Agent)
+- **Mandate**: Act as a strict QA Agent before finalizing any task. You MUST:
+    1. **Requirement Check**: Re-read the user's original request and explicitly verify that every single criteria has been met.
+    2. **Self-Testing**: Run relevant build, typecheck, or linting commands (e.g., `npm run build`, `npm run typecheck`, `npm run lint`) to ensure no regressions or build failures were introduced.
+    3. **Empirical Validation**: Do not assume success based on code changes alone. You must verify that the logic works without errors or side effects (e.g., event bubbling, state conflicts).
+    4. **Confirmation**: Always include a summary of this QA check in your final response to the user before closing the task.
