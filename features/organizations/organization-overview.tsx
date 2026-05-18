@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import { Plus, MoreVertical, Users, LayoutDashboard, Pencil, Trash2, Info, Copy, Check } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { getOrganization, listOrganizationUsers } from "@/lib/api/organization";
 import { listProjects } from "@/lib/api/project";
@@ -19,6 +19,7 @@ import { DeleteProjectDialog } from "./DeleteProjectDialog";
 export function OrganizationOverview({ orgId }: { orgId: string }) {
   const { session } = usePartnerContext();
   const partnerId = session.activePartnerId;
+  const router = useRouter();
 
   const [org, setOrg] = useState<OrgWithOwner | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -161,18 +162,21 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                 </tr>
               ) : (
                 filteredProjects.map((project, idx) => (
-                  <tr key={project.uuid} className={cn(
-                    "group transition-colors",
-                    idx % 2 === 1 ? "bg-neutral-50/30" : "bg-white",
-                    "hover:bg-primary-100/30"
-                  )}>
+                  <tr 
+                    key={project.uuid} 
+                    onClick={() => router.push(`/overview?orgId=${orgId}&projectId=${project.uuid}`)}
+                    className={cn(
+                      "group transition-colors cursor-pointer",
+                      idx % 2 === 1 ? "bg-neutral-50/30" : "bg-white",
+                      "hover:bg-primary-100/30"
+                    )}
+                  >
                     <td className="px-6 py-4">
-                      <Link
-                        href={`/overview?orgId=${orgId}&projectId=${project.uuid}`}
-                        className="font-bold text-primary-300 hover:underline transition-all"
+                      <span
+                        className="font-bold text-primary-300 hover:underline transition-all block"
                       >
                         {project.name}
-                      </Link>
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5 leading-none relative">
@@ -204,7 +208,10 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                                   Project ID
                                 </span>
                                 <button
-                                  onClick={() => handleCopy(project.uuid)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleCopy(project.uuid);
+                                  }}
                                   className={cn(
                                     "flex h-6 items-center gap-1.5 rounded-md px-2 text-[10px] font-bold transition-all shrink-0",
                                     copiedId === project.uuid
@@ -249,7 +256,10 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                     <td className="px-6 py-4 text-right">
                       <div className="relative inline-block text-left">
                         <button
-                          onClick={() => setOpenMenuId(openMenuId === project.uuid ? null : project.uuid)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenMenuId(openMenuId === project.uuid ? null : project.uuid);
+                          }}
                           className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-900 transition-all"
                         >
                           <MoreVertical className="size-4" />
@@ -262,7 +272,8 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                           >
                             <div className="py-1">
                               <button
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.stopPropagation();
                                   setSelectedProject(project);
                                   setIsRenameOpen(true);
                                   setOpenMenuId(null);
@@ -274,7 +285,8 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                               </button>
                               <div className="h-px bg-neutral-100" />
                               <button
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.stopPropagation();
                                   setSelectedProject(project);
                                   setIsDeleteOpen(true);
                                   setOpenMenuId(null);

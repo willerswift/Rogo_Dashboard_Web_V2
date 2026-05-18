@@ -2,7 +2,13 @@
 
 This file serves as a persistent record of work completed, current status, and pending tasks. It should be updated at the end of every working session to ensure continuity.
 
-## Latest Update: May 14, 2026
+## Latest Update: May 18, 2026
+
+### Work Completed
+- **Enhanced Project Table UX**: Made rows in the "Projects in Organization" table clickable, allowing users to navigate directly to the project view by clicking anywhere on the row. Added `stopPropagation` to inline action buttons (Info, Copy, Action Menu) to prevent overlapping click events.
+- **Fixed Row Navigation Bug**: Replaced the `<Link>` component inside the "Name" column with a styled `<span>` to prevent event bubbling conflicts in Next.js App Router where clicking the link caused two simultaneous `router.push` events (one from `<Link>`, one from the `<tr>`), resulting in an aborted navigation.
+
+## Previous Update: May 14, 2026
 
 ### Work Completed
 - **Implemented Project Action Menu**: Added a three-dot dropdown menu for each project in the organization overview table.
