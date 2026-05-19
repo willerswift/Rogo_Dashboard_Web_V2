@@ -164,25 +164,38 @@ export function AccessTreeSidebar() {
               <button
                 onClick={() => setAccessScope("partner")}
                 className={cn(
-                  "flex-1 py-2 px-3 rounded-full transition-all whitespace-nowrap",
-                  accessScope === "partner" ? "bg-primary-300 text-white shadow-sm" : "text-[#777777] hover:text-neutral-900"
+                  "flex flex-1 flex-col justify-center items-center py-2 px-3 rounded-full transition-all whitespace-nowrap",
+                  accessScope === "partner" ? "bg-white shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]" : "hover:bg-black/5"
                 )}
-                style={{ fontFamily: 'SF Pro Display, sans-serif', fontSize: '14px', fontWeight: 400 }}
+                style={{ 
+                  fontFamily: 'SF Pro Display, sans-serif', 
+                  fontSize: '12px', 
+                  fontWeight: 700,
+                  lineHeight: '18px',
+                  color: accessScope === "partner" ? 'var(--brand-primary)' : '#4A4A4A',
+                  textAlign: 'center'
+                }}
               >
                 Partner View
               </button>
               <button
                 onClick={() => setAccessScope("project")}
                 className={cn(
-                  "flex-1 py-2 px-3 rounded-full transition-all whitespace-nowrap",
-                  accessScope === "project" ? "bg-primary-300 text-white shadow-sm" : "text-[#777777] hover:text-neutral-900"
+                  "flex flex-1 flex-col justify-center items-center py-2 px-3 rounded-full transition-all whitespace-nowrap",
+                  accessScope === "project" ? "bg-white shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]" : "hover:bg-black/5"
                 )}
-                style={{ fontFamily: 'SF Pro Display, sans-serif', fontSize: '14px', fontWeight: 400 }}
+                style={{ 
+                  fontFamily: 'SF Pro Display, sans-serif', 
+                  fontSize: '12px', 
+                  fontWeight: 700,
+                  lineHeight: '18px',
+                  color: accessScope === "project" ? 'var(--brand-primary)' : '#4A4A4A',
+                  textAlign: 'center'
+                }}
               >
                 Project view
               </button>
-            </div>
-          </div>
+            </div>          </div>
         )}
 
         {/* Tree Content */}

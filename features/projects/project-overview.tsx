@@ -78,7 +78,7 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
             <div className="flex items-center justify-center size-10 rounded-xl bg-gradient-to-br from-[var(--brand-primary)] to-[color-mix(in srgb, var(--brand-primary), black 10%)] text-white shadow-sm shadow-[var(--brand-primary)]/20">
               <LayoutDashboard className="size-5" />
             </div>
-            <h1 className="text-[32px] font-bold font-heading text-neutral-1000 tracking-tight leading-none">{project.name}</h1>
+            <h1 className="text-[28px] font-bold font-heading text-neutral-1000 tracking-tight leading-none">{project.name}</h1>
             <div className="flex items-center h-7 px-3 rounded-full bg-[#E1F7F1] text-[11px] font-bold text-[#1FC16B] uppercase tracking-wider leading-none ml-2">
               ACTIVE
             </div>

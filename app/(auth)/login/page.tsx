@@ -63,7 +63,7 @@ export default async function LoginPage() {
       <div className="flex flex-1 items-center justify-center bg-white p-6 sm:p-12 lg:p-24">
         <div className="w-full max-w-[420px] space-y-12">
           <div className="space-y-3">
-            <h2 className="text-[32px] font-bold font-heading tracking-tight text-[#111827]">Login</h2>
+            <h2 className="text-[28px] font-bold font-heading tracking-tight text-[#111827]">Login</h2>
             <p className="text-[15px] text-zinc-500 font-medium">
               Enter your credentials to access your dashboard.
             </p>

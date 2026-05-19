@@ -12,7 +12,7 @@ export default function SettingsPage() {
     <PermissionGate action="projectMgmt:*">
       <div className="space-y-6">
         <header className="space-y-2">
-          <h1 className="text-[32px] font-bold text-secondary-500">Settings</h1>
+          <h1 className="text-[28px] font-bold text-secondary-500 font-heading">Settings</h1>
           <p className="text-[14px] text-neutral-500">
             Manage your organization&apos;s preferences, branding, and security configurations.
           </p>

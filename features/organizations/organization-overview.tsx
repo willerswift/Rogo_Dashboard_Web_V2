@@ -99,7 +99,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h1 className="text-[32px] font-bold font-heading text-neutral-1000 tracking-tight">{org.name}</h1>
+          <h1 className="text-[28px] font-bold font-heading text-neutral-1000 tracking-tight">{org.name}</h1>
           <div className="flex items-center h-6 px-2.5 rounded-lg bg-primary-100 text-[11px] font-bold text-primary-300 uppercase">
             ID: {org.orgId}
           </div>

@@ -16,7 +16,7 @@ export function SettingsTabs({ activeTab, onChange }: { activeTab: string; onCha
           key={tab.id}
           onClick={() => onChange(tab.id)}
           className={cn(
-            "px-6 py-4 text-[16px] font-semibold transition-all relative font-heading",
+            "px-6 py-4 text-[14px] font-semibold transition-all relative font-heading",
             activeTab === tab.id
               ? "text-primary-300"
               : "text-neutral-500 hover:text-neutral-700"

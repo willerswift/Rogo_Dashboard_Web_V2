@@ -11,7 +11,15 @@ This file serves as a persistent record of work completed, current status, and p
     - Updated "Create New Organization" buttons in `AccessTreeSidebar`.
     - Updated the notification bell dot in `Topbar`.
     - Updated the typography and color of the "Back to Login" links in `ForgotPasswordForm` to match global primary variables and Montserrat 14px font-semibold.
-- **Standardized Auth Headings**: Updated the headings across the Login, Register, and Forgot Password screens to identically use `32px` font size and the `Montserrat` font family (`font-heading`).
+- **Refined Sidebar Navigation UI**: Updated the `NavSidebar` and `AccessTreeSidebar` active states based on design specifications.
+    - Updated `NavSidebar` active link background to `bg-primary-300/10` and text to `text-primary-300`.
+    - Redesigned `AccessTreeSidebar` Access Scope switch to perfectly match Figma specs: `flex-direction: column; justify-content: center`, white rounded-full pill background with soft shadow (`0 1px 2px 0 rgba(0,0,0,0.05)`), dynamic primary color text, and `SF Pro 12px font-weight 700` typography.
+    - Added custom active state styling for organizations and projects in the tree: a neutral-200 background with a right-aligned 4px solid neutral-800 border.
+- **Enhanced Sidebar Interactivity**: Updated the `NavSidebar` to be collapsed by default (`80px`) and expand on hover (`260px`).
+    - Implemented "Smart Animation" feel using CSS transitions with `cubic-bezier(0.4, 0, 0.2, 1)` and 500ms duration.
+    - Added fade-in and slide animations for navigation labels, the "Partner Admin" tag, and the logout text.
+    - Removed the manual toggle button for a cleaner, hover-driven experience.
+- **Standardized Auth Headings**: Updated the headings across the Login, Register, and Forgot Password screens to identically use `28px` (H4) font size and the `Montserrat` font family (`font-heading`), ensuring consistency with the platform typography scale.
 
 ## Previous Update: May 18, 2026
 
