@@ -5,11 +5,17 @@ This file serves as a persistent record of work completed, current status, and p
 ## Latest Update: May 19, 2026
 
 ### Work Completed
+- **Refined "Welcome to Rogo" View**: Standardized the initial dashboard greeting to comply with global design specifications and interactivity requirements.
+    - Updated typography to use the global heading standard: **Montserrat 28px (font-heading)** for "Welcome to Rogo".
+    - Standardized description text to **15px font-medium** with `neutral-500` color.
+    - Updated the "Select an entity" badge to use **rounded-full** and **Montserrat 14px font-semibold**, aligning it with the platform's button design.
+    - Implemented a "Play Once" animation policy: Added `animate-bounce-once` and `animate-pulse-once` to `globals.css` (tuned to a **3-second total duration** before stopping) and applied them to all animated elements in the Welcome view (Rocket icon, Sparkles, background glows, and loading dots). This ensures animations provide a lively entrance for a specific duration upon appearance rather than looping infinitely.
 - **Hardened Auth Screen Dynamic Colors**: Replaced Tailwind classes (`text-primary-300`) with inline CSS variables (`style={{ color: 'var(--brand-primary)' }}`) for the "Forgot password?", "Register", and "Login" text links in the Auth forms. This ensures the text color synchronously and reliably updates when the user changes the global brand primary color without relying on Tailwind JIT compilation caching.
 - **Synced Primary Color to Remaining UI Elements**: Fixed several hardcoded legacy brand colors (`#fd3566`, `#FF356A`) across the application to properly sync with the global dynamic primary color feature.
     - Updated "Forgot password?" link in `LoginForm`.
     - Updated "Create New Organization" buttons in `AccessTreeSidebar`.
     - Updated the notification bell dot in `Topbar`.
+    - Updated the "Logout" button in `NavSidebar` to use `text-primary-300` and `hover:bg-primary-300/10`, removing the hardcoded red color and ensuring it syncs with the dynamic brand color.
     - Updated the typography and color of the "Back to Login" links in `ForgotPasswordForm` to match global primary variables and Montserrat 14px font-semibold.
 - **Refined Sidebar Navigation UI**: Updated the `NavSidebar` and `AccessTreeSidebar` active states based on design specifications.
     - Updated `NavSidebar` active link background to `bg-primary-300/10` and text to `text-primary-300`.
@@ -27,6 +33,21 @@ This file serves as a persistent record of work completed, current status, and p
 - **Fixed Auth Screens Styling**: Removed hardcoded colors (e.g., `#fd3566`) from the "Forgot password?", "Register", and "Login" links, linking them instead to the global primary color theme variable. Also updated the "Login" and "Create Account" headings to match the global H4 typography size (Montserrat 28px).
 - **Enhanced Project Table UX**: Made rows in the "Projects in Organization" table clickable, allowing users to navigate directly to the project view by clicking anywhere on the row. Added `stopPropagation` to inline action buttons (Info, Copy, Action Menu) to prevent overlapping click events.
 - **Fixed Row Navigation Bug**: Replaced the `<Link>` component inside the "Name" column with a styled `<span>` to prevent event bubbling conflicts in Next.js App Router where clicking the link caused two simultaneous `router.push` events (one from `<Link>`, one from the `<tr>`), resulting in an aborted navigation.
+- **Resolved "Malformed resource string" API Error in Grant Access**: 
+    - Investigated the error `Malformed resource string` using a MongoDB database sample and user feedback.
+    - Corrected the project resource separator from a colon (`:`) to a forward slash (`/`) for specific projects (e.g., `partner:ROGO:project/6a03...`).
+    - Implemented wildcard support (`partner:ROGO:project/*`) when the "Apply to all projects" checkbox is selected in the UI.
+    - Updated actions to use the correct `projectReport` prefix for project-scoped resources.
+    - This fully aligns the frontend payload with the strict Rogo ABAC v2 backend validation rules.
+- **Wired ABAC Checkboxes in Grant Access Dialog**: 
+    - Found that the "Grant Access" UI was previously using hardcoded stub permissions (`["projectDev:edit", "projectDev:view", etc.]`) and ignoring the actual checkboxes.
+    - Implemented State bindings for the permission checkboxes in `GrantAccessDialog.tsx` (e.g., `permDevEdit`, `permAuthView`).
+    - Updated the `handleSubmit` payload to collect the actual user selections and updated `handleGrantAccess` in `users-page.tsx` to dynamically pass these selections into the API's `actions` array.
+- **Implemented Dynamic Project Permissions Display**:
+    - Replaced mocked demo data in the "Users" table with real project assignments parsed from the ABAC permission records.
+    - Added a helper function `getUserProjectData` to derive a user's accessible projects and their specific actions (Edit/View) from fully qualified resource strings.
+    - Enhanced the "Projects for [User]" modal to display actual project details on the left and the user's specific permissions (as badges) on the right, replacing the generic "ACTIVE" status.
+    - Integrated wildcard support for `project/*` resources, ensuring all projects are displayed if the user has partner-wide project access.
 
 ## Previous Update: May 14, 2026
 

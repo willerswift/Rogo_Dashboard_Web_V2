@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Panel, PrimaryButton, SecondaryButton } from "@/features/shared/ui";
 import { LogoAssetUpload } from "./LogoAssetUpload";
@@ -14,6 +14,19 @@ export function BrandingTab() {
   const [favicon, setFavicon] = useState<File | string>(globalFavicon);
   const [primaryColor, setPrimaryColor] = useState(globalColor);
   const [isColorDialogOpen, setIsColorDialogOpen] = useState(false);
+
+  // Sync local state with global state when it loads (e.g. from localStorage)
+  useEffect(() => {
+    setPrimaryColor(globalColor);
+  }, [globalColor]);
+
+  useEffect(() => {
+    setLogo(globalLogo);
+  }, [globalLogo]);
+
+  useEffect(() => {
+    setFavicon(globalFavicon);
+  }, [globalFavicon]);
 
   const logoPreview = logo instanceof File ? URL.createObjectURL(logo) : logo;
 
@@ -90,7 +103,7 @@ export function BrandingTab() {
           <SecondaryButton onClick={() => {
             const defaultColor = "#FD3566";
             const defaultLogo = "/Rogo logo_light.svg";
-            const defaultFavicon = "/favicon.ico";
+            const defaultFavicon = "/web_icon.png";
             setPrimaryColor(defaultColor);
             setLogo(defaultLogo);
             setFavicon(defaultFavicon);

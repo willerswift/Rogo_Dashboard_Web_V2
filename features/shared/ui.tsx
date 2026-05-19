@@ -11,12 +11,14 @@ export function Modal({
   title,
   children,
   wide,
+  headerExtra,
 }: {
   open: boolean;
   onClose: () => void;
   title: string;
   children: React.ReactNode;
   wide?: boolean;
+  headerExtra?: React.ReactNode;
 }) {
   useEffect(() => {
     if (!open) return;
@@ -34,28 +36,31 @@ export function Modal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
       <div className="fixed inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
       <div
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative z-10 mx-4 w-full bg-white shadow-dialog border border-dialog-border",
+          "relative z-10 w-full bg-white shadow-dialog border border-dialog-border animate-in fade-in zoom-in-95 duration-200",
           "rounded-[var(--Radius-6,12px)]",
-          wide ? "max-w-2xl" : "max-w-lg",
+          wide ? "max-w-3xl" : "max-w-lg",
         )}
       >
-        <div className="flex justify-between items-start self-stretch px-8 py-[var(--Spacing-5,20px)]">
-          <h5 className="text-[24px] font-bold text-[#1F244A] tracking-tight font-heading">{title}</h5>
-          <button
-            type="button"
-            onClick={onClose}
-            className="shrink-0 rounded-lg p-1 text-neutral-400 transition hover:bg-neutral-50 hover:text-neutral-600"
-          >
-            <X className="h-5 w-5" />
-          </button>
+        <div className="px-8 pt-6 pb-4">
+          <div className="flex justify-between items-start self-stretch">
+            <h5 className="text-[20px] font-bold text-[#1F244A] tracking-tight font-heading truncate">{title}</h5>
+            <button
+              type="button"
+              onClick={onClose}
+              className="shrink-0 rounded-lg p-1 text-neutral-400 transition hover:bg-neutral-50 hover:text-neutral-600"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          {headerExtra}
         </div>
-        <div className="px-8 pb-8">
+        <div className="px-8 pb-6">
           {children}
         </div>
       </div>

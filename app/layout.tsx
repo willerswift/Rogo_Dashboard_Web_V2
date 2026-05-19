@@ -30,6 +30,22 @@ export default async function RootLayout({
       className="h-full antialiased"
       suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var color = localStorage.getItem('rogo-primary-color');
+                  if (color) {
+                    document.documentElement.style.setProperty('--brand-primary', color);
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-full bg-white text-neutral-900" suppressHydrationWarning>
         <Providers initialSession={session}>{children}</Providers>
       </body>

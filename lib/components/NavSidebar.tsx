@@ -101,11 +101,11 @@ export function NavSidebar() {
         <button 
           onClick={handleLogout}
           className={cn(
-            "flex h-10 w-full items-center rounded-lg text-red-500 hover:bg-red-50 transition-all duration-500 font-sans",
+            "flex h-10 w-full items-center rounded-lg text-primary-300 hover:bg-primary-300/10 transition-all duration-500 font-sans",
             isCollapsed ? "justify-center px-0" : "px-3"
           )}
         >
-          <LogOut className={cn("size-[20px] text-red-500 shrink-0 transition-all duration-500", isCollapsed ? "" : "mr-3")} />
+          <LogOut className={cn("size-[20px] text-primary-300 shrink-0 transition-all duration-500", isCollapsed ? "" : "mr-3")} />
           <span className={cn(
             "text-[14px] font-medium font-sans transition-all duration-500 truncate whitespace-nowrap",
             isCollapsed ? "opacity-0 w-0 -translate-x-4" : "opacity-100 w-auto translate-x-0"

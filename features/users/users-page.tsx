@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
-import { UserPlus, Trash2, Pencil, UserMinus, Users, LayoutGrid } from "lucide-react";
+import { UserPlus, Trash2, Pencil, UserMinus, Users, LayoutGrid, Copy, Check } from "lucide-react";
 
 import { listProjects, listProjectUsers } from "@/lib/api/project";
 import { listOrganizations, listOrganizationUsers } from "@/lib/api/organization";
@@ -16,7 +16,7 @@ import {
   LoadingBlock,
   PrimaryButton,
   Modal,
-  InlineCode,
+  SearchInput,
 } from "@/features/shared/ui";
 import { DataTable, type DataTableColumn } from "@/lib/components/DataTable";
 import { Avatar } from "@/lib/components/ui/avatar";
@@ -39,7 +39,9 @@ export function UsersPage() {
   const [permissionRecords, setPermissionRecords] = useState<PermissionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showGrantAccess, setShowGrantAccess] = useState(false);
-  const [viewingProjectsFor, setViewingProjectsFor] = useState<{user: UserPartner, projects: Project[]} | null>(null);
+  const [viewingProjectsFor, setViewingProjectsFor] = useState<{user: UserPartner} | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [projectSearch, setProjectSearch] = useState("");
 
   const activeProject = useMemo(() => projects.find(p => p.uuid === projectId), [projects, projectId]);
   const activeOrg = useMemo(() => {
@@ -48,6 +50,13 @@ export function UsersPage() {
     }
     return orgs.find(o => o.orgId === orgId);
   }, [orgs, orgId, activeProject]);
+
+  const handleCopy = (id: string) => {
+    void navigator.clipboard.writeText(id);
+    setCopiedId(id);
+    toast.success("Project ID copied to clipboard");
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
   const loadData = useCallback(async () => {
     if (!partnerId) {
@@ -113,13 +122,11 @@ export function UsersPage() {
     if (!partnerId) return;
     try {
       // Build ABAC entries from the selected projects
-      // Currently, the UI stubs the permissions. In the future, we would map the checkboxes to `actions`.
-      // For now, we grant full 'edit' access to the selected projects as a sensible default for the stub.
       const entries: AbacV2Entry[] = [];
       if (projectIds.length > 0) {
         entries.push({
-          resources: projectIds.map(id => `project:${id}`),
-          actions: ["projectDev:edit", "projectDev:view", "report:edit", "report:view"] 
+          resources: projectIds.map(id => id === "*" ? `partner:${partnerId}:project/*` : `partner:${partnerId}:project/${id}`),
+          actions: permissions 
         });
       }
 
@@ -135,6 +142,85 @@ export function UsersPage() {
        toast.error(error instanceof Error ? error.message : "Failed to grant access.");
     }
   };
+
+  const getUserProjectData = useCallback((ownerId: string) => {
+    const record = permissionRecords.find(r => r.ownerId === ownerId);
+    if (!record || !record.abac) return [];
+
+    const projectDataMap = new Map<string, { project: Project; actions: string[] }>();
+    const allProjectsActions: string[] = [];
+
+    record.abac.forEach(entry => {
+      entry.resources.forEach(res => {
+        const match = res.match(new RegExp(`^partner:${partnerId}:project/(.+)$`));
+        if (match) {
+          const id = match[1];
+          if (id === "*") {
+            allProjectsActions.push(...entry.actions);
+          } else {
+            const project = projects.find(p => p.uuid === id);
+            if (project) {
+              const existing = projectDataMap.get(id) || { project, actions: [] };
+              existing.actions.push(...entry.actions);
+              projectDataMap.set(id, existing);
+            }
+          }
+        }
+      });
+    });
+
+    if (allProjectsActions.length > 0) {
+      projects.forEach(p => {
+        const existing = projectDataMap.get(p.uuid) || { project: p, actions: [] };
+        existing.actions.push(...allProjectsActions);
+        projectDataMap.set(p.uuid, existing);
+      });
+    }
+
+    return Array.from(projectDataMap.values()).map(item => ({
+      ...item,
+      actions: Array.from(new Set(item.actions))
+    }));
+  }, [permissionRecords, projects, partnerId]);
+
+  const filteredUserProjects = useMemo(() => {
+    if (!viewingProjectsFor) return [];
+    const allData = getUserProjectData(viewingProjectsFor.user.ownerId);
+    if (!projectSearch.trim()) return allData;
+
+    const query = projectSearch.toLowerCase();
+    const resMap: Record<string, string> = {
+      "projectAuth": "AUTH",
+      "projectMgmt": "MQTT",
+      "projectDev": "PROD",
+      "projectReport": "REPORT",
+    };
+
+    return allData.filter(({ project: p, actions }) => {
+      // 1. Search by Name or ID
+      if (p.name.toLowerCase().includes(query) || p.uuid.toLowerCase().includes(query)) return true;
+
+      // 2. Search by Permissions (Badges)
+      const groups: Record<string, Set<string>> = {};
+      actions.forEach(action => {
+        const [resource, act] = action.split(":");
+        const shortName = resMap[resource] || resource.toUpperCase();
+        if (!groups[shortName]) groups[shortName] = new Set();
+        groups[shortName].add(act || "*");
+      });
+
+      const badgeLabels: string[] = [];
+      Object.entries(groups).forEach(([name, acts]) => {
+        if (acts.has("*") || acts.has("edit")) {
+          badgeLabels.push(`${name} EDIT`.toLowerCase());
+        } else if (acts.has("view")) {
+          badgeLabels.push(`${name} VIEW`.toLowerCase());
+        }
+      });
+
+      return badgeLabels.some(label => label.includes(query));
+    });
+  }, [viewingProjectsFor, getUserProjectData, projectSearch]);
 
   const columns = useMemo<DataTableColumn<UserWithNumProject>[]>(() => {
     if (accessScope === "project") {
@@ -158,14 +244,8 @@ export function UsersPage() {
           header: "PROJECTS",
           headerClassName: "text-[11px] font-bold text-neutral-800 uppercase tracking-wider",
           cell: ({ user }) => {
-            // Restore demo data temporarily
-            const actualProjects = [
-              { name: "Sensor Integration", uuid: "PRJ-001" },
-              { name: "Alpha Project", uuid: "PRJ-002" },
-              { name: "Sample Project", uuid: "PRJ-003" },
-              { name: "Beta Project", uuid: "PRJ-004" },
-              { name: "Gamma Project", uuid: "PRJ-005" },
-            ] as unknown as Project[]; // Mocking data for UI verification
+            const userProjectData = getUserProjectData(user.ownerId);
+            const actualProjects = userProjectData.map(d => d.project);
 
             const displayProjects = actualProjects.slice(0, 3);
             const extraCount = actualProjects.length - 3;
@@ -186,7 +266,7 @@ export function UsersPage() {
                 </div>
                 {extraCount > 0 && (
                   <button
-                    onClick={() => setViewingProjectsFor({ user, projects: actualProjects })}
+                    onClick={() => setViewingProjectsFor({ user })}
                     className="text-[13px] font-bold text-neutral-500 text-left hover:text-neutral-900 transition-colors flex items-center gap-1 w-fit"
                   >
                     View {extraCount} more Project{extraCount !== 1 ? 's' : ''}
@@ -439,28 +519,99 @@ export function UsersPage() {
 
       <Modal
         open={viewingProjectsFor !== null}
-        onClose={() => setViewingProjectsFor(null)}
+        onClose={() => {
+          setViewingProjectsFor(null);
+          setProjectSearch("");
+        }}
         title={`Projects for ${viewingProjectsFor?.user.name}`}
+        wide
+        headerExtra={
+          <div className="flex justify-end mt-2">
+            <SearchInput
+              placeholder="Search by name, ID or permission..."
+              value={projectSearch}
+              onChange={(e) => setProjectSearch(e.target.value)}
+              className="w-full max-w-sm"
+            />
+          </div>
+        }
       >
-        <div className="space-y-4 max-h-[60vh] overflow-y-auto">
-          {viewingProjectsFor?.projects.length === 0 ? (
-            <p className="text-sm text-neutral-500 text-center py-4">No projects found.</p>
+        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+          {filteredUserProjects.length === 0 ? (
+            <p className="text-sm text-neutral-500 text-center py-8">
+              {projectSearch ? "No projects match your search." : "No projects found."}
+            </p>
           ) : (
-            <div className="flex flex-col gap-3">
-              {viewingProjectsFor?.projects.map((p) => (
-                <div key={p.uuid} className="flex items-center justify-between rounded-xl border border-neutral-200 p-3">
-                  <div>
-                    <p className="text-sm font-bold text-neutral-900">{p.name}</p>
-                    <p className="text-xs text-neutral-500 mt-1">
-                      <InlineCode value={p.uuid} />
-                    </p>
+            <div className="flex flex-col gap-2.5">
+              {filteredUserProjects.map(({ project: p, actions }) => {
+                const resMap: Record<string, string> = {
+                  "projectAuth": "AUTH",
+                  "projectMgmt": "MQTT",
+                  "projectDev": "PROD",
+                  "projectReport": "REPORT",
+                };
+
+                const badges: { label: string; isAdmin: boolean }[] = [];
+                const groups: Record<string, Set<string>> = {};
+
+                actions.forEach(action => {
+                  const [resource, act] = action.split(":");
+                  const shortName = resMap[resource] || resource.toUpperCase();
+                  if (!groups[shortName]) groups[shortName] = new Set();
+                  groups[shortName].add(act || "*");
+                });
+
+                Object.entries(groups).forEach(([name, acts]) => {
+                  if (acts.has("*") || acts.has("edit")) {
+                    badges.push({ label: `${name} EDIT`, isAdmin: true });
+                  } else if (acts.has("view")) {
+                    badges.push({ label: `${name} VIEW`, isAdmin: false });
+                  }
+                });
+
+                return (
+                  <div 
+                    key={p.uuid} 
+                    className="group flex items-center gap-4 rounded-2xl border border-neutral-200 bg-white p-4 transition-all hover:border-primary-300 hover:shadow-lg hover:shadow-primary-300/10"
+                  >
+                    <div className="flex flex-1 items-center gap-4 min-w-0">
+                      <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-100/50 text-primary-300 group-hover:bg-primary-300 group-hover:text-white transition-all duration-300 shadow-sm">
+                        <LayoutGrid className="size-5.5" />
+                      </div>
+                      <div className="flex flex-col gap-1 min-w-0">
+                        <p className="text-[16px] font-bold text-neutral-900 leading-none truncate group-hover:text-primary-300 transition-colors">
+                          {p.name}
+                        </p>
+                        <div className="flex items-center gap-2 text-neutral-400 font-mono text-[11px] tracking-tight">
+                          <span className="truncate font-medium group-hover:text-neutral-600 transition-colors">{p.uuid}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopy(p.uuid)}
+                            className="shrink-0 rounded-md p-1 text-neutral-400 transition hover:bg-neutral-100 hover:text-primary-300"
+                            title="Copy ID"
+                          >
+                            {copiedId === p.uuid ? (
+                              <Check className="size-3 text-green-600" />
+                            ) : (
+                              <Copy className="size-3" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex shrink-0 flex-wrap gap-2 justify-end items-center max-w-[50%]">
+                      {badges.length > 0 ? (
+                        badges.sort((a, b) => a.label.localeCompare(b.label)).map(badge => (
+                          <PermissionBadge key={badge.label} label={badge.label} isAdmin={badge.isAdmin} />
+                        ))
+                      ) : (
+                        <span className="text-[12px] text-neutral-400 italic font-medium px-2">Default Access</span>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex h-6 items-center gap-1.5 rounded-full bg-[#1FC16B]/10 px-2.5 text-[10px] font-bold tracking-wider text-[#1FC16B]">
-                    <div className="h-1.5 w-1.5 rounded-full bg-[#1FC16B]" />
-                    ACTIVE
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

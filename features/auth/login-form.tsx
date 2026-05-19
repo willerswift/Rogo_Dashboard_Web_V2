@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { login } from "@/lib/api/auth";
 import { cn } from "@/lib/utils/cn";
@@ -26,6 +26,7 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -36,9 +37,34 @@ export function LoginForm() {
     },
   });
 
+  // Load remembered credentials on mount
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rogo-remember-email");
+    const savedPassword = localStorage.getItem("rogo-remember-password");
+    const savedRememberMe = localStorage.getItem("rogo-remember-me") === "true";
+
+    if (savedRememberMe && savedEmail) {
+      setValue("email", savedEmail);
+      if (savedPassword) setValue("password", savedPassword);
+      setValue("rememberMe", true);
+    }
+  }, [setValue]);
+
   const onSubmit = handleSubmit(async (values) => {
     try {
       await login(values);
+      
+      // Handle Remember Me
+      if (values.rememberMe) {
+        localStorage.setItem("rogo-remember-email", values.email);
+        localStorage.setItem("rogo-remember-password", values.password);
+        localStorage.setItem("rogo-remember-me", "true");
+      } else {
+        localStorage.removeItem("rogo-remember-email");
+        localStorage.removeItem("rogo-remember-password");
+        localStorage.removeItem("rogo-remember-me");
+      }
+
       toast.success("Signed in successfully.");
       window.location.href = "/";
     } catch (error) {

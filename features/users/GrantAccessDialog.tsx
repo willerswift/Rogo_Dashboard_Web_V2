@@ -37,6 +37,12 @@ export function GrantAccessDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [view, setView] = useState<"permissions" | "projectList">("permissions");
 
+  const [permDevEdit, setPermDevEdit] = useState(false);
+  const [permDevView, setPermDevView] = useState(false);
+  const [permAuthEdit, setPermAuthEdit] = useState(false);
+  const [permAuthView, setPermAuthView] = useState(false);
+  const [permReport, setPermReport] = useState(false);
+
   const filteredProjects = useMemo(() => {
     return projects.filter(project => {
       const query = projectSearch.toLowerCase();
@@ -114,8 +120,18 @@ export function GrantAccessDialog({
     setIsSubmitting(true);
     try {
       if (onGrant) {
-        // Collect actual permission state later. For now pass stub permissions.
-        await onGrant(selectedUserId, Array.from(selectedProjects), ["example:permission"]);
+        const permissions: string[] = [];
+        if (permDevEdit) permissions.push("projectDev:edit");
+        if (permDevView) permissions.push("projectDev:view");
+        if (permAuthEdit) permissions.push("projectAuth:edit");
+        if (permAuthView) permissions.push("projectAuth:view");
+        if (permReport) permissions.push("projectReport:edit", "projectReport:view");
+        
+        const finalProjectIds = isAllSelected && selectedProjects.size === projects.length 
+          ? ["*"] 
+          : Array.from(selectedProjects);
+
+        await onGrant(selectedUserId, finalProjectIds, permissions);
       }
       onClose();
     } finally {
@@ -154,7 +170,7 @@ export function GrantAccessDialog({
           </div>
           
           {view === "projectList" && (
-            <div className="absolute right-8 bottom-[var(--Spacing-5,20px)] w-[280px]">
+            <div className="absolute right-8 bottom-3 w-[280px]">
               <SearchInput
                 placeholder="Search projects..."
                 value={projectSearch}
@@ -239,11 +255,11 @@ export function GrantAccessDialog({
                       <h6 className="text-[14px] font-medium text-primary-300">(Optional) Project Development</h6>
                       <div className="space-y-3 pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <CheckboxInput />
+                          <CheckboxInput checked={permDevEdit} onChange={() => setPermDevEdit(!permDevEdit)} />
                           <span className="text-[14px] text-neutral-700">Project Development Edit (Create/ Edit/ Delete)</span>
                         </label>
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <CheckboxInput />
+                          <CheckboxInput checked={permDevView} onChange={() => setPermDevView(!permDevView)} />
                           <span className="text-[14px] text-neutral-700">Project Development View</span>
                         </label>
                       </div>
@@ -255,11 +271,11 @@ export function GrantAccessDialog({
                       <h6 className="text-[14px] font-medium text-primary-300">(Optional) Project Authorization:</h6>
                       <div className="flex gap-8 pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <CheckboxInput />
+                          <CheckboxInput checked={permAuthEdit} onChange={() => setPermAuthEdit(!permAuthEdit)} />
                           <span className="text-[14px] text-neutral-700">Project Authorization Edit (Create/ Edit/ Delete)</span>
                         </label>
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <CheckboxInput />
+                          <CheckboxInput checked={permAuthView} onChange={() => setPermAuthView(!permAuthView)} />
                           <span className="text-[14px] text-neutral-700">Project Authorization View</span>
                         </label>
                       </div>
@@ -269,7 +285,7 @@ export function GrantAccessDialog({
                       <h6 className="text-[14px] font-medium text-primary-300">(Optional) Project Report:</h6>
                       <div className="pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
-                          <CheckboxInput />
+                          <CheckboxInput checked={permReport} onChange={() => setPermReport(!permReport)} />
                           <span className="text-[14px] text-neutral-700">Report Project</span>
                         </label>
                       </div>
@@ -280,7 +296,7 @@ export function GrantAccessDialog({
             </>
           ) : (
             <div className="flex-1 flex flex-col h-full bg-white overflow-hidden">
-              <div className="p-6 pb-4">
+              <div className="px-6 pt-4 pb-4">
                 <div className="flex items-center justify-between bg-primary-100/30 rounded-xl p-4 border border-primary-300/20">
                   <label className="flex items-center gap-3 cursor-pointer">
                     <CheckboxInput checked={isAllSelected} onChange={handleToggleAllProjects} />
