@@ -56,7 +56,7 @@ export function ForgotPasswordForm() {
         <Link
           href="/login"
           className="inline-flex items-center gap-2 text-[14px] font-semibold hover:opacity-80 transition-opacity font-heading"
-          style={{ color: '#393984' }}
+          style={{ color: 'var(--brand-primary)' }}
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Login
@@ -82,7 +82,7 @@ export function ForgotPasswordForm() {
               placeholder="name@company.com"
               {...register("email")}
               className={cn(
-                "block w-full h-10 pl-11 pr-3 bg-white rounded-[6px] border border-[#E5E7EB] text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-rogo-pink/10 focus:border-rogo-pink transition-all",
+                "block w-full h-10 pl-11 pr-3 bg-white rounded-[6px] border border-[#E5E7EB] text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
                 "autofill:shadow-[0_0_0_30px_white_inset]",
                 errors.email && "border-red-500 focus:border-red-500 focus:ring-red-500/10"
               )}
@@ -98,7 +98,7 @@ export function ForgotPasswordForm() {
         type="submit"
         disabled={isSubmitting}
         className={cn(
-          "w-full inline-flex h-[40px] px-3 py-2 gap-2 items-center justify-center rounded-full bg-rogo-pink text-white text-[14px] font-semibold transition-all hover:bg-[var(--brand-primary-hover)] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-rogo-pink/20 font-heading"
+          "w-full inline-flex h-[40px] px-3 py-2 gap-2 items-center justify-center rounded-full bg-primary-300 text-white text-[14px] font-semibold transition-all hover:bg-[var(--brand-primary-hover)] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-primary-300/20 font-heading"
         )}
       >
         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}
@@ -108,8 +108,8 @@ export function ForgotPasswordForm() {
       <div className="text-center">
         <Link
           href="/login"
-          className="inline-flex items-center gap-2 text-sm font-bold hover:opacity-70 transition-opacity"
-          style={{ color: '#393984' }}
+          className="inline-flex items-center gap-2 text-[14px] font-semibold hover:opacity-70 transition-opacity font-heading"
+          style={{ color: 'var(--brand-primary)' }}
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Login

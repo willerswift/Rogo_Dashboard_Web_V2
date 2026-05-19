@@ -123,7 +123,8 @@ export function LoginForm() {
         </label>
         <Link
           href="/forgot-password"
-          className="text-[14px] font-semibold text-[#fd3566] hover:opacity-80 transition-opacity font-heading" style={{ color: '#FF356A' }}
+          className="text-[14px] font-semibold hover:opacity-80 transition-opacity font-heading"
+          style={{ color: 'var(--brand-primary)' }}
         >
           Forgot password?
         </Link>
@@ -142,7 +143,7 @@ export function LoginForm() {
       <div className="pt-4 text-center">
         <p className="text-[13px] text-zinc-600">
           Don't have an account?{" "}
-          <Link href="/register" className="text-[14px] font-semibold text-primary-300 hover:underline font-heading" style={{ color: '#FF356A' }}>
+          <Link href="/register" className="text-[14px] font-semibold hover:underline font-heading" style={{ color: 'var(--brand-primary)' }}>
             Register
           </Link>
         </p>

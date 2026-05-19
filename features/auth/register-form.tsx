@@ -213,7 +213,7 @@ export function RegisterForm() {
       <div className="text-center">
         <p className="text-[13px] text-zinc-600">
           Already have an account?{" "}
-          <Link href="/login" className="text-[14px] font-semibold text-primary-300 hover:underline font-heading" style={{ color: '#FF356A' }}>
+          <Link href="/login" className="text-[14px] font-semibold hover:underline font-heading" style={{ color: 'var(--brand-primary)' }}>
             Login
           </Link>
         </p>

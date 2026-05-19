@@ -106,7 +106,7 @@ export function BrandingTab() {
 
       <div className="space-y-4">
         <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Live Preview</span>
-        <div className="rounded-2xl border border-neutral-200 bg-[#FFF1F4] p-8 aspect-video flex flex-col items-center justify-center relative overflow-hidden">
+        <div className="rounded-2xl border border-neutral-200 bg-primary-300/10 p-8 aspect-video flex flex-col items-center justify-center relative overflow-hidden">
           <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]" />
           
           <div className="relative w-full max-w-[480px] rounded-xl bg-white shadow-2xl border border-neutral-100 overflow-hidden scale-90 sm:scale-100">

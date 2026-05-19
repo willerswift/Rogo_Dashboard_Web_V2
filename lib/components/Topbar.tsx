@@ -12,7 +12,7 @@ export function Topbar() {
       <div className="flex items-center gap-5">
         <button className="relative rounded-full p-2 text-neutral-400 hover:bg-neutral-50 hover:text-neutral-600 transition-colors">
           <Bell className="size-[22px] stroke-[1.5px]" />
-          <span className="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-[#fd3566] ring-2 ring-white" />
+          <span className="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-primary-300 ring-2 ring-white" />
         </button>
 
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-purple-500 shadow-sm">

@@ -277,7 +277,7 @@ export function AccessTreeSidebar() {
 
               <button
                 onClick={() => setShowCreateOrg(true)}
-                className="flex w-full items-center gap-1.5 py-2 text-[14px] font-semibold text-[#FD3566] hover:bg-[#FD3566]/5 rounded-xl transition-colors mt-2 font-heading whitespace-nowrap"
+                className="flex w-full items-center gap-1.5 py-2 text-[14px] font-semibold text-primary-300 hover:bg-primary-300/10 rounded-xl transition-colors mt-2 font-heading whitespace-nowrap"
               >
                 <Plus className="size-5" />
                 <span>Create New Organization</span>
