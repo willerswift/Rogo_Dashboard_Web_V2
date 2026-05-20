@@ -143,7 +143,7 @@ export function GrantAccessDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4 transition-colors duration-500">
-      <div className="relative w-full max-w-[800px] h-[600px] flex flex-col rounded-[var(--Radius-6,12px)] bg-surface border border-dialog-border shadow-dialog animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
+      <div className="relative w-full max-w-[800px] h-[600px] flex flex-col rounded-[var(--Radius-6,12px)] bg-surface border border-dialog-border animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
         
         {/* Header */}
         <div className="relative px-8 py-[var(--Spacing-5,20px)] border-b border-border shrink-0">
@@ -203,7 +203,7 @@ export function GrantAccessDialog({
                       className={cn(
                         "w-full flex items-center gap-3 p-1 rounded-xl transition-all text-left self-stretch",
                         selectedUserId === user.ownerId 
-                          ? "bg-primary-100/20 ring-1 ring-primary-300/20 shadow-sm" 
+                          ? "bg-primary-100/20 ring-1 ring-primary-300/20" 
                           : "hover:bg-surface-muted"
                       )}
                     >
@@ -313,7 +313,7 @@ export function GrantAccessDialog({
               </div>
               <div className="flex-1 overflow-auto border-t border-border">
                 <table className="w-full text-left text-sm border-collapse">
-                  <thead className="sticky top-0 bg-surface shadow-sm z-10">
+                  <thead className="sticky top-0 bg-surface z-10">
                     <tr className="text-[12px] font-bold uppercase tracking-wider text-neutral-500 leading-[18px] font-sans border-b border-border">
                       <th className="px-6 py-4 w-12 text-left">ALL PROJECT</th>
                       <th className="px-6 py-4 text-left">NAME</th>
@@ -370,7 +370,7 @@ export function GrantAccessDialog({
           <SecondaryButton onClick={onClose} className="px-6">
             Close
           </SecondaryButton>
-          <PrimaryButton onClick={handleSubmit} disabled={!selectedUserId || isSubmitting} className="px-8 shadow-md shadow-primary-300/20">
+          <PrimaryButton onClick={handleSubmit} disabled={!selectedUserId || isSubmitting} className="px-8">
             Save
           </PrimaryButton>
         </div>

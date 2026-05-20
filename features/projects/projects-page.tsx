@@ -229,7 +229,7 @@ export function ProjectsPage() {
                         {openUuidId === project.uuid && (
                           <div 
                             ref={uuidRef}
-                            className="absolute bottom-full mb-3 left-0 z-[100] w-[280px] rounded-xl border border-border bg-surface p-3 shadow-2xl animate-in fade-in zoom-in duration-200"
+                            className="absolute bottom-full mb-3 left-0 z-[100] w-[280px] rounded-xl border border-border bg-surface p-3 animate-in fade-in zoom-in duration-200"
                           >
                             <div className="space-y-2">
                               <div className="flex items-center justify-between gap-2">

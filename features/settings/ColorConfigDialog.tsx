@@ -3,12 +3,16 @@
 import { useState, useEffect, useRef } from "react";
 import { Modal, SecondaryButton, PrimaryButton } from "@/features/shared/ui";
 import { cn } from "@/lib/utils/cn";
+import NextImage from "next/image";
+import { rgbToHex, extractColorsFromLogo, hsvToRgb, rgbToHsv } from "@/lib/utils/colors";
 
 interface ColorConfigDialogProps {
   open: boolean;
   onClose: () => void;
   initialColor: string;
   onSave: (color: string) => void;
+  logoUrl?: string;
+  recommendedColors?: string[];
 }
 
 function hexToRgb(hex: string) {
@@ -20,58 +24,32 @@ function hexToRgb(hex: string) {
   } : { r: 0, g: 0, b: 0 };
 }
 
-function rgbToHex(r: number, g: number, b: number) {
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).padStart(6, '0').toUpperCase();
-}
-
-function hsvToRgb(h: number, s: number, v: number) {
-  s = s / 100;
-  v = v / 100;
-  let r = 0, g = 0, b = 0;
-  const i = Math.floor(h / 60);
-  const f = h / 60 - i;
-  const p = v * (1 - s);
-  const q = v * (1 - f * s);
-  const t = v * (1 - (1 - f) * s);
-  switch (i % 6) {
-    case 0: r = v; g = t; b = p; break;
-    case 1: r = q; g = v; b = p; break;
-    case 2: r = p; g = v; b = t; break;
-    case 3: r = p; g = q; b = v; break;
-    case 4: r = t; g = p; b = v; break;
-    case 5: r = v; g = p; b = q; break;
-  }
-  return {
-    r: Math.round(r * 255),
-    g: Math.round(g * 255),
-    b: Math.round(b * 255)
-  };
-}
-
-function rgbToHsv(r: number, g: number, b: number) {
-  r /= 255; g /= 255; b /= 255;
-  const max = Math.max(r, g, b), min = Math.min(r, g, b);
-  let h = 0, s = 0, v = max;
-  const d = max - min;
-  s = max === 0 ? 0 : d / max;
-  if (max !== min) {
-    switch (max) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
-    }
-    h /= 6;
-  }
-  return { h: h * 360, s: s * 100, v: v * 100 };
-}
-
-export function ColorConfigDialog({ open, onClose, initialColor, onSave }: ColorConfigDialogProps) {
+export function ColorConfigDialog({ 
+  open, 
+  onClose, 
+  initialColor, 
+  onSave, 
+  logoUrl, 
+  recommendedColors: propRecommendedColors 
+}: ColorConfigDialogProps) {
   const [color, setColor] = useState(initialColor);
   const [rgb, setRgb] = useState(hexToRgb(initialColor));
   const [hsv, setHsv] = useState(rgbToHsv(rgb.r, rgb.g, rgb.b));
-  
+  const [recommendedColors, setRecommendedColors] = useState<string[]>(propRecommendedColors || [
+    "#FD3566", "#E21B54", "#FFB2BA", "#281719", "#5A5A88"
+  ]);
+
   const svAreaRef = useRef<HTMLDivElement>(null);
   const hueAreaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (propRecommendedColors && propRecommendedColors.length > 0) {
+      const timer = setTimeout(() => {
+        setRecommendedColors(propRecommendedColors);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [propRecommendedColors]);
 
   useEffect(() => {
     if (open) {
@@ -84,6 +62,17 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
       return () => clearTimeout(timer);
     }
   }, [initialColor, open]);
+
+  // Extract colors from logo if not provided by props
+  useEffect(() => {
+    if (!logoUrl || (propRecommendedColors && propRecommendedColors.length > 0)) return;
+
+    extractColorsFromLogo(logoUrl).then(colors => {
+      if (colors.length > 0) {
+        setRecommendedColors(colors);
+      }
+    });
+  }, [logoUrl, propRecommendedColors]);
 
   const updateFromHex = (newHex: string) => {
     setColor(newHex);
@@ -172,98 +161,35 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
     document.addEventListener('pointerup', handlePointerUp);
   };
 
-  const recommendedColors = [
-    "#FD3566", "#E21B54", "#FFB2BA", "#281719", "#5A5A88"
-  ];
-
   const hueColor = `hsl(${hsv.h}, 100%, 50%)`;
 
   return (
     <Modal open={open} onClose={onClose} title="Brand Color Configuration">
       <div className="space-y-6">
         <p className="text-sm text-neutral-500 -mt-4">Define your primary brand identity</p>
-        
-        {/* Interactive Color Picker */}
-        <div className="flex gap-4 h-[240px]">
-          {/* SV Area */}
-          <div 
-            ref={svAreaRef}
-            onPointerDown={handleSvPointerDown}
-            className="flex-1 rounded-2xl relative overflow-hidden cursor-crosshair touch-none shadow-inner"
-            style={{ backgroundColor: hueColor }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-white to-transparent pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent pointer-events-none" />
-            <div 
-              className="absolute h-6 w-6 rounded-full border-[3px] border-white shadow-md pointer-events-none -ml-3 -mt-3 transition-transform"
-              style={{
-                left: `${hsv.s}%`,
-                top: `${100 - hsv.v}%`,
-                backgroundColor: color
-              }}
-            />
-          </div>
-          
-          {/* Hue Slider */}
-          <div 
-            ref={hueAreaRef}
-            onPointerDown={handleHuePointerDown}
-            className="w-5 rounded-full relative cursor-pointer touch-none shadow-inner"
-            style={{
-              background: 'linear-gradient(to bottom, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'
-            }}
-          >
-            <div 
-              className="absolute -left-1 -right-1 h-3 rounded-full bg-white shadow-md border border-border pointer-events-none -mt-1.5 transition-transform"
-              style={{ top: `${(hsv.h / 360) * 100}%` }}
-            />
-          </div>
-        </div>
 
-        {/* HEX/RGB Inputs */}
-        <div className="grid grid-cols-4 gap-4">
-          <div className="space-y-1.5">
-            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Hex</span>
-            <input 
-              value={color}
-              onChange={handleHexChange}
-              className="w-full h-10 rounded-[6px] border border-border bg-surface px-3 text-[14px] font-medium text-foreground outline-none focus:border-primary-300 transition-all"
-            />
+        {/* Current Primary Logo Preview */}
+        {logoUrl && (
+          <div className="flex items-center gap-3 rounded-xl border border-neutral-100 bg-white p-3 w-fit min-w-[140px]">
+            <div className="relative h-8 w-8 overflow-hidden rounded-md border border-neutral-100 p-1 flex items-center justify-center">
+              <NextImage 
+                src={logoUrl} 
+                alt="Preview" 
+                width={32}
+                height={32}
+                className="object-contain"
+              />
+            </div>
+            <span className="text-[12px] font-medium text-neutral-600">
+              Current Primary Logo
+            </span>
           </div>
-          <div className="space-y-1.5">
-            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">R</span>
-            <input 
-              value={rgb.r}
-              onChange={(e) => handleRgbChange("r", e.target.value)}
-              className="w-full h-10 rounded-[6px] border border-border bg-surface px-3 text-[14px] font-medium text-foreground outline-none focus:border-primary-300 transition-all"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">G</span>
-            <input 
-              value={rgb.g}
-              onChange={(e) => handleRgbChange("g", e.target.value)}
-              className="w-full h-10 rounded-[6px] border border-border bg-surface px-3 text-[14px] font-medium text-foreground outline-none focus:border-primary-300 transition-all"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">B</span>
-            <input 
-              value={rgb.b}
-              onChange={(e) => handleRgbChange("b", e.target.value)}
-              className="w-full h-10 rounded-[6px] border border-border bg-surface px-3 text-[14px] font-medium text-foreground outline-none focus:border-primary-300 transition-all"
-            />
-          </div>
-        </div>
+        )}
 
-        {/* Recommended Colors */}
+        {/* Recommended Colors moved up */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Recommended from logo</span>
-            <div className="flex items-center gap-1">
-              <span className="text-[10px] font-bold text-neutral-500 uppercase">Rogo</span>
-              <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: initialColor }} />
-            </div>
           </div>
           <div className="flex gap-4">
             {recommendedColors.map((c) => (
@@ -278,13 +204,95 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
                 <div 
                   className={cn(
                     "h-10 w-10 rounded-full border-2 transition-colors",
-                    color.toUpperCase() === c.toUpperCase() ? "border-foreground shadow-sm" : "border-transparent"
+                    color.toUpperCase() === c.toUpperCase() ? "border-neutral-800" : "border-transparent"
                   )}
                   style={{ backgroundColor: c }}
                 />
-                <span className="text-[10px] font-bold text-neutral-400 group-hover:text-neutral-500 uppercase tracking-wider">{c}</span>
+                <span className="text-[10px] font-bold text-neutral-400 group-hover:text-neutral-600 uppercase tracking-wider">{c}</span>
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* Interactive Color Picker */}
+        <div className="flex gap-4 h-[240px]">
+          {/* SV Area */}
+          <div 
+            ref={svAreaRef}
+            onPointerDown={handleSvPointerDown}
+            className="flex-1 rounded-2xl relative overflow-hidden cursor-crosshair touch-none"
+            style={{ backgroundColor: hueColor }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-white to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent pointer-events-none" />
+            <div 
+              className="absolute h-6 w-6 rounded-full border-[3px] border-white pointer-events-none -ml-3 -mt-3 transition-transform"
+              style={{
+                left: `${hsv.s}%`,
+                top: `${100 - hsv.v}%`,
+                backgroundColor: color
+              }}
+            />
+          </div>
+          
+          {/* Hue Slider */}
+          <div 
+            ref={hueAreaRef}
+            onPointerDown={handleHuePointerDown}
+            className="w-5 rounded-full relative cursor-pointer touch-none"
+            style={{
+              background: 'linear-gradient(to bottom, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'
+            }}
+          >
+            <div 
+              className="absolute -left-1 -right-1 h-3 rounded-full bg-white border border-border pointer-events-none -mt-1.5 transition-transform"
+              style={{ top: `${(hsv.h / 360) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* HEX/RGB Inputs */}
+        <div className="flex gap-4">
+          <div className="space-y-1.5 flex-none">
+            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Hex</span>
+            <div className="relative flex items-center group">
+              <div 
+                className="absolute left-2.5 size-5 rounded-[4px] border border-neutral-100 transition-transform group-focus-within:scale-110"
+                style={{ backgroundColor: color }}
+              />
+              <input 
+                value={color}
+                onChange={handleHexChange}
+                className="w-[120px] h-10 rounded-[6px] border border-[#E5E7EB] bg-white pl-10 pr-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
+              />
+            </div>
+          </div>
+          
+          <div className="flex-1 grid grid-cols-3 gap-4">
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">R</span>
+              <input 
+                value={rgb.r}
+                onChange={(e) => handleRgbChange("r", e.target.value)}
+                className="w-full h-10 rounded-[6px] border border-[#E5E7EB] bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">G</span>
+              <input 
+                value={rgb.g}
+                onChange={(e) => handleRgbChange("g", e.target.value)}
+                className="w-full h-10 rounded-[6px] border border-[#E5E7EB] bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">B</span>
+              <input 
+                value={rgb.b}
+                onChange={(e) => handleRgbChange("b", e.target.value)}
+                className="w-full h-10 rounded-[6px] border border-[#E5E7EB] bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
+              />
+            </div>
           </div>
         </div>
 

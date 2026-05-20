@@ -34,7 +34,7 @@ export function Topbar() {
 
         <div className="h-8 w-[1px] bg-border mx-1" />
 
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary-200 to-secondary-300 shadow-sm ring-2 ring-white dark:ring-surface">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary-200 to-secondary-300 ring-2 ring-white dark:ring-surface">
           <span className="text-[14px] font-bold text-white">JD</span>
         </div>
       </div>

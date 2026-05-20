@@ -2,7 +2,7 @@
 
 import { Upload, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 interface LogoAssetUploadProps {
   label: string;
@@ -22,8 +22,25 @@ export function LogoAssetUpload({
   icon = "upload" 
 }: LogoAssetUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>(typeof value === "string" ? value : "");
 
-  const previewUrl = value instanceof File ? URL.createObjectURL(value) : value;
+  useEffect(() => {
+    if (value instanceof File) {
+      const url = URL.createObjectURL(value);
+      const timer = setTimeout(() => {
+        setPreviewUrl(url);
+      }, 0);
+      return () => {
+        clearTimeout(timer);
+        URL.revokeObjectURL(url);
+      };
+    } else if (typeof value === "string") {
+      const timer = setTimeout(() => {
+        setPreviewUrl(value);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [value]);
 
   const handleClick = () => {
     inputRef.current?.click();
@@ -67,8 +84,8 @@ export function LogoAssetUpload({
           </p>
           
           {previewUrl && (
-            <div className="flex items-center gap-3 rounded-xl border border-border bg-surface p-3 shadow-sm w-fit min-w-[140px]">
-              <div className="relative h-8 w-8 overflow-hidden rounded-md border border-border p-1 flex items-center justify-center">
+            <div className="flex items-center gap-3 rounded-xl border border-neutral-100 bg-white p-3 w-fit min-w-[140px]">
+              <div className="relative h-8 w-8 overflow-hidden rounded-md border border-neutral-100 p-1 flex items-center justify-center">
                 <Image 
                   src={previewUrl} 
                   alt="Preview" 

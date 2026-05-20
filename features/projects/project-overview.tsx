@@ -75,7 +75,7 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center size-10 rounded-xl bg-gradient-to-br from-[var(--brand-primary)] to-[color-mix(in srgb, var(--brand-primary), black 10%)] text-white shadow-sm shadow-[var(--brand-primary)]/20">
+            <div className="flex items-center justify-center size-10 rounded-xl bg-gradient-to-br from-[var(--brand-primary)] to-[color-mix(in srgb, var(--brand-primary), black 10%)] text-white">
               <LayoutDashboard className="size-5" />
             </div>
             <h1 className="text-[28px] font-bold font-heading text-foreground tracking-tight leading-none">{project.name}</h1>
@@ -136,7 +136,7 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
               <dd className="mt-2 flex items-center gap-2 font-medium text-foreground">
                 <div className="relative flex items-center justify-center">
                   <div className="absolute h-3 w-3 rounded-full bg-[#1FC16B] opacity-20 animate-ping" />
-                  <div className="relative h-2 w-2 rounded-full bg-[#1FC16B] shadow-sm" />
+                  <div className="relative h-2 w-2 rounded-full bg-[#1FC16B]" />
                 </div>
                 Fully Operational
               </dd>

@@ -83,7 +83,7 @@ export function ForgotPasswordForm() {
               {...register("email")}
               className={cn(
                 "block w-full h-10 pl-11 pr-3 bg-surface rounded-[6px] border border-border text-sm placeholder:text-neutral-500 text-foreground focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
-                "autofill:shadow-[0_0_0_1000px_var(--surface)_inset] autofill:text-fill-foreground",
+                " autofill:text-fill-foreground",
                 errors.email && "border-red-500 focus:border-red-500 focus:ring-red-500/10"
               )}
             />
@@ -98,7 +98,7 @@ export function ForgotPasswordForm() {
         type="submit"
         disabled={isSubmitting}
         className={cn(
-          "w-full inline-flex h-[40px] px-3 py-2 gap-2 items-center justify-center rounded-full bg-primary-300 text-white text-[14px] font-semibold transition-all hover:bg-[var(--brand-primary-hover)] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-primary-300/20 font-heading"
+          "w-full inline-flex h-[40px] px-3 py-2 gap-2 items-center justify-center rounded-full bg-primary-300 text-white text-[14px] font-semibold transition-all hover:bg-[var(--brand-primary-hover)] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed font-heading"
         )}
       >
         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}

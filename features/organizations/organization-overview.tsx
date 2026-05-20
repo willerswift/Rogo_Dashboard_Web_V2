@@ -133,7 +133,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
             />
             <PrimaryButton
               onClick={() => setIsCreateOpen(true)}
-              className="shadow-md shadow-primary-300/20 transition-all"
+              className="transition-all"
             >
               <Plus className="size-4 stroke-[3px]" />
               Create Project
@@ -141,7 +141,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
           </div>
         </div>
 
-        <div className="overflow-visible rounded-2xl border border-border bg-surface shadow-sm">
+        <div className="overflow-visible rounded-2xl border border-border bg-surface">
           <table className="w-full text-left text-sm border-collapse">
             <thead>
               <tr className="bg-surface-muted/50 border-b border-border text-[12px] font-bold uppercase tracking-wider text-neutral-500 leading-[18px] font-sans">
@@ -200,7 +200,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                         {openUuidId === project.uuid && (
                           <div
                             ref={uuidRef}
-                            className="absolute bottom-full mb-3 left-0 z-[100] w-[280px] rounded-xl border border-border bg-surface p-3 shadow-2xl animate-in fade-in zoom-in duration-200"
+                            className="absolute bottom-full mb-3 left-0 z-[100] w-[280px] rounded-xl border border-border bg-surface p-3 animate-in fade-in zoom-in duration-200"
                           >
                             <div className="space-y-2">
                               <div className="flex items-center justify-between gap-2">
@@ -268,7 +268,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                         {openMenuId === project.uuid && (
                           <div
                             ref={menuRef}
-                            className="absolute right-0 top-full z-20 mt-1 w-48 origin-top-right overflow-hidden rounded-xl border border-border bg-surface shadow-xl animate-in fade-in zoom-in-95 duration-150"
+                            className="absolute right-0 top-full z-20 mt-1 w-48 origin-top-right overflow-hidden rounded-xl border border-border bg-surface animate-in fade-in zoom-in-95 duration-150"
                           >
                             <div className="py-1">
                               <button

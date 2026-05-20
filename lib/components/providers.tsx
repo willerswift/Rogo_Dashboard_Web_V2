@@ -41,7 +41,7 @@ export function Providers({
           position="top-right"
           toastOptions={{
             classNames: {
-              toast: "border border-border bg-surface text-foreground shadow-panel",
+              toast: "border border-border bg-surface text-foreground",
               description: "text-muted-foreground",
             },
           }}

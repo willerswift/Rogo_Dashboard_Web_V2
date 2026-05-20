@@ -66,7 +66,7 @@ export function CreateOrganizationDialog({ open, onClose, onSuccess }: CreateOrg
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-black/40 p-4 transition-colors duration-500">
-      <div className="relative w-full max-w-[640px] rounded-[var(--Radius-6,12px)] bg-surface border border-dialog-border shadow-dialog animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
+      <div className="relative w-full max-w-[640px] rounded-[var(--Radius-6,12px)] bg-surface border border-dialog-border animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
         <div className="px-8 py-[var(--Spacing-5,20px)] flex items-center justify-between">
           <h5 className="text-[24px] font-bold text-foreground tracking-tight font-heading">Create New Organization</h5>
           <button
@@ -104,7 +104,7 @@ export function CreateOrganizationDialog({ open, onClose, onSuccess }: CreateOrg
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-primary-300 px-3 py-2 text-[14px] font-semibold text-white shadow-md shadow-primary-300/20 hover:bg-primary-400 transition-all disabled:opacity-50 font-heading"
+              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-primary-300 px-3 py-2 text-[14px] font-semibold text-white hover:bg-primary-400 transition-all disabled:opacity-50 font-heading"
             >
               Save
             </button>

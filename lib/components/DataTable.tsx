@@ -44,7 +44,7 @@ export function DataTable<T>({
   const hasHeader = title || description || toolbar;
 
   return (
-    <Card className="rounded-xl border-border shadow-sm bg-surface">
+    <Card className="rounded-xl border-border bg-surface">
       {hasHeader && (
         <CardHeader className="p-5 gap-4 sm:flex-row sm:items-start sm:justify-between border-b border-border">
           <div className="space-y-0.5">

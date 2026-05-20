@@ -449,13 +449,13 @@ export function UsersPage() {
             )}
 
             {/* Stat Badges */}
-            <div className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-[11px] font-bold text-neutral-500 shadow-sm">
+            <div className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-[11px] font-bold text-neutral-500">
               <Users className="size-3.5 text-neutral-400" />
               {users.length} Members
             </div>
             
             {(activeOrg || !projectId) && (
-              <div className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-[11px] font-bold text-neutral-500 shadow-sm">
+              <div className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-[11px] font-bold text-neutral-500">
                 <LayoutGrid className="size-3.5 text-neutral-400" />
                 {activeOrg 
                   ? projects.filter(p => p.orgId === activeOrg.orgId).length
@@ -476,7 +476,7 @@ export function UsersPage() {
             <PrimaryButton
               type="button"
               onClick={() => setShowGrantAccess(true)}
-              className="shadow-md shadow-primary-300/20 transition-all"
+              className="transition-all"
             >
               <UserPlus className="size-4" />
               Grant Access
@@ -497,7 +497,7 @@ export function UsersPage() {
             <PrimaryButton
               type="button"
               onClick={() => setShowGrantAccess(true)}
-              className="shadow-md shadow-primary-300/20 transition-all mt-2"
+              className="transition-all mt-2"
             >
               <UserPlus className="size-4" />
               Grant Permission
@@ -572,10 +572,10 @@ export function UsersPage() {
                 return (
                   <div 
                     key={p.uuid} 
-                    className="group flex items-center gap-4 rounded-2xl border border-border bg-surface p-4 transition-all hover:border-primary-300 hover:shadow-lg hover:shadow-primary-300/10"
+                    className="group flex items-center gap-4 rounded-2xl border border-border bg-surface p-4 transition-all hover:border-primary-300"
                   >
                     <div className="flex flex-1 items-center gap-4 min-w-0">
-                      <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-100/20 text-primary-300 group-hover:bg-primary-300 group-hover:text-white transition-all duration-300 shadow-sm">
+                      <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-100/20 text-primary-300 group-hover:bg-primary-300 group-hover:text-white transition-all duration-300">
                         <LayoutGrid className="size-5.5" />
                       </div>
                       <div className="flex flex-col gap-1 min-w-0">

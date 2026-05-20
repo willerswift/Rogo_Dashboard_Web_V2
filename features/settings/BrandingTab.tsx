@@ -7,6 +7,7 @@ import { LogoAssetUpload } from "./LogoAssetUpload";
 import { ColorConfigDialog } from "./ColorConfigDialog";
 import { cn } from "@/lib/utils/cn";
 import { useTheme } from "@/lib/components/ThemeProvider";
+import { extractColorsFromLogo, fileToBase64 } from "@/lib/utils/colors";
 
 export function BrandingTab() {
   const { primaryColor: globalColor, logoUrl: globalLogo, faviconUrl: globalFavicon, setBranding } = useTheme();
@@ -14,25 +15,67 @@ export function BrandingTab() {
   const [favicon, setFavicon] = useState<File | string>(globalFavicon);
   const [primaryColor, setPrimaryColor] = useState(globalColor);
   const [isColorDialogOpen, setIsColorDialogOpen] = useState(false);
+  const [recommendedColors, setRecommendedColors] = useState<string[]>([
+    "#38BDF8", "#4ADE80", "#818CF8", "#FBBF24", "#FD3566"
+  ]);
+
+  const [logoPreview, setLogoPreview] = useState<string>(typeof globalLogo === "string" ? globalLogo : "");
+
+  // Handle Logo Preview and Object URL Cleanup
+  useEffect(() => {
+    if (logo instanceof File) {
+      const url = URL.createObjectURL(logo);
+      const timer = setTimeout(() => {
+        setLogoPreview(url);
+      }, 0);
+      return () => {
+        clearTimeout(timer);
+        URL.revokeObjectURL(url);
+      };
+    } else {
+      const timer = setTimeout(() => {
+        setLogoPreview(logo);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [logo]);
 
   // Sync local state with global state when it loads (e.g. from localStorage)
   useEffect(() => {
-    setPrimaryColor(globalColor);
+    const timer = setTimeout(() => {
+      setPrimaryColor(globalColor);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [globalColor]);
 
   useEffect(() => {
-    setLogo(globalLogo);
+    const timer = setTimeout(() => {
+      setLogo(globalLogo);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [globalLogo]);
 
   useEffect(() => {
-    setFavicon(globalFavicon);
+    const timer = setTimeout(() => {
+      setFavicon(globalFavicon);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [globalFavicon]);
 
-  const logoPreview = logo instanceof File ? URL.createObjectURL(logo) : logo;
+  // Extract colors from logo whenever it changes
+  useEffect(() => {
+    if (logoPreview) {
+      extractColorsFromLogo(logoPreview).then(colors => {
+        if (colors.length > 0) {
+          setRecommendedColors(colors);
+        }
+      });
+    }
+  }, [logoPreview]);
 
-  const handleSave = () => {
-    const finalLogo = logo instanceof File ? URL.createObjectURL(logo) : logo;
-    const finalFavicon = favicon instanceof File ? URL.createObjectURL(favicon) : favicon;
+  const handleSave = async () => {
+    const finalLogo = logo instanceof File ? await fileToBase64(logo) : logo;
+    const finalFavicon = favicon instanceof File ? await fileToBase64(favicon) : favicon;
     setBranding(primaryColor, finalLogo, finalFavicon);
   };
 
@@ -62,38 +105,82 @@ export function BrandingTab() {
         <Panel title="BRAND COLORS">
           <div className="px-6 py-4 space-y-4">
             <div className="space-y-1">
-              <span className="text-sm font-bold text-foreground">Primary Color</span>
-              <p className="text-[13px] text-muted-foreground">
+              <h3 className="text-sm font-bold text-neutral-800">Primary Color</h3>
+              <p className="text-[13px] text-neutral-500">
                 Used for primary buttons, active states, and key visual highlights.
               </p>
             </div>
             
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setIsColorDialogOpen(true)}
-                className="flex items-center gap-4 rounded-xl border border-border bg-surface px-4 py-3 transition-all hover:border-primary-200"
-              >
-                <div 
-                  className="h-8 w-8 rounded-lg shadow-sm" 
-                  style={{ backgroundColor: primaryColor }} 
-                />
-                <span className="text-[15px] font-medium text-muted-foreground font-mono tracking-wider">
-                  {primaryColor.toUpperCase()}
-                </span>
-              </button>
-              
-              <div className="flex gap-2">
-                {["#38BDF8", "#4ADE80", "#818CF8", "#FBBF24", "#FD3566"].map((c) => (
-                  <button
-                    key={c}
-                    onClick={() => setPrimaryColor(c)}
-                    className={cn(
-                      "h-8 w-8 rounded-full border-2 transition-transform hover:scale-110",
-                      primaryColor === c ? "border-foreground" : "border-transparent"
-                    )}
-                    style={{ backgroundColor: c }}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-3 py-2 h-[56px] w-fit focus-within:border-primary-200 transition-all group">
+                  <div 
+                    className="h-10 w-10 rounded-lg shrink-0 cursor-pointer transition-transform hover:scale-105 active:scale-95" 
+                    style={{ backgroundColor: primaryColor }}
+                    onClick={() => setIsColorDialogOpen(true)}
+                    title="Open Color Picker"
                   />
-                ))}
+                  <input
+                    value={primaryColor}
+                    onChange={(e) => setPrimaryColor(e.target.value)}
+                    className="w-[85px] text-[15px] font-medium text-neutral-700 font-mono tracking-wider outline-none bg-transparent"
+                    placeholder="#000000"
+                  />
+                </div>
+                
+                <div className="flex gap-4">
+                  {recommendedColors.map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => setPrimaryColor(c)}
+                      className={cn(
+                        "flex flex-col items-center gap-2 group transition-transform hover:scale-105",
+                        primaryColor.toUpperCase() === c.toUpperCase() ? "scale-105" : ""
+                      )}
+                    >
+                      <div 
+                        className={cn(
+                          "h-10 w-10 rounded-full border-2 transition-colors",
+                          primaryColor.toUpperCase() === c.toUpperCase() ? "border-neutral-800" : "border-neutral-100"
+                        )}
+                        style={{ backgroundColor: c }}
+                      />
+                      <span className="text-[10px] font-bold text-neutral-400 group-hover:text-neutral-600 uppercase tracking-wider">{c}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2 max-w-[320px]">
+                <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Access Scope</span>
+                <div className="flex p-1 justify-center items-start self-stretch gap-1 rounded-full bg-neutral-100 transition-colors">
+                  <button
+                    className="flex flex-1 flex-col justify-center items-center py-2 px-3 rounded-full transition-all whitespace-nowrap bg-white"
+                    style={{ 
+                      fontFamily: 'SF Pro Display, sans-serif', 
+                      fontSize: '12px', 
+                      fontWeight: 700,
+                      lineHeight: '18px',
+                      color: primaryColor,
+                      textAlign: 'center'
+                    }}
+                  >
+                    Partner View
+                  </button>
+                  <button
+                    className="flex flex-1 flex-col justify-center items-center py-2 px-3 rounded-full transition-all whitespace-nowrap"
+                    style={{ 
+                      fontFamily: 'SF Pro Display, sans-serif', 
+                      fontSize: '12px', 
+                      fontWeight: 700,
+                      lineHeight: '18px',
+                      color: '#8E8E8E',
+                      textAlign: 'center'
+                    }}
+                  >
+                    Project view
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -122,7 +209,7 @@ export function BrandingTab() {
         <div className="rounded-2xl border border-border bg-primary-300/10 p-8 aspect-video flex flex-col items-center justify-center relative overflow-hidden">
           <div className="absolute inset-0 bg-surface/20 backdrop-blur-[2px]" />
           
-          <div className="relative w-full max-w-[480px] rounded-xl bg-surface shadow-2xl border border-border overflow-hidden scale-90 sm:scale-100">
+          <div className="relative w-full max-w-[480px] rounded-xl bg-surface border border-border overflow-hidden scale-90 sm:scale-100">
             {/* Mock Dashboard Top Nav */}
             <div className="h-12 border-b border-border/50 px-6 flex items-center justify-between">
               <div className="relative h-5 w-24">
@@ -141,7 +228,7 @@ export function BrandingTab() {
               </div>
               <div className="flex justify-center">
                 <div 
-                  className="h-8 w-32 rounded-full flex items-center justify-center text-[10px] font-bold text-white uppercase tracking-wider shadow-sm transition-colors"
+                  className="h-8 w-32 rounded-full flex items-center justify-center text-[10px] font-bold text-white uppercase tracking-wider transition-colors"
                   style={{ backgroundColor: primaryColor }}
                 >
                   Preview Render
@@ -156,6 +243,8 @@ export function BrandingTab() {
         open={isColorDialogOpen}
         onClose={() => setIsColorDialogOpen(false)}
         initialColor={primaryColor}
+        logoUrl={logoPreview}
+        recommendedColors={recommendedColors}
         onSave={(c) => {
           setPrimaryColor(c);
           setIsColorDialogOpen(false);

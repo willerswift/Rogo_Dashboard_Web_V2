@@ -120,7 +120,7 @@ export function AccessTreeSidebar() {
   };
 
   return (
-    <aside className="h-screen w-[280px] border-r border-border bg-surface overflow-hidden flex flex-col shadow-sm font-sans transition-colors duration-500">
+    <aside className="h-screen w-[280px] border-r border-border bg-surface overflow-hidden flex flex-col font-sans transition-colors duration-500">
       {/* 1. Partner Switcher */}
       <div className="p-4 border-b border-border">
         <div className="flex h-[40px] items-center justify-between gap-2 rounded-[4px] border border-border bg-surface-muted px-4 hover:border-primary-300 cursor-pointer transition-all">
@@ -165,7 +165,7 @@ export function AccessTreeSidebar() {
                 onClick={() => setAccessScope("partner")}
                 className={cn(
                   "flex flex-1 flex-col justify-center items-center py-2 px-3 rounded-full transition-all whitespace-nowrap",
-                  accessScope === "partner" ? "bg-surface shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]" : "hover:bg-surface-muted"
+                  accessScope === "partner" ? "bg-surface" : "hover:bg-surface-muted"
                 )}
                 style={{ 
                   fontFamily: 'SF Pro Display, sans-serif', 
@@ -182,7 +182,7 @@ export function AccessTreeSidebar() {
                 onClick={() => setAccessScope("project")}
                 className={cn(
                   "flex flex-1 flex-col justify-center items-center py-2 px-3 rounded-full transition-all whitespace-nowrap",
-                  accessScope === "project" ? "bg-surface shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]" : "hover:bg-surface-muted"
+                  accessScope === "project" ? "bg-surface" : "hover:bg-surface-muted"
                 )}
                 style={{ 
                   fontFamily: 'SF Pro Display, sans-serif', 
@@ -208,9 +208,9 @@ export function AccessTreeSidebar() {
           ) : (
             <div className="space-y-1">
               {/* Partner Root */}
-              <div className="flex items-center gap-4 py-2 text-[14px] font-normal text-neutral-500 whitespace-nowrap px-2">
-                <FolderIcon className="size-5 text-neutral-500 fill-current" />
-                <span>{session.activePartnerId || "Rogo"}</span>
+              <div className="flex items-center gap-4 py-2 text-[14px] font-normal text-neutral-600 whitespace-nowrap px-2">
+                <FolderIcon className="size-5 text-neutral-400 fill-neutral-400" />
+                <span className="font-heading uppercase tracking-wider text-[13px]">{session.activePartnerId || "ROGO"}</span>
               </div>
 
               {/* Organizations */}
@@ -223,10 +223,10 @@ export function AccessTreeSidebar() {
                   return (
                     <div key={org.orgId} className="space-y-0">
                       <div
-                        className="group flex items-center pl-2 hover:bg-surface-muted rounded-md cursor-pointer transition-colors"
+                        className="group flex items-center pl-2 hover:bg-neutral-50 rounded-md cursor-pointer transition-colors"
                         onClick={() => toggleOrg(org.orgId)}
                       >
-                        <div className="p-1 text-neutral-500 transition-colors mr-1">
+                        <div className="p-1 text-neutral-400 transition-colors mr-1">
                           {isExpanded ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
                         </div>
                         <button
@@ -235,14 +235,11 @@ export function AccessTreeSidebar() {
                             handleSelectOrg(org.orgId);
                           }}
                           className={cn(
-                            "flex flex-1 items-center gap-3 rounded-md px-2 py-2 text-[14px] font-sans transition-all whitespace-nowrap outline-none",
-                            isActive && "ring-2 ring-primary-300 ring-inset",
-                            isExpanded || isActive
-                              ? "font-normal text-neutral-500"
-                              : "font-normal text-neutral-500 hover:text-foreground"
+                            "flex flex-1 items-center gap-3 rounded-md px-2 py-2 text-[14px] transition-all whitespace-nowrap outline-none",
+                            isActive ? "text-primary-300 font-semibold" : "text-neutral-600 font-medium"
                           )}
                         >
-                          <Building2 className="size-[18px] shrink-0 text-neutral-500" />
+                          <Building2 className={cn("size-[18px] shrink-0", isActive ? "text-primary-300" : "text-neutral-400")} />
                           <span className="truncate">{org.name}</span>
                         </button>
                       </div>
@@ -271,17 +268,14 @@ export function AccessTreeSidebar() {
                     <button
                       onClick={() => handleSelectProject(project.uuid)}
                       className={cn(
-                        "flex w-full items-center gap-3 rounded-l-md rounded-r-none py-2 pl-1 pr-2 text-[14px] font-sans transition-all relative whitespace-nowrap",
+                        "flex w-full items-center gap-3 rounded-md py-2 pl-[42px] pr-2 text-[14px] transition-all relative whitespace-nowrap",
                         activeProjectId === project.uuid
-                          ? "bg-surface-muted font-normal text-foreground"
-                          : "font-normal text-neutral-500 hover:bg-surface-muted hover:text-foreground"
+                          ? "text-primary-300 font-semibold bg-primary-300/5"
+                          : "text-neutral-600 font-medium hover:bg-neutral-50"
                       )}
                     >
-                      <Dot className="size-[18px] shrink-0 text-[#22C55E]" />
+                      <Dot className={cn("size-[18px] shrink-0", activeProjectId === project.uuid ? "text-primary-300" : "text-green-500")} />
                       <span className="truncate">{project.name}</span>
-                      {activeProjectId === project.uuid && (
-                        <div className="absolute right-0 top-0 h-full w-[4px] bg-neutral-800 dark:bg-neutral-100" />
-                      )}
                     </button>
                   </div>
                 ))}
@@ -328,17 +322,14 @@ function OrgProjectsList({ projects, activeProjectId, onSelect, searchQuery }: {
           key={p.uuid}
           onClick={() => onSelect(p.uuid)}
           className={cn(
-            "flex w-full items-center gap-3 rounded-l-md rounded-r-none py-2 pl-[42px] pr-2 text-[14px] font-sans transition-all relative whitespace-nowrap",
+            "flex w-full items-center gap-3 rounded-md py-2 pl-[42px] pr-2 text-[14px] transition-all relative whitespace-nowrap",
             activeProjectId === p.uuid
-              ? "bg-surface-muted font-normal text-foreground"
-              : "font-normal text-neutral-500 hover:bg-surface-muted hover:text-foreground"
+              ? "text-primary-300 font-semibold bg-primary-300/5"
+              : "text-neutral-600 font-medium hover:bg-neutral-50"
           )}
         >
-          <Dot className="size-[18px] shrink-0 text-[#22C55E]" />
+          <Dot className={cn("size-[18px] shrink-0", activeProjectId === p.uuid ? "text-primary-300" : "text-green-500")} />
           <span className="truncate">{p.name}</span>
-          {activeProjectId === p.uuid && (
-            <div className="absolute right-0 top-0 h-full w-[4px] bg-neutral-800 dark:bg-neutral-100" />
-          )}
         </button>
       ))}
     </>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { Loader2, X, Check, Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Loader2, X, Check, Search, Eye, EyeOff, Lock } from "lucide-react";
 
 import { cn } from "@/lib/utils/cn";
 
@@ -42,7 +42,7 @@ export function Modal({
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative z-10 w-full bg-surface shadow-dialog border border-dialog-border animate-in fade-in zoom-in-95 duration-200",
+          "relative z-10 w-full bg-white border border-[#F3F4F6] animate-in fade-in zoom-in-95 duration-200",
           "rounded-[var(--Radius-6,12px)]",
           wide ? "max-w-3xl" : "max-w-lg",
         )}
@@ -82,7 +82,7 @@ export function Panel({
   action?: React.ReactNode;
 }) {
   return (
-    <section className={cn("rounded-xl border border-border bg-surface shadow-sm overflow-hidden transition-colors duration-500", className)}>
+    <section className={cn("rounded-xl border border-border bg-surface overflow-hidden transition-colors duration-500", className)}>
       <div className="flex items-start justify-between gap-4 px-6 py-4 border-b border-border-muted">
         <div className="space-y-1">
           <h2 className="text-[18px] font-bold text-foreground">{title}</h2>
@@ -102,18 +102,23 @@ export function Field({
   hint,
   error,
   children,
+  footer,
 }: {
   label: string;
   hint?: string;
   error?: string;
   children: React.ReactNode;
+  footer?: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-1.5">
       <span className="text-[13px] font-semibold text-neutral-500">{label}</span>
       {children}
-      {hint ? <span className="text-xs font-normal text-neutral-500">{hint}</span> : null}
-      {error ? <span className="text-xs font-medium text-red-600">{error}</span> : null}
+      <div className="flex flex-col gap-1">
+        {hint ? <span className="text-xs font-normal text-neutral-500">{hint}</span> : null}
+        {error ? <span className="text-xs font-medium text-red-600">{error}</span> : null}
+      </div>
+      {footer}
     </div>
   );
 }
@@ -128,7 +133,7 @@ export function TextInput(
       {...inputProps}
       className={cn(
         "h-10 rounded-[6px] border border-border bg-surface px-[var(--Spacing-2,8px)] text-[14px] text-foreground outline-none transition placeholder:text-neutral-400 focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20",
-        "autofill:shadow-[0_0_0_1000px_var(--surface)_inset] autofill:text-fill-foreground",
+        "autofill:text-fill-foreground",
         invalid && "border-red-200 focus:border-red-200 focus:ring-red-100/20",
         className,
       )}
@@ -150,7 +155,7 @@ export function SearchInput(
         {...inputProps}
         className={cn(
           "h-10 w-full rounded-[6px] border border-border bg-surface pl-9 pr-[var(--Spacing-2,8px)] text-[14px] text-foreground outline-none transition placeholder:text-neutral-400 focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20",
-          "autofill:shadow-[0_0_0_1000px_var(--surface)_inset] autofill:text-fill-foreground"
+          "autofill:text-fill-foreground"
         )}
       />
     </div>
@@ -167,7 +172,7 @@ export function TextArea(
       {...textareaProps}
       className={cn(
         "min-h-28 rounded-[6px] border border-border bg-surface px-[var(--Spacing-2,8px)] py-[var(--Spacing-2,8px)] text-[14px] text-foreground outline-none transition placeholder:text-neutral-400 focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20",
-        "autofill:shadow-[0_0_0_1000px_var(--surface)_inset] autofill:text-fill-foreground",
+        "autofill:text-fill-foreground",
         invalid && "border-red-200 focus:border-red-200 focus:ring-red-100/20",
         className,
       )}
@@ -185,11 +190,44 @@ export function SelectInput(
       {...selectProps}
       className={cn(
         "h-10 rounded-[6px] border border-border bg-surface px-[var(--Spacing-2,8px)] text-[14px] text-foreground outline-none transition focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20",
-        "autofill:shadow-[0_0_0_1000px_var(--surface)_inset] autofill:text-fill-foreground",
+        "autofill:text-fill-foreground",
         invalid && "border-red-200 focus:border-red-200 focus:ring-red-100/20",
         className,
       )}
     />
+  );
+}
+
+export function PasswordInput(
+  props: React.InputHTMLAttributes<HTMLInputElement> & { invalid?: boolean },
+) {
+  const { invalid, className, ...inputProps } = props;
+  const [show, setShow] = useState(false);
+
+  return (
+    <div className="relative group">
+      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-400 group-focus-within:text-primary-300 transition-colors">
+        <Lock className="size-4" />
+      </div>
+      <input
+        {...inputProps}
+        type={show ? "text" : "password"}
+        className={cn(
+          "h-10 w-full rounded-[6px] border border-border bg-surface pl-10 pr-10 text-[14px] text-foreground outline-none transition placeholder:text-neutral-400 focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20",
+          "autofill:text-fill-foreground",
+          invalid && "border-red-200 focus:border-red-200 focus:ring-red-100/20",
+          className,
+        )}
+      />
+      <button
+        type="button"
+        onClick={() => setShow(!show)}
+        className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-neutral-600 transition-colors cursor-pointer"
+        aria-label={show ? "Hide password" : "Show password"}
+      >
+        {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+      </button>
+    </div>
   );
 }
 
@@ -250,7 +288,7 @@ export function InlineCode({ value }: { value: string }) {
 
 export function JsonBlock({ value }: { value: unknown }) {
   return (
-    <pre className="overflow-x-auto rounded-2xl bg-secondary-500 p-6 text-[13px] leading-6 text-white font-mono shadow-inner">
+    <pre className="overflow-x-auto rounded-2xl bg-secondary-500 p-6 text-[13px] leading-6 text-white font-mono">
       {JSON.stringify(value, null, 2)}
     </pre>
   );

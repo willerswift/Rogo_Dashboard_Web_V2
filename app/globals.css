@@ -91,10 +91,10 @@
   --neutral-400: #bbbbbb;
   --neutral-500: #a4a4a4;
   --neutral-600: #8e8e8e;
-  --neutral-700: #777777;
-  --neutral-800: #606060;
-  --neutral-900: #4a4a4a;
-  --neutral-1000: #333333;
+  --neutral-700: #555555;
+  --neutral-800: #444444;
+  --neutral-900: #333333;
+  --neutral-1000: #111111;
 
   /* Status */
   --red-100: #fb3748;
@@ -108,8 +108,8 @@
   --Radius-6: 12px;
   --Spacing-2: 8px;
   --Spacing-5: 20px;
-  --panel-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --dialog-shadow: 0 10px 20px 0 rgba(33, 33, 76, 0.08);
+  --panel-shadow: none;
+  --dialog-shadow: none;
   --dialog-border: #F3F4F6;
 }
 

@@ -9,6 +9,7 @@ import {
   Panel,
   Field,
   TextInput,
+  PasswordInput,
   PrimaryButton,
   SecondaryButton,
 } from "@/features/shared/ui";
@@ -40,10 +41,14 @@ export function AccountPage() {
     if (!newPassword) return { score: 0, label: "", color: "bg-neutral-100" };
     
     let score = 0;
+    // 1. Length >= 8
     if (newPassword.length >= 8) score += 1;
-    if (newPassword.length >= 12) score += 1;
-    if (/[A-Z]/.test(newPassword) && /[a-z]/.test(newPassword)) score += 1;
-    if (/[0-9]/.test(newPassword) || /[^A-Za-z0-9]/.test(newPassword)) score += 1;
+    // 2. Contains uppercase
+    if (/[A-Z]/.test(newPassword)) score += 1;
+    // 3. Contains number
+    if (/[0-9]/.test(newPassword)) score += 1;
+    // 4. Contains special character
+    if (/[^A-Za-z0-9]/.test(newPassword)) score += 1;
 
     if (score <= 1) return { score: 1, label: "WEAK", color: "bg-red-400" };
     if (score === 2) return { score: 2, label: "MEDIUM", color: "bg-yellow-500" };
@@ -52,7 +57,7 @@ export function AccountPage() {
   }, [newPassword]);
 
   const isPasswordMismatch = confirmPassword.length > 0 && newPassword !== confirmPassword;
-  const isLengthInvalid = newPassword.length > 0 && newPassword.length < 12;
+  const isLengthInvalid = newPassword.length > 0 && newPassword.length < 8;
   const isFormFilled = currentPassword.length > 0 && newPassword.length > 0 && confirmPassword.length > 0;
   const isFormValid = isFormFilled && !isPasswordMismatch && !isLengthInvalid && strengthInfo.score >= 2;
 
@@ -67,7 +72,7 @@ export function AccountPage() {
         >
           <div className="px-6 py-4">
             <div className="flex flex-col gap-8 md:flex-row md:items-start">
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-surface text-2xl font-bold text-neutral-400 border border-border shadow-sm">
+              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-surface text-2xl font-bold text-neutral-400 border border-border">
                 JD
               </div>
 
@@ -127,13 +132,12 @@ export function AccountPage() {
       {/* Right Column - Security */}
       <div className="space-y-6 font-sans">
         <Panel
-          title="Security"
+          title="Change Password"
           action={<Shield className="size-5 text-neutral-500" />}
         >
           <div className="px-6 py-4 space-y-5">
             <Field label="Current Password">
-              <TextInput
-                type="password"
+              <PasswordInput
                 placeholder="••••••••"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
@@ -144,48 +148,69 @@ export function AccountPage() {
             <div className="space-y-3">
               <Field 
                 label="New Password"
-                error={isLengthInvalid ? "Password must be at least 12 characters." : undefined}
+                error={isLengthInvalid ? "Password must be at least 8 characters." : undefined}
+                footer={
+                  <div className="mt-2 space-y-3">
+                    {/* Strength Factors Description - Single Line (Moved UP) */}
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <div className={cn("flex items-center gap-1.5 transition-colors", newPassword.length >= 8 ? "text-primary-300" : "text-neutral-400")}>
+                        <div className={cn("size-1 rounded-full", newPassword.length >= 8 ? "bg-primary-300" : "bg-neutral-300")} />
+                        <span className="text-[12px] font-medium font-sans">8 characters</span>
+                      </div>
+                      <div className={cn("flex items-center gap-1.5 transition-colors", /[A-Z]/.test(newPassword) ? "text-primary-300" : "text-neutral-400")}>
+                        <div className={cn("size-1 rounded-full", /[A-Z]/.test(newPassword) ? "bg-primary-300" : "bg-neutral-300")} />
+                        <span className="text-[12px] font-medium font-sans">1 uppercase</span>
+                      </div>
+                      <div className={cn("flex items-center gap-1.5 transition-colors", /[0-9]/.test(newPassword) ? "text-primary-300" : "text-neutral-400")}>
+                        <div className={cn("size-1 rounded-full", /[0-9]/.test(newPassword) ? "bg-primary-300" : "bg-neutral-300")} />
+                        <span className="text-[12px] font-medium font-sans">Numbers</span>
+                      </div>
+                      <div className={cn("flex items-center gap-1.5 transition-colors", /[^A-Za-z0-9]/.test(newPassword) ? "text-primary-300" : "text-neutral-400")}>
+                        <div className={cn("size-1 rounded-full", /[^A-Za-z0-9]/.test(newPassword) ? "bg-primary-300" : "bg-neutral-300")} />
+                        <span className="text-[12px] font-medium font-sans">Special characters</span>
+                      </div>
+                    </div>
+
+                    {/* Multi-segment Strength Meter (Moved DOWN) */}
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1 flex gap-1.5 h-1.5">
+                        {[1, 2, 3, 4].map((seg) => (
+                          <div
+                            key={seg}
+                            className={cn(
+                              "flex-1 rounded-full transition-all duration-300",
+                              seg <= strengthInfo.score ? strengthInfo.color : "bg-neutral-100"
+                            )}
+                          />
+                        ))}
+                      </div>
+                      {strengthInfo.label && (
+                        <span className={cn("text-[10px] font-bold tracking-widest uppercase shrink-0", 
+                          strengthInfo.score === 1 ? "text-red-400" : 
+                          strengthInfo.score === 2 || strengthInfo.score === 3 ? "text-yellow-500" : "text-green-500"
+                        )}>
+                          {strengthInfo.label}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                }
               >
-                <TextInput
-                  type="password"
-                  placeholder="Minimum 12 characters"
+                <PasswordInput
+                  placeholder="Minimum 8 characters"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   invalid={isLengthInvalid}
                   className="w-full"
                 />
               </Field>
-              
-              {/* Multi-segment Strength Meter */}
-              <div className="flex items-center gap-4">
-                <div className="flex-1 flex gap-1.5 h-1.5">
-                  {[1, 2, 3, 4].map((seg) => (
-                    <div
-                      key={seg}
-                      className={cn(
-                        "flex-1 rounded-full transition-all duration-300",
-                        seg <= strengthInfo.score ? strengthInfo.color : "bg-surface-muted"
-                      )}
-                    />
-                  ))}
-                </div>
-                {strengthInfo.label && (
-                  <span className={cn("text-[10px] font-bold tracking-widest uppercase shrink-0", 
-                    strengthInfo.score === 1 ? "text-red-400" : 
-                    strengthInfo.score === 2 || strengthInfo.score === 3 ? "text-yellow-500" : "text-green-500"
-                  )}>
-                    {strengthInfo.label}
-                  </span>
-                )}
-              </div>
             </div>
 
             <Field 
               label="Confirm New Password" 
               error={isPasswordMismatch ? "Passwords do not match." : undefined}
             >
-              <TextInput
-                type="password"
+              <PasswordInput
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -198,7 +223,7 @@ export function AccountPage() {
               <PrimaryButton
                 onClick={handleSaveSecurity}
                 disabled={!isFormFilled}
-                className={cn(!isFormValid && isFormFilled && "opacity-50 cursor-not-allowed shadow-none")}
+                className={cn(!isFormValid && isFormFilled && "opacity-50 cursor-not-allowed")}
               >
                 Save Changes
               </PrimaryButton>
@@ -209,10 +234,10 @@ export function AccountPage() {
 
       {/* Bottom Banner */}
       <div className="lg:col-span-2">
-        <div className="flex items-center justify-between rounded-xl border border-primary-300/20 bg-primary-100/10 p-4 pl-0 overflow-hidden shadow-sm">
+        <div className="flex items-center justify-between rounded-xl border border-primary-300/20 bg-primary-100/10 p-4 pl-0 overflow-hidden">
           <div className="flex items-center gap-5">
             <div className="h-20 w-1.5 bg-primary-300 rounded-r-full" />
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border bg-surface shadow-sm">
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border bg-surface">
               <Shield className="size-5 text-primary-300" />
             </div>
             <div className="space-y-1">
@@ -223,7 +248,7 @@ export function AccountPage() {
             </div>
           </div>
           <div className="pr-6">
-            <SecondaryButton className="border-primary-300 text-primary-300 hover:bg-primary-300 hover:text-white transition-all shadow-sm">
+            <SecondaryButton className="border-primary-300 text-primary-300 hover:bg-primary-300 hover:text-white transition-all">
               Request access change
             </SecondaryButton>
           </div>

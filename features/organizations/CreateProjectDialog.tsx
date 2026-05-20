@@ -125,7 +125,7 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4 transition-colors duration-500">
-        <div className="relative w-full max-w-[720px] rounded-[var(--Radius-6,12px)] bg-surface border border-dialog-border shadow-dialog animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
+        <div className="relative w-full max-w-[720px] rounded-[var(--Radius-6,12px)] bg-surface border border-dialog-border animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
           <div className="px-8 py-[var(--Spacing-5,20px)] flex items-center justify-between">
             <h5 className="text-[24px] font-bold text-foreground tracking-tight font-heading">Create New Project</h5>
             <button
@@ -156,7 +156,7 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
                 </button>
 
                 {isDropdownOpen && (
-                  <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-10 overflow-hidden rounded-2xl border border-border bg-surface shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-10 overflow-hidden rounded-2xl border border-border bg-surface animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="max-h-[300px] overflow-y-auto py-2">
                       <button
                         type="button"
@@ -232,9 +232,8 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-primary-300 px-3 py-2 text-[14px] font-semibold text-white shadow-md shadow-primary-300/20 hover:bg-primary-400 transition-all disabled:opacity-50 font-heading"
-              >
-                Save
+                className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-primary-300 px-3 py-2 text-[14px] font-semibold text-white hover:bg-primary-400 transition-all disabled:opacity-50 font-heading"
+              >                Save
               </button>
             </div>
           </form>
