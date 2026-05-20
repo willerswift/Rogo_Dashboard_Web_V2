@@ -10,6 +10,7 @@ import { listProjects } from "@/lib/api/project";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import type { OrgWithOwner, Project, OrganizationMember } from "@/lib/types/partner";
 import { LoadingBlock, EmptyState, PrimaryButton, SearchInput } from "@/features/shared/ui";
+import { BreadcrumbHeader } from "@/features/shared/breadcrumb-header";
 import { cn } from "@/lib/utils/cn";
 import { formatDate } from "@/lib/utils/format";
 import { CreateProjectDialog } from "./CreateProjectDialog";
@@ -19,6 +20,7 @@ import { DeleteProjectDialog } from "./DeleteProjectDialog";
 export function OrganizationOverview({ orgId }: { orgId: string }) {
   const { session } = usePartnerContext();
   const partnerId = session.activePartnerId;
+  const partnerName = session.activePartnerId || "ROGO";
   const router = useRouter();
 
   const [org, setOrg] = useState<OrgWithOwner | null>(null);
@@ -95,17 +97,20 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
   if (!org) return <EmptyState title="Not found" description="Select an organization from the tree." />;
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-700 transition-colors duration-500">
-      {/* Header Section */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h1 className="text-[28px] font-bold font-heading text-foreground tracking-tight">{org.name}</h1>
-          <div className="flex items-center h-6 px-2.5 rounded-lg bg-primary-100/20 text-[11px] font-bold text-primary-300 uppercase">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-700 transition-colors duration-500">
+      <BreadcrumbHeader
+        items={[
+          { label: partnerName, href: "/overview?view=partner" },
+          { label: org.name, active: true }
+        ]}
+        backHref="/overview?view=partner"
+        breadcrumbAddon={
+          <div className="flex items-center h-8 px-3 rounded-full bg-primary-100/20 text-[12px] font-bold text-primary-300 uppercase tracking-tight">
             ID: {org.orgId}
           </div>
-        </div>
-
-        <div className="flex items-center gap-3">
+        }
+      >
+        <div className="flex items-center gap-3 ml-2">
           <div className="flex items-center h-7 px-3 rounded-full bg-primary-100/20 text-[10px] font-bold text-primary-300 uppercase tracking-wider">
             ORG
           </div>
@@ -118,7 +123,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
             {projects.length} Projects
           </div>
         </div>
-      </div>
+      </BreadcrumbHeader>
 
       {/* Projects Section */}
       <div className="space-y-6">

@@ -150,38 +150,6 @@ export function BrandingTab() {
                   ))}
                 </div>
               </div>
-
-              <div className="space-y-2 max-w-[320px]">
-                <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Access Scope</span>
-                <div className="flex p-1 justify-center items-start self-stretch gap-1 rounded-full bg-neutral-100 transition-colors">
-                  <button
-                    className="flex flex-1 flex-col justify-center items-center py-2 px-3 rounded-full transition-all whitespace-nowrap bg-white"
-                    style={{ 
-                      fontFamily: 'SF Pro Display, sans-serif', 
-                      fontSize: '12px', 
-                      fontWeight: 700,
-                      lineHeight: '18px',
-                      color: primaryColor,
-                      textAlign: 'center'
-                    }}
-                  >
-                    Partner View
-                  </button>
-                  <button
-                    className="flex flex-1 flex-col justify-center items-center py-2 px-3 rounded-full transition-all whitespace-nowrap"
-                    style={{ 
-                      fontFamily: 'SF Pro Display, sans-serif', 
-                      fontSize: '12px', 
-                      fontWeight: 700,
-                      lineHeight: '18px',
-                      color: '#8E8E8E',
-                      textAlign: 'center'
-                    }}
-                  >
-                    Project view
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </Panel>

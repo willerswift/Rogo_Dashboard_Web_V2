@@ -116,7 +116,7 @@ export function PartnerOverview() {
           />
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
           <table className="w-full text-left text-sm border-collapse">
             <thead>
               <tr className="bg-surface-muted/50 border-b border-border text-[12px] font-bold uppercase tracking-wider text-neutral-500 font-sans">

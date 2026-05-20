@@ -5,9 +5,11 @@ import { toast } from "sonner";
 import { Info, Check, Copy, Pencil, Trash2, LayoutDashboard, Fingerprint, Activity, CalendarDays, Calendar } from "lucide-react";
 
 import { getProjectDetail } from "@/lib/api/project";
+import { getOrganization } from "@/lib/api/organization";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
-import type { Project } from "@/lib/types/partner";
+import type { Project, OrgWithOwner } from "@/lib/types/partner";
 import { LoadingBlock, EmptyState, InlineCode, SecondaryButton, Panel } from "@/features/shared/ui";
+import { BreadcrumbHeader } from "@/features/shared/breadcrumb-header";
 import { cn } from "@/lib/utils/cn";
 import { formatDate } from "@/lib/utils/format";
 import { RenameProjectDialog } from "@/features/organizations/RenameProjectDialog";
@@ -18,8 +20,10 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
   const router = useRouter();
   const { session } = usePartnerContext();
   const partnerId = session.activePartnerId;
+  const partnerName = session.activePartnerId || "ROGO";
 
   const [project, setProject] = useState<Project | null>(null);
+  const [org, setOrg] = useState<OrgWithOwner | null>(null);
   const [loading, setLoading] = useState(true);
 
   // UI state
@@ -36,6 +40,11 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
       setLoading(true);
       const detail = await getProjectDetail(partnerId, projectId);
       setProject(detail.project);
+      
+      if (detail.project.orgId) {
+        const orgDetail = await getOrganization(partnerId, detail.project.orgId);
+        setOrg(orgDetail);
+      }
     } catch {
       toast.error("Failed to load project details");
     } finally {
@@ -71,23 +80,34 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-700 transition-colors duration-500">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center size-10 rounded-xl bg-gradient-to-br from-[var(--brand-primary)] to-[color-mix(in srgb, var(--brand-primary), black 10%)] text-white">
-              <LayoutDashboard className="size-5" />
-            </div>
-            <h1 className="text-[28px] font-bold font-heading text-foreground tracking-tight leading-none">{project.name}</h1>
-            <div className="flex items-center h-7 px-3 rounded-full bg-green-100/20 text-[11px] font-bold text-[#1FC16B] uppercase tracking-wider leading-none ml-2">
-              ACTIVE
-            </div>
+      <BreadcrumbHeader
+        items={[
+          { label: partnerName, href: "/overview?view=partner" },
+          { 
+            label: org ? org.name : "No Organization", 
+            href: org ? `/overview?orgId=${org.orgId}` : undefined
+          },
+          { label: project.name, active: true }
+        ]}
+        backHref={org ? `/overview?orgId=${org.orgId}` : "/overview?view=partner"}
+        breadcrumbAddon={
+          <div className="flex items-center h-8 px-3 rounded-full bg-primary-100/20 text-[12px] font-bold text-primary-300 uppercase tracking-tight">
+            ID: {displayId.slice(0, 8)}
           </div>
-          <p className="text-sm text-neutral-500">
-            Manage your project configuration and view essential details.
-          </p>
+        }
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex items-center h-7 px-3 rounded-full bg-green-100/20 text-[11px] font-bold text-[#1FC16B] uppercase tracking-wider">
+            ACTIVE
+          </div>
         </div>
-        
+      </BreadcrumbHeader>
+
+      {/* Actions Row */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-neutral-500">
+          Manage your project configuration and view essential details.
+        </p>
         <div className="flex items-center gap-3">
           <SecondaryButton onClick={() => setIsRenameOpen(true)}>
             <Pencil className="size-4" />

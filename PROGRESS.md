@@ -5,6 +5,30 @@ This file serves as a persistent record of work completed, current status, and p
 ## Latest Update: May 20, 2026
 
 ### Work Completed
+- **Refined Breadcrumb Header Layout & Spacing**:
+    - **Single-line Layout**: Moved organization statistical badges (Member count, Project count) into the same horizontal line as the breadcrumb navigation.
+    - **ID Placement**: Added a `breadcrumbAddon` slot to render the ID tag immediately adjacent to the rightmost breadcrumb segment, decoupling it from the right-aligned stats.
+    - **Right Alignment**: Implemented a `justify-between` flex layout to push contextual tags and badges to the far right of the header, keeping the breadcrumb navigation cleanly on the left.
+    - **Back Button Spacing**: Shortened the gap between the back button and the breadcrumb navigation path from 16px to 8px.
+    - **Visual Sync**: Updated the active breadcrumb segment color to sync with the primary brand color (`text-primary-300`).
+    - **Flat Design Compliance**: Removed the border, shadow, and outline from the back button, as well as the shadow from the organizations table, to maintain consistency with the application's flat design system.
+- **Branding Settings Cleanup**: 
+    - Removed a redundant "Access Scope" toggle element (Partner View / Project View) that was inadvertently placed inside the "Brand Colors" configuration panel.
+- **Redesigned Breadcrumb Header UI**: Refined the navigation header to match the latest typography and color specifications.
+    - **Typography Scale**: Updated breadcrumb text size to **Montserrat 24px font-bold** (H4 scaled) with a **36px line-height**.
+    - **Color Logic**:
+        - **Non-active Segments**: Set to `text-neutral-600` (#8E8E8E). If clickable, they transition to `text-primary-300` on hover.
+        - **Active Segment**: Set to `text-secondary-400` (#21214C) to clearly indicate the current view.
+        - **Separator**: Standardized the literal "/" separator to `text-neutral-600`.
+    - **Unified Single-Line Layout**: Integrated navigation segments and contextual badges (ID, Status) into a single horizontal flow. Used `flex-wrap` and `items-center` to ensure badges stay perfectly aligned with the text baseline.
+- **Implemented Unified Breadcrumb Header**: Added a standardized navigation header across all overview states to provide clear hierarchical context and intuitive navigation.
+    - Features a **Back Button**: Allows users to quickly return to the previous logical level (e.g., from Project to Organization, or Organization to Partner Overview).
+    - Dynamic Breadcrumb Paths:
+        - **Organization**: `Partner Name / Organization Name`
+        - **Project (with Org)**: `Partner Name / Organization Name / Project Name`
+        - **Standalone Project**: `Partner Name / No Organization / Project Name`
+    - **Interactive Segments**: Made breadcrumb segments clickable, enabling direct navigation to the Partner Overview or Organization Overview tables.
+    - Integrated this header into `OrganizationOverview` and `ProjectOverview` components.
 - **Implemented Partner Overview Table**: Added a new platform-level view that displays a summary of all organizations when the "Partner Root" is clicked in the sidebar.
     - Features a comprehensive data table with columns: **Organization Name**, **Organization ID**, **Projects** (count), **Members** (count), **Created Date**, and **Updated Date**.
     - Enabled row-level navigation to the specific Organization Overview from the table.
