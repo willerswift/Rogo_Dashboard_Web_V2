@@ -138,12 +138,12 @@ export function AccessTreeSidebar() {
 
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* 2. Access Tree Header */}
-        <div className="p-6 pb-2">
+        <div className="px-4 pt-6 pb-2">
           <h2 className="text-[20px] font-semibold font-heading text-foreground tracking-tight">Access Tree</h2>
         </div>
 
         {/* 3. Search */}
-        <div className="px-6 py-2">
+        <div className="px-4 py-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
             <input
@@ -158,7 +158,7 @@ export function AccessTreeSidebar() {
 
         {/* 4. Access Scope Toggle */}
         {!pathname.startsWith("/overview") && (
-          <div className="px-6 py-2">
+          <div className="px-4 py-2">
             <p className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">ACCESS SCOPE</p>
             <div className="flex p-1 justify-center items-start self-stretch gap-1 rounded-full bg-border-muted transition-colors">
               <button
@@ -208,13 +208,19 @@ export function AccessTreeSidebar() {
           ) : (
             <div className="space-y-1">
               {/* Partner Root */}
-              <div className="flex items-center gap-4 py-2 text-[14px] font-normal text-neutral-600 whitespace-nowrap px-2">
+              <div 
+                onClick={() => router.push(`${pathname}?view=partner`)}
+                className="flex items-center gap-4 py-2 text-[14px] text-foreground whitespace-nowrap px-0 cursor-pointer hover:bg-neutral-50 rounded-md transition-colors"
+              >
                 <FolderIcon className="size-5 text-neutral-400 fill-neutral-400" />
-                <span className="font-heading uppercase tracking-wider text-[13px]">{session.activePartnerId || "ROGO"}</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-neutral-500 font-normal">Partner:</span>
+                  <span className="font-bold uppercase tracking-tight">{session.activePartnerId || "ROGO"}</span>
+                </div>
               </div>
 
               {/* Organizations */}
-              <div className="pl-0.5 space-y-0">
+              <div className="pl-0 space-y-0">
                 {filteredOrgs.map((org) => {
                   const isExpanded = expandedOrgs.has(org.orgId);
                   const isActive = activeOrgId === org.orgId && !activeProjectId;
@@ -223,7 +229,7 @@ export function AccessTreeSidebar() {
                   return (
                     <div key={org.orgId} className="space-y-0">
                       <div
-                        className="group flex items-center pl-2 hover:bg-neutral-50 rounded-md cursor-pointer transition-colors"
+                        className="group flex items-center pl-0 hover:bg-neutral-50 rounded-md cursor-pointer transition-colors"
                         onClick={() => toggleOrg(org.orgId)}
                       >
                         <div className="p-1 text-neutral-400 transition-colors mr-1">
@@ -264,13 +270,13 @@ export function AccessTreeSidebar() {
                 })}
 
                 {filteredStandaloneProjects.map((project) => (
-                  <div key={project.uuid} className="pl-2">
+                  <div key={project.uuid} className="w-full">
                     <button
                       onClick={() => handleSelectProject(project.uuid)}
                       className={cn(
-                        "flex w-full items-center gap-3 rounded-md py-2 pl-[42px] pr-2 text-[14px] transition-all relative whitespace-nowrap",
+                        "flex w-full items-center gap-3 rounded-md py-2 pl-[22px] pr-2 text-[14px] transition-all relative whitespace-nowrap outline-none",
                         activeProjectId === project.uuid
-                          ? "text-primary-300 font-semibold bg-primary-300/5"
+                          ? "text-primary-300 font-semibold bg-primary-300/5 ring-1 ring-primary-300/20"
                           : "text-neutral-600 font-medium hover:bg-neutral-50"
                       )}
                     >
@@ -283,7 +289,7 @@ export function AccessTreeSidebar() {
 
               <button
                 onClick={() => setShowCreateOrg(true)}
-                className="flex w-full items-center gap-1.5 py-2 text-[14px] font-semibold text-primary-300 hover:bg-primary-300/10 rounded-xl transition-colors mt-2 font-heading whitespace-nowrap"
+                className="flex w-full items-center gap-1.5 py-2 px-2 text-[14px] font-semibold text-primary-300 hover:bg-primary-300/10 rounded-xl transition-colors mt-2 font-heading whitespace-nowrap outline-none"
               >
                 <Plus className="size-5" />
                 <span>Create New Organization</span>
@@ -322,9 +328,9 @@ function OrgProjectsList({ projects, activeProjectId, onSelect, searchQuery }: {
           key={p.uuid}
           onClick={() => onSelect(p.uuid)}
           className={cn(
-            "flex w-full items-center gap-3 rounded-md py-2 pl-[42px] pr-2 text-[14px] transition-all relative whitespace-nowrap",
+            "flex w-full items-center gap-3 rounded-md py-2 pl-[38px] pr-2 text-[14px] transition-all relative whitespace-nowrap outline-none",
             activeProjectId === p.uuid
-              ? "text-primary-300 font-semibold bg-primary-300/5"
+              ? "text-primary-300 font-semibold bg-primary-300/5 ring-1 ring-primary-300/20"
               : "text-neutral-600 font-medium hover:bg-neutral-50"
           )}
         >
