@@ -32,6 +32,12 @@ This file serves as a persistent record of work completed, current status, and p
 - **Addressed Runtime and Build Integrity**:
     - Fixed a naming collision where the Next.js `Image` component shadowed the native browser `Image` constructor, resolving a runtime `TypeError`.
     - Resolved several TypeScript and linting warnings, specifically focusing on `prefer-const` and cascading render issues in `useEffect`.
+- **Implemented Partner Selection Dropdown**:
+    - Added a functional partner switcher to the `AccessTreeSidebar`, allowing users with multiple partner associations to switch between them easily.
+    - Created a new API route `/api/session/active-partner` to securely update the `activePartnerId` in the server-side session cookie.
+    - Enhanced the UI with an interactive dropdown menu, including visual feedback for the currently active partner and a click-outside-to-close handler.
+    - Integrated the switcher with the existing `PartnerContext`, ensuring the organization and project tree automatically reloads upon switching.
+    - Implemented automatic query parameter clearing (e.g., `orgId`, `projectId`) when a new partner is selected to maintain data integrity across different contexts.
 
 ## Previous Update: May 19, 2026
 

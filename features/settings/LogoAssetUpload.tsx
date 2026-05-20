@@ -84,8 +84,8 @@ export function LogoAssetUpload({
           </p>
           
           {previewUrl && (
-            <div className="flex items-center gap-3 rounded-xl border border-neutral-100 bg-white p-3 w-fit min-w-[140px]">
-              <div className="relative h-8 w-8 overflow-hidden rounded-md border border-neutral-100 p-1 flex items-center justify-center">
+            <div className="flex items-center gap-3 rounded-xl border border-neutral-100 dark:border-neutral-800 bg-white dark:bg-surface-muted p-3 w-fit min-w-[140px]">
+              <div className="relative h-8 w-8 overflow-hidden rounded-md border border-neutral-100 dark:border-neutral-800 p-1 flex items-center justify-center bg-white">
                 <Image 
                   src={previewUrl} 
                   alt="Preview" 
@@ -94,7 +94,7 @@ export function LogoAssetUpload({
                   className="object-contain"
                 />
               </div>
-              <span className="text-[12px] font-medium text-neutral-500">
+              <span className="text-[12px] font-medium text-neutral-500 dark:text-neutral-400">
                 Current {label}
               </span>
             </div>

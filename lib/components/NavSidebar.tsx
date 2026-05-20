@@ -78,11 +78,11 @@ export function NavSidebar() {
                 "group relative flex items-center transition-all duration-500 overflow-hidden font-sans rounded-lg",
                 isCollapsed ? "justify-center px-0 py-3" : "px-3 py-2",
                 isActive
-                  ? "bg-primary-300/10 text-primary-300 font-semibold"
+                  ? "bg-primary-300/20 text-primary-300 dark:text-white font-semibold"
                   : "text-foreground font-normal hover:bg-surface-muted hover:text-foreground"
                 )}
                 >
-                <Icon className={cn("size-[22px] shrink-0 transition-all duration-500", isCollapsed ? "mx-0" : "mr-3", isActive ? "text-primary-300" : "text-foreground stroke-[1.5px]")} />
+                <Icon className={cn("size-[22px] shrink-0 transition-all duration-500", isCollapsed ? "mx-0" : "mr-3", isActive ? "text-primary-300 dark:text-white" : "text-foreground stroke-[1.5px]")} />
                 <span className={cn(
                   "truncate whitespace-nowrap text-[14px] leading-[21px] font-sans transition-all duration-500",
                   isCollapsed ? "opacity-0 w-0 -translate-x-4" : "opacity-100 w-auto translate-x-0"
