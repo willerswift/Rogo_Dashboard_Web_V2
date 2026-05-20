@@ -214,7 +214,7 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
             }}
           >
             <div 
-              className="absolute -left-1 -right-1 h-3 rounded-full bg-white shadow-md border border-neutral-200 pointer-events-none -mt-1.5 transition-transform"
+              className="absolute -left-1 -right-1 h-3 rounded-full bg-white shadow-md border border-border pointer-events-none -mt-1.5 transition-transform"
               style={{ top: `${(hsv.h / 360) * 100}%` }}
             />
           </div>
@@ -227,7 +227,7 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
             <input 
               value={color}
               onChange={handleHexChange}
-              className="w-full h-10 rounded-[6px] border border-[#E5E7EB] bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
+              className="w-full h-10 rounded-[6px] border border-border bg-surface px-3 text-[14px] font-medium text-foreground outline-none focus:border-primary-300 transition-all"
             />
           </div>
           <div className="space-y-1.5">
@@ -235,7 +235,7 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
             <input 
               value={rgb.r}
               onChange={(e) => handleRgbChange("r", e.target.value)}
-              className="w-full h-10 rounded-[6px] border border-[#E5E7EB] bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
+              className="w-full h-10 rounded-[6px] border border-border bg-surface px-3 text-[14px] font-medium text-foreground outline-none focus:border-primary-300 transition-all"
             />
           </div>
           <div className="space-y-1.5">
@@ -243,7 +243,7 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
             <input 
               value={rgb.g}
               onChange={(e) => handleRgbChange("g", e.target.value)}
-              className="w-full h-10 rounded-[6px] border border-[#E5E7EB] bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
+              className="w-full h-10 rounded-[6px] border border-border bg-surface px-3 text-[14px] font-medium text-foreground outline-none focus:border-primary-300 transition-all"
             />
           </div>
           <div className="space-y-1.5">
@@ -251,7 +251,7 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
             <input 
               value={rgb.b}
               onChange={(e) => handleRgbChange("b", e.target.value)}
-              className="w-full h-10 rounded-[6px] border border-[#E5E7EB] bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none focus:border-primary-300 transition-all"
+              className="w-full h-10 rounded-[6px] border border-border bg-surface px-3 text-[14px] font-medium text-foreground outline-none focus:border-primary-300 transition-all"
             />
           </div>
         </div>
@@ -261,7 +261,7 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Recommended from logo</span>
             <div className="flex items-center gap-1">
-              <span className="text-[10px] font-bold text-neutral-600 uppercase">Rogo</span>
+              <span className="text-[10px] font-bold text-neutral-500 uppercase">Rogo</span>
               <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: initialColor }} />
             </div>
           </div>
@@ -278,11 +278,11 @@ export function ColorConfigDialog({ open, onClose, initialColor, onSave }: Color
                 <div 
                   className={cn(
                     "h-10 w-10 rounded-full border-2 transition-colors",
-                    color.toUpperCase() === c.toUpperCase() ? "border-neutral-800 shadow-sm" : "border-transparent"
+                    color.toUpperCase() === c.toUpperCase() ? "border-foreground shadow-sm" : "border-transparent"
                   )}
                   style={{ backgroundColor: c }}
                 />
-                <span className="text-[10px] font-bold text-neutral-400 group-hover:text-neutral-600 uppercase tracking-wider">{c}</span>
+                <span className="text-[10px] font-bold text-neutral-400 group-hover:text-neutral-500 uppercase tracking-wider">{c}</span>
               </button>
             ))}
           </div>

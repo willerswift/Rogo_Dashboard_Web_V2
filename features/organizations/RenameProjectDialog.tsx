@@ -88,15 +88,15 @@ export function RenameProjectDialog({ open, onClose, onSuccess, project }: Renam
   if (!open || !project) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4">
-      <div className="relative w-full max-w-[480px] rounded-[var(--Radius-6,12px)] bg-white border border-dialog-border shadow-dialog animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4 transition-colors duration-500">
+      <div className="relative w-full max-w-[480px] rounded-[var(--Radius-6,12px)] bg-surface border border-dialog-border shadow-dialog animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
         <div className="px-8 py-[var(--Spacing-5,20px)] flex items-center justify-between">
-          <h5 className="text-[24px] font-bold text-[#1F244A] tracking-tight font-heading">
-            Rename Project <span className="text-[var(--brand-primary)]">{project.name}</span>
+          <h5 className="text-[24px] font-bold text-foreground tracking-tight font-heading">
+            Rename Project <span className="text-primary-300">{project.name}</span>
           </h5>
           <button
             onClick={onClose}
-            className="rounded-full p-1 text-neutral-400 hover:bg-neutral-50 transition-colors"
+            className="rounded-full p-1 text-neutral-400 hover:bg-surface-muted transition-colors"
           >
             <X className="size-6" />
           </button>
@@ -104,19 +104,19 @@ export function RenameProjectDialog({ open, onClose, onSuccess, project }: Renam
 
         <form onSubmit={onSubmit} className="px-8 pb-8 space-y-8">
           <div className="space-y-3">
-            <label className="text-[15px] font-bold text-[#1F244A]">
-              Project Name<span className="text-[var(--brand-primary)] ml-1">*</span>
+            <label className="text-[15px] font-bold text-foreground">
+              Project Name<span className="text-primary-300 ml-1">*</span>
             </label>
             <input
               {...register("name")}
               placeholder="Project Name"
               className={cn(
-                "h-[52px] w-full rounded-xl border bg-white px-5 text-[15px] outline-none transition-all placeholder:text-neutral-300",
-                errors.name ? "border-[var(--brand-primary)]" : "border-neutral-200 focus:border-[var(--brand-primary)]"
+                "h-[52px] w-full rounded-xl border bg-surface px-5 text-[15px] text-foreground outline-none transition-all placeholder:text-neutral-500",
+                errors.name ? "border-primary-300" : "border-border focus:border-primary-300"
               )}
             />
             {errors.name && (
-              <p className="text-[13px] font-bold text-[var(--brand-primary)]">{errors.name.message}</p>
+              <p className="text-[13px] font-bold text-primary-300">{errors.name.message}</p>
             )}
           </div>
 
@@ -124,14 +124,14 @@ export function RenameProjectDialog({ open, onClose, onSuccess, project }: Renam
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-6 py-2 text-[14px] font-semibold text-[#1F244A] hover:bg-neutral-50 transition-all font-heading"
+              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full border border-border bg-surface px-6 py-2 text-[14px] font-semibold text-foreground hover:bg-surface-muted transition-all font-heading"
             >
               Close
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-[var(--brand-primary)] px-8 py-2 text-[14px] font-semibold text-white shadow-md shadow-[var(--brand-primary)]/20 hover:bg-[var(--brand-primary-hover)] transition-all disabled:opacity-50 font-heading"
+              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-primary-300 px-8 py-2 text-[14px] font-semibold text-white shadow-md shadow-primary-300/20 hover:bg-primary-400 transition-all disabled:opacity-50 font-heading"
             >
               Save
             </button>

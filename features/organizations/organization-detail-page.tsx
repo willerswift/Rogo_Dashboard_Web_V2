@@ -146,26 +146,26 @@ export function OrganizationDetailPage({ orgId }: { orgId: string }) {
         <div className="px-6 py-4">
           <dl className="grid gap-4 text-sm md:grid-cols-2 xl:grid-cols-4">
             <div>
-              <dt className="text-zinc-500">Org ID</dt>
+              <dt className="text-muted-foreground">Org ID</dt>
               <dd className="mt-1">
                 <InlineCode value={organization.orgId} />
               </dd>
             </div>
             <div>
-              <dt className="text-zinc-500">Status</dt>
+              <dt className="text-muted-foreground">Status</dt>
               <dd className="mt-1">
                 <StatusBadge value={organization.status} />
               </dd>
             </div>
             <div>
-              <dt className="text-zinc-500">Owner</dt>
-              <dd className="mt-1 font-medium text-zinc-900">
+              <dt className="text-muted-foreground">Owner</dt>
+              <dd className="mt-1 font-medium text-foreground">
                 {organization.owner?.email ?? organization.owner?.name ?? "—"}
               </dd>
             </div>
             <div>
-              <dt className="text-zinc-500">Created</dt>
-              <dd className="mt-1 font-medium text-zinc-900">
+              <dt className="text-muted-foreground">Created</dt>
+              <dd className="mt-1 font-medium text-foreground">
                 {organization.createdDate ? new Date(organization.createdDate).toLocaleDateString() : "—"}
               </dd>
             </div>
@@ -192,16 +192,16 @@ export function OrganizationDetailPage({ orgId }: { orgId: string }) {
               {members.map((member) => (
                 <div
                   key={member.uuid ?? member.userId}
-                  className="flex flex-col gap-3 rounded-xl border border-zinc-200 px-4 py-3 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-3 rounded-xl border border-border px-4 py-3 md:flex-row md:items-center md:justify-between"
                 >
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-zinc-900">{member.user?.email ?? member.user?.name ?? "Unknown user"}</span>
+                      <span className="font-medium text-foreground">{member.user?.email ?? member.user?.name ?? "Unknown user"}</span>
                       {member.isOwner ? (
                         <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">Owner</span>
                       ) : null}
                     </div>
-                    <div className="mt-1 text-xs text-zinc-500">
+                    <div className="mt-1 text-xs text-muted-foreground">
                       Joined {formatDate(member.joinedAt)}
                     </div>
                   </div>

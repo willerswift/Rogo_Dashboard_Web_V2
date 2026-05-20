@@ -95,6 +95,11 @@ This file serves as a persistent record of work completed, current status, and p
     - Standardized table headers to use **neutral-800** text color and **px-6 py-4** padding.
     - Applied the new **6px border-radius** and **standardized TextInput** components across affected dialogs.
     - Verified the fix with a successful `npm run build` (Next.js/Turbopack).
+- **UI/UX Improvements**:
+    - Implemented a Dark/Light mode toggle in the `Topbar`, positioned to the left of the notification button.
+    - Refined the dark mode color palette in `globals.css` to match the "Rogo Solution Web Dashboard" demo model.
+    - Fixed hardcoded background and text colors in `app/layout.tsx` to ensure seamless theme transitions.
+    - Standardized the neutral color scale for dark mode to improve readability and contrast.
 - **Stabilized UI/UX**:
     - Ensured consistent behavior of the Project ID copy feature in both Organization Overview and Projects Page.
     - Restored the Project Action Menu (Rename/Delete) in the organization table.

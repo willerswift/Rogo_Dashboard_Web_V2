@@ -38,11 +38,11 @@ export function LogoAssetUpload({
 
   return (
     <div className="flex flex-col gap-4">
-      <span className="text-sm font-bold text-neutral-800">{label}</span>
+      <span className="text-sm font-bold text-foreground">{label}</span>
       <div className="flex items-center gap-6">
         <button
           onClick={handleClick}
-          className="group relative flex h-[120px] w-[120px] shrink-0 flex-col items-center justify-center rounded-xl border-2 border-dashed border-neutral-200 bg-neutral-50 transition-all hover:border-primary-200 hover:bg-white"
+          className="group relative flex h-[120px] w-[120px] shrink-0 flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-surface-muted transition-all hover:border-primary-300 hover:bg-surface"
         >
           <input
             ref={inputRef}
@@ -67,8 +67,8 @@ export function LogoAssetUpload({
           </p>
           
           {previewUrl && (
-            <div className="flex items-center gap-3 rounded-xl border border-neutral-100 bg-white p-3 shadow-sm w-fit min-w-[140px]">
-              <div className="relative h-8 w-8 overflow-hidden rounded-md border border-neutral-100 p-1 flex items-center justify-center">
+            <div className="flex items-center gap-3 rounded-xl border border-border bg-surface p-3 shadow-sm w-fit min-w-[140px]">
+              <div className="relative h-8 w-8 overflow-hidden rounded-md border border-border p-1 flex items-center justify-center">
                 <Image 
                   src={previewUrl} 
                   alt="Preview" 
@@ -77,7 +77,7 @@ export function LogoAssetUpload({
                   className="object-contain"
                 />
               </div>
-              <span className="text-[12px] font-medium text-neutral-600">
+              <span className="text-[12px] font-medium text-neutral-500">
                 Current {label}
               </span>
             </div>

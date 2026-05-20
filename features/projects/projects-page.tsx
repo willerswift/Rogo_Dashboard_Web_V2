@@ -188,15 +188,15 @@ export function ProjectsPage() {
             <LoadingBlock label="Loading projects..." />
           </div>
         ) : visibleProjects.length === 0 ? (
-          <div className="px-6 py-8 text-center border-t border-neutral-100">
-            <h3 className="font-bold text-neutral-900">No projects found</h3>
+          <div className="px-6 py-8 text-center border-t border-border">
+            <h3 className="font-bold text-foreground">No projects found</h3>
             <p className="mt-2 text-sm text-neutral-500 max-w-sm mx-auto">Create a project using the button above, or clear the organization filter.</p>
           </div>
         ) : (
-          <div className="overflow-visible border-t border-neutral-100">
+          <div className="overflow-visible border-t border-border">
             <table className="min-w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-neutral-800 leading-[18px] font-sans">
+                <tr className="border-b border-border text-[12px] font-bold uppercase tracking-wider text-foreground leading-[18px] font-sans">
                   <th className="px-6 py-4 text-left">Name</th>
                   <th className="px-6 py-4 text-left">Project ID</th>
                   <th className="px-6 py-4 text-left">Organization</th>
@@ -207,9 +207,9 @@ export function ProjectsPage() {
               </thead>
               <tbody>
                 {visibleProjects.map((project) => (
-                  <tr key={project.uuid} className="border-b border-zinc-100 align-top">
-                    <td className="px-6 py-4 font-medium text-zinc-900">{project.name}</td>
-                    <td className="px-6 py-4 text-zinc-600">
+                  <tr key={project.uuid} className="border-b border-border align-top">
+                    <td className="px-6 py-4 font-medium text-foreground">{project.name}</td>
+                    <td className="px-6 py-4 text-neutral-500">
                       <div className="flex items-center gap-1.5 leading-none relative">
                         <InlineCode value={project.uuid.slice(0, 8)} />
                         <button
@@ -229,7 +229,7 @@ export function ProjectsPage() {
                         {openUuidId === project.uuid && (
                           <div 
                             ref={uuidRef}
-                            className="absolute bottom-full mb-3 left-0 z-[100] w-[280px] rounded-xl border border-neutral-200 bg-white p-3 shadow-2xl animate-in fade-in zoom-in duration-200"
+                            className="absolute bottom-full mb-3 left-0 z-[100] w-[280px] rounded-xl border border-border bg-surface p-3 shadow-2xl animate-in fade-in zoom-in duration-200"
                           >
                             <div className="space-y-2">
                               <div className="flex items-center justify-between gap-2">
@@ -241,8 +241,8 @@ export function ProjectsPage() {
                                   className={cn(
                                     "flex h-6 items-center gap-1.5 rounded-md px-2 text-[10px] font-bold transition-all shrink-0",
                                     copiedId === project.uuid
-                                      ? "bg-[var(--brand-primary)]/10 text-[var(--brand-primary)]"
-                                      : "bg-[var(--brand-primary)] text-white hover:bg-[color-mix(in srgb, var(--brand-primary), black 10%)]"
+                                      ? "bg-primary-300/10 text-primary-300"
+                                      : "bg-primary-300 text-white hover:bg-primary-400"
                                   )}
                                 >
                                   {copiedId === project.uuid ? (
@@ -259,28 +259,28 @@ export function ProjectsPage() {
                                 </button>
                               </div>
 
-                              <div className="rounded-lg border border-[#E6E8F4] bg-[#E6E8F4]/30 p-2">
-                                <div className="text-[12px] font-medium text-[var(--brand-primary)] break-all leading-relaxed font-mono tracking-tight">
+                              <div className="rounded-lg border border-primary-300/20 bg-primary-300/10 p-2">
+                                <div className="text-[12px] font-medium text-primary-300 break-all leading-relaxed font-mono tracking-tight">
                                   {project.uuid}
                                 </div>
                               </div>
                             </div>
                             {/* Little arrow */}
-                            <div className="absolute top-full left-3 -mt-1.5 h-3 w-3 rotate-45 border-b border-r border-neutral-200 bg-white" />
+                            <div className="absolute top-full left-3 -mt-1.5 h-3 w-3 rotate-45 border-b border-r border-border bg-surface" />
                           </div>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-zinc-600">
+                    <td className="px-6 py-4 text-neutral-500">
                       {project.orgId ? (orgNameById[project.orgId] ?? project.orgId) : "—"}
                     </td>
-                    <td className="px-6 py-4 text-zinc-600">{project.needVerifyEmail ? "Required" : "Optional"}</td>
-                    <td className="px-6 py-4 text-zinc-600">{project.authorizedServices?.length ?? 0}</td>
+                    <td className="px-6 py-4 text-neutral-500">{project.needVerifyEmail ? "Required" : "Optional"}</td>
+                    <td className="px-6 py-4 text-neutral-500">{project.authorizedServices?.length ?? 0}</td>
                     <td className="py-4 pr-6 text-right">
                       <div className="flex justify-end gap-2">
                         <Link
                           href={`/projects/${project.uuid}`}
-                          className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-300 px-3 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+                          className="inline-flex h-10 items-center justify-center rounded-xl border border-border px-3 text-sm font-medium text-foreground hover:bg-surface-muted"
                         >
                           Detail
                         </Link>
@@ -323,7 +323,7 @@ export function ProjectsPage() {
             <TextInput invalid={Boolean(editForm.formState.errors.name)} {...editForm.register("name")} />
           </Field>
           <div className="flex items-center">
-            <label className="inline-flex items-center gap-3 text-sm text-zinc-700">
+            <label className="inline-flex items-center gap-3 text-sm text-foreground">
               <CheckboxInput {...editForm.register("needVerifyEmail")} />
               Require email verification
             </label>

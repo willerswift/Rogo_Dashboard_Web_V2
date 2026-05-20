@@ -120,15 +120,15 @@ export function AccessTreeSidebar() {
   };
 
   return (
-    <aside className="h-screen w-[280px] border-r border-neutral-100 bg-white overflow-hidden flex flex-col shadow-sm font-sans" style={{ fontFamily: 'SF Pro Display, sans-serif' }}>
+    <aside className="h-screen w-[280px] border-r border-border bg-surface overflow-hidden flex flex-col shadow-sm font-sans transition-colors duration-500">
       {/* 1. Partner Switcher */}
-      <div className="p-4 border-b border-neutral-100">
-        <div className="flex h-[40px] items-center justify-between gap-2 rounded-[4px] border border-neutral-300 bg-neutral-100 px-4 hover:bg-neutral-50 cursor-pointer transition-all">
+      <div className="p-4 border-b border-border">
+        <div className="flex h-[40px] items-center justify-between gap-2 rounded-[4px] border border-border bg-surface-muted px-4 hover:border-primary-300 cursor-pointer transition-all">
           <div className="flex items-center gap-2 truncate">
-            <span className="text-[14px] font-normal text-secondary-400 leading-[21px]" style={{ fontFamily: 'SF Pro, SF Pro Display, sans-serif' }}>
+            <span className="text-[14px] font-normal text-neutral-500 leading-[21px]">
               Partner:
             </span>
-            <span className="text-[14px] font-bold text-secondary-400 leading-[21px]" style={{ fontFamily: 'SF Pro, SF Pro Display, sans-serif' }}>
+            <span className="text-[14px] font-bold text-foreground leading-[21px]">
               {session.activePartnerId || "Rogo"}
             </span>
           </div>
@@ -139,7 +139,7 @@ export function AccessTreeSidebar() {
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* 2. Access Tree Header */}
         <div className="p-6 pb-2">
-          <h2 className="text-[20px] font-semibold font-heading text-neutral-900 tracking-tight">Access Tree</h2>
+          <h2 className="text-[20px] font-semibold font-heading text-foreground tracking-tight">Access Tree</h2>
         </div>
 
         {/* 3. Search */}
@@ -149,7 +149,7 @@ export function AccessTreeSidebar() {
             <input
               type="text"
               placeholder="Search organization, project, ..."
-              className="w-full h-[40px] rounded-[6px] border border-[#E5E7EB] bg-white pl-9 pr-3 py-2 text-[14px] font-sans outline-none focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20 transition-all placeholder:text-neutral-400"
+              className="w-full h-[40px] rounded-[6px] border border-border bg-surface pl-9 pr-3 py-2 text-[14px] font-sans outline-none focus:border-primary-300 focus:ring-4 focus:ring-primary-100/20 transition-all placeholder:text-neutral-400 text-foreground"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -159,20 +159,20 @@ export function AccessTreeSidebar() {
         {/* 4. Access Scope Toggle */}
         {!pathname.startsWith("/overview") && (
           <div className="px-6 py-2">
-            <p className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-2" style={{ fontFamily: 'SF Pro Display, sans-serif' }}>ACCESS SCOPE</p>
-            <div className="flex p-1 justify-center items-start self-stretch gap-1 rounded-full bg-[#E8E8E8]">
+            <p className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">ACCESS SCOPE</p>
+            <div className="flex p-1 justify-center items-start self-stretch gap-1 rounded-full bg-border-muted transition-colors">
               <button
                 onClick={() => setAccessScope("partner")}
                 className={cn(
                   "flex flex-1 flex-col justify-center items-center py-2 px-3 rounded-full transition-all whitespace-nowrap",
-                  accessScope === "partner" ? "bg-white shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]" : "hover:bg-black/5"
+                  accessScope === "partner" ? "bg-surface shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]" : "hover:bg-surface-muted"
                 )}
                 style={{ 
                   fontFamily: 'SF Pro Display, sans-serif', 
                   fontSize: '12px', 
                   fontWeight: 700,
                   lineHeight: '18px',
-                  color: accessScope === "partner" ? 'var(--brand-primary)' : '#4A4A4A',
+                  color: accessScope === "partner" ? 'var(--brand-primary)' : 'var(--neutral-500)',
                   textAlign: 'center'
                 }}
               >
@@ -182,24 +182,25 @@ export function AccessTreeSidebar() {
                 onClick={() => setAccessScope("project")}
                 className={cn(
                   "flex flex-1 flex-col justify-center items-center py-2 px-3 rounded-full transition-all whitespace-nowrap",
-                  accessScope === "project" ? "bg-white shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]" : "hover:bg-black/5"
+                  accessScope === "project" ? "bg-surface shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]" : "hover:bg-surface-muted"
                 )}
                 style={{ 
                   fontFamily: 'SF Pro Display, sans-serif', 
                   fontSize: '12px', 
                   fontWeight: 700,
                   lineHeight: '18px',
-                  color: accessScope === "project" ? 'var(--brand-primary)' : '#4A4A4A',
+                  color: accessScope === "project" ? 'var(--brand-primary)' : 'var(--neutral-500)',
                   textAlign: 'center'
                 }}
               >
                 Project view
               </button>
-            </div>          </div>
+            </div>
+          </div>
         )}
 
         {/* Tree Content */}
-        <div className="mt-4 border-t border-neutral-200 pt-4 flex-1 overflow-y-auto px-4 custom-scrollbar font-sans">
+        <div className="mt-4 border-t border-border pt-4 flex-1 overflow-y-auto px-4 custom-scrollbar font-sans">
           {loading ? (
             <div className="flex items-center justify-center py-8 text-sm text-neutral-400 italic">
               Loading access tree...
@@ -207,8 +208,8 @@ export function AccessTreeSidebar() {
           ) : (
             <div className="space-y-1">
               {/* Partner Root */}
-              <div className="flex items-center gap-4 py-2 text-[14px] font-normal text-[#777777] whitespace-nowrap px-2">
-                <FolderIcon className="size-5 text-[#777777] fill-current" />
+              <div className="flex items-center gap-4 py-2 text-[14px] font-normal text-neutral-500 whitespace-nowrap px-2">
+                <FolderIcon className="size-5 text-neutral-500 fill-current" />
                 <span>{session.activePartnerId || "Rogo"}</span>
               </div>
 
@@ -222,10 +223,10 @@ export function AccessTreeSidebar() {
                   return (
                     <div key={org.orgId} className="space-y-0">
                       <div
-                        className="group flex items-center pl-2 hover:bg-neutral-50 rounded-md cursor-pointer transition-colors"
+                        className="group flex items-center pl-2 hover:bg-surface-muted rounded-md cursor-pointer transition-colors"
                         onClick={() => toggleOrg(org.orgId)}
                       >
-                        <div className="p-1 text-[#777777] transition-colors mr-1">
+                        <div className="p-1 text-neutral-500 transition-colors mr-1">
                           {isExpanded ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
                         </div>
                         <button
@@ -237,12 +238,11 @@ export function AccessTreeSidebar() {
                             "flex flex-1 items-center gap-3 rounded-md px-2 py-2 text-[14px] font-sans transition-all whitespace-nowrap outline-none",
                             isActive && "ring-2 ring-primary-300 ring-inset",
                             isExpanded || isActive
-                              ? "font-normal text-[#777777]"
-                              : "font-normal text-[#777777] hover:text-neutral-900"
+                              ? "font-normal text-neutral-500"
+                              : "font-normal text-neutral-500 hover:text-foreground"
                           )}
-                          style={{ fontFamily: 'SF Pro Display, sans-serif', fontSize: '14px', fontWeight: 400 }}
                         >
-                          <Building2 className="size-[18px] shrink-0 text-[#777777]" />
+                          <Building2 className="size-[18px] shrink-0 text-neutral-500" />
                           <span className="truncate">{org.name}</span>
                         </button>
                       </div>
@@ -273,15 +273,14 @@ export function AccessTreeSidebar() {
                       className={cn(
                         "flex w-full items-center gap-3 rounded-l-md rounded-r-none py-2 pl-1 pr-2 text-[14px] font-sans transition-all relative whitespace-nowrap",
                         activeProjectId === project.uuid
-                          ? "bg-[#F3F4F6] font-normal text-[#777777]"
-                          : "font-normal text-[#777777] hover:bg-neutral-50 hover:text-neutral-900"
+                          ? "bg-surface-muted font-normal text-foreground"
+                          : "font-normal text-neutral-500 hover:bg-surface-muted hover:text-foreground"
                       )}
-                      style={{ fontFamily: 'SF Pro Display, sans-serif', fontSize: '14px', fontWeight: 400 }}
                     >
                       <Dot className="size-[18px] shrink-0 text-[#22C55E]" />
                       <span className="truncate">{project.name}</span>
                       {activeProjectId === project.uuid && (
-                        <div className="absolute right-0 top-0 h-full w-[4px] bg-[#393984]" />
+                        <div className="absolute right-0 top-0 h-full w-[4px] bg-neutral-800 dark:bg-neutral-100" />
                       )}
                     </button>
                   </div>
@@ -331,15 +330,14 @@ function OrgProjectsList({ projects, activeProjectId, onSelect, searchQuery }: {
           className={cn(
             "flex w-full items-center gap-3 rounded-l-md rounded-r-none py-2 pl-[42px] pr-2 text-[14px] font-sans transition-all relative whitespace-nowrap",
             activeProjectId === p.uuid
-              ? "bg-[#F3F4F6] font-normal text-[#777777]"
-              : "font-normal text-[#777777] hover:bg-neutral-50 hover:text-neutral-900"
+              ? "bg-surface-muted font-normal text-foreground"
+              : "font-normal text-neutral-500 hover:bg-surface-muted hover:text-foreground"
           )}
-          style={{ fontFamily: 'SF Pro Display, sans-serif', fontSize: '14px', fontWeight: 400 }}
         >
           <Dot className="size-[18px] shrink-0 text-[#22C55E]" />
           <span className="truncate">{p.name}</span>
           {activeProjectId === p.uuid && (
-            <div className="absolute right-0 top-0 h-full w-[4px] bg-[#393984]" />
+            <div className="absolute right-0 top-0 h-full w-[4px] bg-neutral-800 dark:bg-neutral-100" />
           )}
         </button>
       ))}

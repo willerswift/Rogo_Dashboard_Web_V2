@@ -142,28 +142,28 @@ export function GrantAccessDialog({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4">
-      <div className="relative w-full max-w-[800px] h-[600px] flex flex-col rounded-[var(--Radius-6,12px)] bg-white border border-dialog-border shadow-dialog animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4 transition-colors duration-500">
+      <div className="relative w-full max-w-[800px] h-[600px] flex flex-col rounded-[var(--Radius-6,12px)] bg-surface border border-dialog-border shadow-dialog animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
         
         {/* Header */}
-        <div className="relative px-8 py-[var(--Spacing-5,20px)] border-b border-neutral-100 shrink-0">
+        <div className="relative px-8 py-[var(--Spacing-5,20px)] border-b border-border shrink-0">
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-2">
                 {view === "projectList" && (
-                  <button onClick={() => setView("permissions")} className="text-neutral-400 hover:text-neutral-900 transition-colors">
+                  <button onClick={() => setView("permissions")} className="text-neutral-400 hover:text-foreground transition-colors">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </button>
                 )}
-                <h5 className="text-[24px] font-bold text-[#1F244A] tracking-tight font-heading">{title}</h5>
+                <h5 className="text-[24px] font-bold text-foreground tracking-tight font-heading">{title}</h5>
               </div>
               <p className="text-[13px] text-neutral-500 mt-1">Manage who has access to this organization and their roles.</p>
             </div>
             <button
               onClick={onClose}
-              className="rounded-full p-1.5 text-neutral-400 hover:bg-neutral-50 transition-colors -mt-1 -mr-1"
+              className="rounded-full p-1.5 text-neutral-400 hover:bg-surface-muted transition-colors -mt-1 -mr-1"
             >
               <X className="size-5" />
             </button>
@@ -185,7 +185,7 @@ export function GrantAccessDialog({
           {view === "permissions" ? (
             <>
               {/* Left Panel - Users */}
-              <div className="w-[240px] border-r border-neutral-100 flex flex-col bg-white shrink-0 p-6 gap-5 self-stretch items-start">
+              <div className="w-[240px] border-r border-border flex flex-col bg-surface shrink-0 p-6 gap-5 self-stretch items-start">
                 <div className="w-full shrink-0">
                   <SearchInput
                     placeholder="Search Username"
@@ -203,19 +203,18 @@ export function GrantAccessDialog({
                       className={cn(
                         "w-full flex items-center gap-3 p-1 rounded-xl transition-all text-left self-stretch",
                         selectedUserId === user.ownerId 
-                          ? "bg-primary-100 ring-1 ring-primary-300/20 shadow-sm" 
-                          : "hover:bg-neutral-50"
+                          ? "bg-primary-100/20 ring-1 ring-primary-300/20 shadow-sm" 
+                          : "hover:bg-surface-muted"
                       )}
                     >
                       <Avatar name={user.name} email={user.email} className="size-10" />
                       <div className="overflow-hidden flex-1">
                         <p className={cn(
-                          "text-[16px] font-bold truncate leading-[24px] font-sans", 
-                          selectedUserId === user.ownerId ? "text-[#1F244A]" : "text-[#1F244A]"
+                          "text-[16px] font-bold truncate leading-[24px] font-sans text-foreground", 
                         )}>
                           {user.name}
                         </p>
-                        <p className="text-[12px] text-[#777777] truncate leading-[18px] font-sans">{user.email}</p>
+                        <p className="text-[12px] text-neutral-500 truncate leading-[18px] font-sans">{user.email}</p>
                       </div>
                     </button>
                   ))}
@@ -230,14 +229,14 @@ export function GrantAccessDialog({
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    <div className="flex items-center justify-between bg-primary-100/30 rounded-xl p-4 border border-primary-300/20">
+                    <div className="flex items-center justify-between bg-primary-100/10 rounded-xl p-4 border border-primary-300/20">
                       <label className="flex items-center gap-3 cursor-pointer">
                         <CheckboxInput checked={isAllSelected} onChange={handleToggleAllProjects} />
-                        <span className="text-[14px] font-medium text-neutral-900">Apply user to all Projects</span>
+                        <span className="text-[14px] font-medium text-foreground">Apply user to all Projects</span>
                       </label>
                       <button 
                         onClick={() => setView("projectList")}
-                        className="text-[13px] font-bold text-[#1F244A] flex items-center gap-1.5 hover:text-primary-300 transition-colors"
+                        className="text-[13px] font-bold text-primary-300 flex items-center gap-1.5 hover:text-primary-400 transition-colors"
                       >
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M7 1L1 4L7 7L13 4L7 1Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -256,27 +255,27 @@ export function GrantAccessDialog({
                       <div className="space-y-3 pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
                           <CheckboxInput checked={permDevEdit} onChange={() => setPermDevEdit(!permDevEdit)} />
-                          <span className="text-[14px] text-neutral-700">Project Development Edit (Create/ Edit/ Delete)</span>
+                          <span className="text-[14px] text-neutral-600 dark:text-neutral-400">Project Development Edit (Create/ Edit/ Delete)</span>
                         </label>
                         <label className="flex items-center gap-3 cursor-pointer">
                           <CheckboxInput checked={permDevView} onChange={() => setPermDevView(!permDevView)} />
-                          <span className="text-[14px] text-neutral-700">Project Development View</span>
+                          <span className="text-[14px] text-neutral-600 dark:text-neutral-400">Project Development View</span>
                         </label>
                       </div>
                     </div>
 
-                    <div className="w-full h-px bg-neutral-200 border-t border-dashed" />
+                    <div className="w-full h-px bg-border border-t border-dashed" />
 
                     <div className="space-y-4">
                       <h6 className="text-[14px] font-medium text-primary-300">(Optional) Project Authorization:</h6>
                       <div className="flex gap-8 pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
                           <CheckboxInput checked={permAuthEdit} onChange={() => setPermAuthEdit(!permAuthEdit)} />
-                          <span className="text-[14px] text-neutral-700">Project Authorization Edit (Create/ Edit/ Delete)</span>
+                          <span className="text-[14px] text-neutral-600 dark:text-neutral-400">Project Authorization Edit (Create/ Edit/ Delete)</span>
                         </label>
                         <label className="flex items-center gap-3 cursor-pointer">
                           <CheckboxInput checked={permAuthView} onChange={() => setPermAuthView(!permAuthView)} />
-                          <span className="text-[14px] text-neutral-700">Project Authorization View</span>
+                          <span className="text-[14px] text-neutral-600 dark:text-neutral-400">Project Authorization View</span>
                         </label>
                       </div>
                     </div>
@@ -286,7 +285,7 @@ export function GrantAccessDialog({
                       <div className="pl-1">
                         <label className="flex items-center gap-3 cursor-pointer">
                           <CheckboxInput checked={permReport} onChange={() => setPermReport(!permReport)} />
-                          <span className="text-[14px] text-neutral-700">Report Project</span>
+                          <span className="text-[14px] text-neutral-600 dark:text-neutral-400">Report Project</span>
                         </label>
                       </div>
                     </div>
@@ -295,14 +294,14 @@ export function GrantAccessDialog({
               </div>
             </>
           ) : (
-            <div className="flex-1 flex flex-col h-full bg-white overflow-hidden">
+            <div className="flex-1 flex flex-col h-full bg-surface overflow-hidden">
               <div className="px-6 pt-4 pb-4">
-                <div className="flex items-center justify-between bg-primary-100/30 rounded-xl p-4 border border-primary-300/20">
+                <div className="flex items-center justify-between bg-primary-100/10 rounded-xl p-4 border border-primary-300/20">
                   <label className="flex items-center gap-3 cursor-pointer">
                     <CheckboxInput checked={isAllSelected} onChange={handleToggleAllProjects} />
-                    <span className="text-[14px] font-medium text-neutral-900">Apply user to all Projects</span>
+                    <span className="text-[14px] font-medium text-foreground">Apply user to all Projects</span>
                   </label>
-                  <span className="text-[13px] font-bold text-[#1F244A] flex items-center gap-1.5">
+                  <span className="text-[13px] font-bold text-primary-300 flex items-center gap-1.5">
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M7 1L1 4L7 7L13 4L7 1Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                       <path d="M1 10L7 13L13 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -312,10 +311,10 @@ export function GrantAccessDialog({
                   </span>
                 </div>
               </div>
-              <div className="flex-1 overflow-auto border-t border-neutral-100">
+              <div className="flex-1 overflow-auto border-t border-border">
                 <table className="w-full text-left text-sm border-collapse">
-                  <thead className="sticky top-0 bg-white shadow-[0_1px_0_0_#F5F5F5] z-10">
-                    <tr className="text-[12px] font-bold uppercase tracking-wider text-neutral-800 leading-[18px] font-sans">
+                  <thead className="sticky top-0 bg-surface shadow-sm z-10">
+                    <tr className="text-[12px] font-bold uppercase tracking-wider text-neutral-500 leading-[18px] font-sans border-b border-border">
                       <th className="px-6 py-4 w-12 text-left">ALL PROJECT</th>
                       <th className="px-6 py-4 text-left">NAME</th>
                       <th className="px-6 py-4 text-left">PROJECT ID</th>
@@ -324,7 +323,7 @@ export function GrantAccessDialog({
                       <th className="px-6 py-4 text-left">UPDATED</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-100">
+                  <tbody className="divide-y divide-border-muted">
                     {filteredProjects.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="px-6 py-10 text-center text-neutral-400 font-medium">
@@ -333,12 +332,12 @@ export function GrantAccessDialog({
                       </tr>
                     ) : (
                       filteredProjects.map((project) => (
-                        <tr key={project.uuid} className="hover:bg-neutral-50/50 transition-colors">
+                        <tr key={project.uuid} className="hover:bg-surface-muted transition-colors">
                           <td className="px-6 py-4">
                             <CheckboxInput checked={selectedProjects.has(project.uuid)} onChange={() => handleToggleProject(project.uuid)} />
                           </td>
                           <td className="px-6 py-4 font-medium text-primary-300">{project.name}</td>
-                          <td className="px-6 py-4 font-mono text-[12px] text-neutral-600">{project.uuid.slice(0, 8)}</td>
+                          <td className="px-6 py-4 font-mono text-[12px] text-neutral-400">{project.uuid.slice(0, 8)}</td>
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#1FC16B] bg-[#1FC16B]/10 px-2 py-0.5 rounded-full w-fit">
                               <div className="h-1.5 w-1.5 rounded-full bg-[#1FC16B]" />
@@ -353,7 +352,7 @@ export function GrantAccessDialog({
                   </tbody>
                 </table>
               </div>
-              <div className="flex items-center justify-between border-t border-neutral-100 px-6 py-4 bg-white">
+              <div className="flex items-center justify-between border-t border-border px-6 py-4 bg-surface">
                 <span className="text-[13px] text-neutral-500">
                   Showing 1 to {filteredProjects.length} of {filteredProjects.length} entries
                 </span>
@@ -367,8 +366,8 @@ export function GrantAccessDialog({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-neutral-100 flex justify-end gap-3 shrink-0 bg-white rounded-b-[var(--Radius-6,12px)]">
-          <SecondaryButton onClick={onClose} className="px-6 border-neutral-300 text-neutral-700">
+        <div className="p-4 border-t border-border flex justify-end gap-3 shrink-0 bg-surface rounded-b-[var(--Radius-6,12px)]">
+          <SecondaryButton onClick={onClose} className="px-6">
             Close
           </SecondaryButton>
           <PrimaryButton onClick={handleSubmit} disabled={!selectedUserId || isSubmitting} className="px-8 shadow-md shadow-primary-300/20">

@@ -37,8 +37,12 @@ export default async function RootLayout({
               (function() {
                 try {
                   var color = localStorage.getItem('rogo-primary-color');
+                  var theme = localStorage.getItem('rogo-theme-mode');
                   if (color) {
                     document.documentElement.style.setProperty('--brand-primary', color);
+                  }
+                  if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
                   }
                 } catch (e) {}
               })();
@@ -46,7 +50,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full bg-white text-neutral-900" suppressHydrationWarning>
+      <body className="min-h-full" suppressHydrationWarning>
         <Providers initialSession={session}>{children}</Providers>
       </body>
     </html>

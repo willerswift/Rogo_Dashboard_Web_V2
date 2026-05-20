@@ -14,7 +14,7 @@ export default async function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col lg:flex-row bg-white">
+    <div className="flex min-h-screen w-full flex-col lg:flex-row bg-background transition-colors duration-500">
       {/* Left side: Background and Branding */}
       <div className="relative hidden w-full lg:flex lg:w-[40%] xl:w-[33%] overflow-hidden bg-[#0F172A]">
         <Image
@@ -60,11 +60,11 @@ export default async function LoginPage() {
       </div>
 
       {/* Right side: Login Form */}
-      <div className="flex flex-1 items-center justify-center bg-white p-6 sm:p-12 lg:p-24">
+      <div className="flex flex-1 items-center justify-center bg-background p-6 sm:p-12 lg:p-24 transition-colors duration-500">
         <div className="w-full max-w-[420px] space-y-12">
           <div className="space-y-3">
-            <h2 className="text-[28px] font-bold font-heading tracking-tight text-[#111827]">Login</h2>
-            <p className="text-[15px] text-zinc-500 font-medium">
+            <h2 className="text-[28px] font-bold font-heading tracking-tight text-foreground">Login</h2>
+            <p className="text-[15px] text-neutral-500 font-medium">
               Enter your credentials to access your dashboard.
             </p>
           </div>

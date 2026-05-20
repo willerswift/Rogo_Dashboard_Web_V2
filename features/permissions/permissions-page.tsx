@@ -196,11 +196,11 @@ export function PermissionsPage() {
               {records.map((record, index) => (
                 <div
                   key={record.uuid ?? `${record.ownerId}-${record.partnerId}-${index}`}
-                  className="flex flex-col gap-3 rounded-xl border border-zinc-200 px-4 py-3 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-3 rounded-xl border border-border px-4 py-3 md:flex-row md:items-center md:justify-between"
                 >
                   <div>
-                    <div className="font-medium text-zinc-900 text-sm font-mono">{record.ownerId}</div>
-                    <div className="mt-1 text-xs text-zinc-500">{record.abac.length} permission {record.abac.length === 1 ? "entry" : "entries"}</div>
+                    <div className="font-medium text-foreground text-sm font-mono">{record.ownerId}</div>
+                    <div className="mt-1 text-xs text-muted-foreground">{record.abac.length} permission {record.abac.length === 1 ? "entry" : "entries"}</div>
                   </div>
                   {canView ? (
                     <SecondaryButton type="button" onClick={() => void handleSelectRecord(record.ownerId)}>

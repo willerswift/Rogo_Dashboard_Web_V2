@@ -9,10 +9,10 @@ export function Avatar({ name, email, src, className }: { name?: string; email?:
     .toUpperCase()
     .slice(0, 2);
 
-  const colorClass = "bg-neutral-100 text-neutral-600";
+  const colorClass = "bg-surface-muted text-neutral-500";
 
   return (
-    <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden font-bold text-[13px] border border-neutral-200", colorClass, className)}>
+    <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden font-bold text-[13px] border border-border", colorClass, className)}>
       {src ? (
         <Image src={src} alt={name || "Avatar"} width={40} height={40} className="h-full w-full object-cover" unoptimized />
       ) : (

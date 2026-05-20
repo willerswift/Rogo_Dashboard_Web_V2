@@ -199,7 +199,7 @@ export function ProductsPage() {
           <div className="overflow-x-auto">
             <table className="min-w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-neutral-800 leading-[18px] font-sans">
+                <tr className="border-b border-border text-[12px] font-bold uppercase tracking-wider text-neutral-500 leading-[18px] font-sans">
                   <th className="px-6 py-4 text-left">Model ID</th>
                   <th className="px-6 py-4 text-left">Name</th>
                   <th className="px-6 py-4 text-left">Category</th>
@@ -211,19 +211,19 @@ export function ProductsPage() {
               </thead>
               <tbody>
                 {products.map((product) => (
-                  <tr key={product.uuid ?? product.modelId} className="border-b border-zinc-100">
-                    <td className="px-6 py-4 font-medium text-zinc-900">{product.modelId}</td>
-                    <td className="px-6 py-4 text-zinc-600">{product.name}</td>
-                    <td className="px-6 py-4 text-zinc-600">{product.categoryInfo.join(", ") || "—"}</td>
+                  <tr key={product.uuid ?? product.modelId} className="border-b border-border-muted hover:bg-surface-muted transition-colors">
+                    <td className="px-6 py-4 font-medium text-foreground">{product.modelId}</td>
+                    <td className="px-6 py-4 text-neutral-500">{product.name}</td>
+                    <td className="px-6 py-4 text-neutral-500">{product.categoryInfo.join(", ") || "—"}</td>
                     <td className="px-6 py-4">
-                      {product.releaseStatus ? <StatusBadge value={product.releaseStatus} /> : <span className="text-zinc-400">—</span>}
+                      {product.releaseStatus ? <StatusBadge value={product.releaseStatus} /> : <span className="text-neutral-400">—</span>}
                     </td>
-                    <td className="px-6 py-4 text-zinc-600">{product.isPublic ? "Yes" : "No"}</td>
-                    <td className="px-6 py-4 text-zinc-600">{product.isReadyOEM ? "Yes" : "No"}</td>
+                    <td className="px-6 py-4 text-neutral-500">{product.isPublic ? "Yes" : "No"}</td>
+                    <td className="px-6 py-4 text-neutral-500">{product.isReadyOEM ? "Yes" : "No"}</td>
                     <td className="py-4 pr-6 text-right">
                       <Link
                         href={`/products/${product.modelId}`}
-                        className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-300 px-3 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+                        className="inline-flex h-[40px] items-center justify-center rounded-full border border-border bg-surface px-4 py-2 text-[14px] font-semibold text-foreground transition hover:bg-surface-muted font-heading"
                       >
                         Detail
                       </Link>
@@ -234,7 +234,7 @@ export function ProductsPage() {
             </table>
           </div>
 
-          <div className="px-6 py-4 flex items-center justify-between text-sm text-zinc-500 border-t border-neutral-100">
+          <div className="px-6 py-4 flex items-center justify-between text-sm text-neutral-500 border-t border-border">
             <span>Page {page} of {Math.max(totalPage, 1)}</span>
             <div className="flex gap-2">
               <SecondaryButton type="button" disabled={page <= 1} onClick={() => setPage((current) => current - 1)}>

@@ -13,7 +13,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
   const showAccessTree = pathname.startsWith("/overview") || pathname.startsWith("/users");
 
   return (
-    <div className="flex h-screen w-full bg-[#F9F9F9] overflow-hidden">
+    <div className="flex h-screen w-full bg-background overflow-hidden transition-colors duration-500">
       {/* 1. Primary Navigation Sidebar */}
       <NavSidebar />
 

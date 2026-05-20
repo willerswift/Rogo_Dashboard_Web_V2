@@ -228,12 +228,12 @@ export function UsersPage() {
         {
           id: "user",
           header: "USER",
-          headerClassName: "text-[11px] font-bold text-neutral-800 uppercase tracking-wider",
+          headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider",
           cell: ({ user }) => (
             <div className="flex items-center gap-3">
               <Avatar name={user.name} email={user.email} />
               <div className="flex flex-col">
-                <span className="text-[14px] font-bold text-[#1F244A] leading-tight">{user.name}</span>
+                <span className="text-[14px] font-bold text-foreground leading-tight">{user.name}</span>
                 <span className="text-[12px] text-neutral-500 leading-tight mt-0.5">{user.email}</span>
               </div>
             </div>
@@ -242,7 +242,7 @@ export function UsersPage() {
         {
           id: "projects",
           header: "PROJECTS",
-          headerClassName: "text-[11px] font-bold text-neutral-800 uppercase tracking-wider",
+          headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider",
           cell: ({ user }) => {
             const userProjectData = getUserProjectData(user.ownerId);
             const actualProjects = userProjectData.map(d => d.project);
@@ -258,16 +258,16 @@ export function UsersPage() {
               <div className="flex flex-col gap-2 py-1">
                 <div className="flex flex-wrap gap-2">
                   {displayProjects.map((p) => (
-                    <div key={p.uuid} className="flex h-[28px] items-center justify-center gap-2 rounded-full bg-[#1FC16B]/10 px-2 py-0.5">
-                      <span className="text-[12px] font-bold text-[#1F244A] tracking-tight">{p.name}</span>
-                      <span className="text-[11px] font-bold text-[#3B4AD0]">{p.uuid.slice(0, 8)}</span>
+                    <div key={p.uuid} className="flex h-[28px] items-center justify-center gap-2 rounded-full bg-primary-100/10 px-2 py-0.5">
+                      <span className="text-[12px] font-bold text-foreground tracking-tight">{p.name}</span>
+                      <span className="text-[11px] font-bold text-primary-300">{p.uuid.slice(0, 8)}</span>
                     </div>
                   ))}
                 </div>
                 {extraCount > 0 && (
                   <button
                     onClick={() => setViewingProjectsFor({ user })}
-                    className="text-[13px] font-bold text-neutral-500 text-left hover:text-neutral-900 transition-colors flex items-center gap-1 w-fit"
+                    className="text-[13px] font-bold text-neutral-500 text-left hover:text-foreground transition-colors flex items-center gap-1 w-fit"
                   >
                     View {extraCount} more Project{extraCount !== 1 ? 's' : ''}
                     <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -282,17 +282,17 @@ export function UsersPage() {
         {
           id: "joined",
           header: "JOINED",
-          headerClassName: "text-[11px] font-bold text-neutral-800 uppercase tracking-wider",
+          headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider",
           cell: () => <span className="text-[13px] text-neutral-500">Oct 12, 2023</span>,
         },
         {
           id: "actions",
           header: "ACTIONS",
           className: "text-right",
-          headerClassName: "text-[11px] font-bold text-neutral-800 uppercase tracking-wider text-right",
+          headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider text-right",
           cell: () => (
             <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button className="text-neutral-400 hover:text-neutral-900 transition-colors">
+              <button className="text-neutral-400 hover:text-foreground transition-colors">
                 <Pencil className="size-4" />
               </button>
               <button className="text-neutral-400 hover:text-primary-300 transition-colors">
@@ -308,12 +308,12 @@ export function UsersPage() {
       {
         id: "user",
         header: "USER",
-        headerClassName: "text-[11px] font-bold text-neutral-800 uppercase tracking-wider",
+        headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider",
         cell: ({ user }) => (
           <div className="flex items-center gap-3">
             <Avatar name={user.name} email={user.email} />
             <div className="flex flex-col">
-              <span className="text-[14px] font-bold text-[#1F244A] leading-tight">{user.name}</span>
+              <span className="text-[14px] font-bold text-foreground leading-tight">{user.name}</span>
               <span className="text-[12px] text-neutral-500 leading-tight mt-0.5">{user.email}</span>
             </div>
           </div>
@@ -322,10 +322,10 @@ export function UsersPage() {
       {
         id: "permissions",
         header: "PERMISSION",
-        headerClassName: "text-[11px] font-bold text-neutral-800 uppercase tracking-wider",
+        headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider",
         cell: ({ user }) => {
           const record = permissionRecords.find(r => r.ownerId === user.ownerId);
-          if (!record || !record.abac || !record.abac.length) return <span className="text-neutral-300 text-[12px] italic">No permissions</span>;
+          if (!record || !record.abac || !record.abac.length) return <span className="text-neutral-400 text-[12px] italic">No permissions</span>;
           
           const resMap: Record<string, string> = {
             "organization": "ORG",
@@ -422,11 +422,11 @@ export function UsersPage() {
         {/* Top Tier: Root Context Info (Large) */}
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
-            <h1 className="text-[28px] font-bold text-neutral-900 tracking-tight font-heading">
+            <h1 className="text-[28px] font-bold text-foreground tracking-tight font-heading">
               {rootName}
             </h1>
             {displayId && (
-              <span className="inline-flex items-center rounded-md bg-[#F0F2FF] px-2 py-0.5 text-[10px] font-bold text-[#3B4AD0] uppercase">
+              <span className="inline-flex items-center rounded-md bg-primary-100/10 px-2 py-0.5 text-[10px] font-bold text-primary-300 uppercase">
                 ID: {displayId}
               </span>
             )}
@@ -439,7 +439,7 @@ export function UsersPage() {
                 PRJ
               </span>
             ) : activeOrg ? (
-              <span className="inline-flex items-center rounded-md bg-primary-100 px-2 py-0.5 text-[10px] font-bold text-primary-300">
+              <span className="inline-flex items-center rounded-md bg-primary-100/10 px-2 py-0.5 text-[10px] font-bold text-primary-300">
                 ORG
               </span>
             ) : (
@@ -449,13 +449,13 @@ export function UsersPage() {
             )}
 
             {/* Stat Badges */}
-            <div className="flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 py-1 text-[11px] font-bold text-neutral-500 shadow-sm">
+            <div className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-[11px] font-bold text-neutral-500 shadow-sm">
               <Users className="size-3.5 text-neutral-400" />
               {users.length} Members
             </div>
             
             {(activeOrg || !projectId) && (
-              <div className="flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 py-1 text-[11px] font-bold text-neutral-500 shadow-sm">
+              <div className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-[11px] font-bold text-neutral-500 shadow-sm">
                 <LayoutGrid className="size-3.5 text-neutral-400" />
                 {activeOrg 
                   ? projects.filter(p => p.orgId === activeOrg.orgId).length
@@ -468,7 +468,7 @@ export function UsersPage() {
 
         {/* Bottom Tier: Context Title & Action Button */}
         <div className="flex items-center justify-between">
-          <h2 className="text-[18px] font-bold text-neutral-900 tracking-tight font-heading">
+          <h2 className="text-[18px] font-bold text-foreground tracking-tight font-heading">
             {subTitle}
           </h2>
 
@@ -572,22 +572,22 @@ export function UsersPage() {
                 return (
                   <div 
                     key={p.uuid} 
-                    className="group flex items-center gap-4 rounded-2xl border border-neutral-200 bg-white p-4 transition-all hover:border-primary-300 hover:shadow-lg hover:shadow-primary-300/10"
+                    className="group flex items-center gap-4 rounded-2xl border border-border bg-surface p-4 transition-all hover:border-primary-300 hover:shadow-lg hover:shadow-primary-300/10"
                   >
                     <div className="flex flex-1 items-center gap-4 min-w-0">
-                      <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-100/50 text-primary-300 group-hover:bg-primary-300 group-hover:text-white transition-all duration-300 shadow-sm">
+                      <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-100/20 text-primary-300 group-hover:bg-primary-300 group-hover:text-white transition-all duration-300 shadow-sm">
                         <LayoutGrid className="size-5.5" />
                       </div>
                       <div className="flex flex-col gap-1 min-w-0">
-                        <p className="text-[16px] font-bold text-neutral-900 leading-none truncate group-hover:text-primary-300 transition-colors">
+                        <p className="text-[16px] font-bold text-foreground leading-none truncate group-hover:text-primary-300 transition-colors">
                           {p.name}
                         </p>
-                        <div className="flex items-center gap-2 text-neutral-400 font-mono text-[11px] tracking-tight">
-                          <span className="truncate font-medium group-hover:text-neutral-600 transition-colors">{p.uuid}</span>
+                        <div className="flex items-center gap-2 text-neutral-500 font-mono text-[11px] tracking-tight">
+                          <span className="truncate font-medium group-hover:text-neutral-400 transition-colors">{p.uuid}</span>
                           <button
                             type="button"
                             onClick={() => handleCopy(p.uuid)}
-                            className="shrink-0 rounded-md p-1 text-neutral-400 transition hover:bg-neutral-100 hover:text-primary-300"
+                            className="shrink-0 rounded-md p-1 text-neutral-400 transition hover:bg-surface-muted hover:text-primary-300"
                             title="Copy ID"
                           >
                             {copiedId === p.uuid ? (
@@ -625,8 +625,8 @@ function PermissionBadge({ label, isAdmin }: { label: string; isAdmin: boolean }
     <span className={cn(
       "inline-flex items-center rounded-full px-2 py-0.5 h-6 text-[10px] font-bold tracking-tight whitespace-nowrap transition-colors",
       isAdmin 
-        ? "bg-[#F3E8FF] text-[#7C3AED]" // Purple for Admin
-        : "bg-[#F3F4F6] text-neutral-600" // Standard for View only
+        ? "bg-primary-100/20 text-primary-300" // Themed for Admin
+        : "bg-surface-muted text-neutral-500 border border-border" // Standard for View only
     )}>
       {label}
     </span>

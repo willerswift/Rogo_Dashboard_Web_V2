@@ -44,12 +44,12 @@ export function DataTable<T>({
   const hasHeader = title || description || toolbar;
 
   return (
-    <Card className="rounded-xl border-neutral-200 shadow-sm">
+    <Card className="rounded-xl border-border shadow-sm bg-surface">
       {hasHeader && (
-        <CardHeader className="p-5 gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <CardHeader className="p-5 gap-4 sm:flex-row sm:items-start sm:justify-between border-b border-border">
           <div className="space-y-0.5">
-            {title && <CardTitle className="text-[16px] font-bold text-neutral-900">{title}</CardTitle>}
-            {description ? <CardDescription className="text-[13px]">{description}</CardDescription> : null}
+            {title && <CardTitle className="text-[16px] font-bold text-foreground">{title}</CardTitle>}
+            {description ? <CardDescription className="text-[13px] text-neutral-500">{description}</CardDescription> : null}
           </div>
           {toolbar ? <div className="flex items-center gap-2">{toolbar}</div> : null}
         </CardHeader>
@@ -59,12 +59,12 @@ export function DataTable<T>({
           <Table>
             {caption ? <TableCaption className="sr-only">{caption}</TableCaption> : null}
             <TableHeader>
-              <TableRow className="hover:bg-transparent border-neutral-100">
+              <TableRow className="hover:bg-transparent border-border">
                 {columns.map((column) => (
                   <TableHead 
                     key={column.id} 
                     className={cn(
-                      "px-6 py-4 text-[12px] font-bold uppercase tracking-wider text-neutral-800 leading-[18px] font-sans", 
+                      "px-6 py-4 text-[12px] font-bold uppercase tracking-wider text-neutral-500 leading-[18px] font-sans", 
                       column.headerClassName
                     )}
                   >
@@ -76,9 +76,9 @@ export function DataTable<T>({
             <TableBody>
               {data.length > 0 ? (
                 data.map((row, rowIndex) => (
-                  <TableRow key={rowIndex} className="group hover:bg-neutral-50/50 border-neutral-50">
+                  <TableRow key={rowIndex} className="group hover:bg-surface-muted border-border-muted transition-colors">
                     {columns.map((column) => (
-                      <TableCell key={column.id} className={cn("px-6 py-4 text-[13px]", column.className)}>
+                      <TableCell key={column.id} className={cn("px-6 py-4 text-[13px] text-foreground", column.className)}>
                         {column.cell(row)}
                       </TableCell>
                     ))}
@@ -89,7 +89,7 @@ export function DataTable<T>({
                   <TableCell colSpan={columns.length} className="py-12">
                     <div className="mx-auto flex max-w-md flex-col items-center gap-3 px-4 text-center">
                       <div className="space-y-1.5">
-                        <p className="text-[14px] font-bold text-neutral-900">{emptyTitle}</p>
+                        <p className="text-[14px] font-bold text-foreground">{emptyTitle}</p>
                         <p className="text-[12px] text-neutral-500">{emptyDescription}</p>
                       </div>
                       {emptyAction}

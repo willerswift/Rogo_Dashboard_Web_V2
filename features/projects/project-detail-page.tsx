@@ -130,24 +130,24 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
         <div className="px-6 py-4">
           <dl className="grid gap-4 text-sm md:grid-cols-2 xl:grid-cols-4">
             <div>
-              <dt className="text-zinc-500">UUID</dt>
-              <dd className="mt-1 font-medium text-zinc-900">{detail.project.uuid}</dd>
+              <dt className="text-muted-foreground">UUID</dt>
+              <dd className="mt-1 font-medium text-foreground">{detail.project.uuid}</dd>
             </div>
             <div>
-              <dt className="text-zinc-500">Org ID</dt>
-              <dd className="mt-1 font-medium text-zinc-900">{detail.project.orgId ?? "—"}</dd>
+              <dt className="text-muted-foreground">Org ID</dt>
+              <dd className="mt-1 font-medium text-foreground">{detail.project.orgId ?? "—"}</dd>
             </div>
             <div>
-              <dt className="text-zinc-500">IP whitelist count</dt>
-              <dd className="mt-1 font-medium text-zinc-900">{detail.numOfIps}</dd>
+              <dt className="text-muted-foreground">IP whitelist count</dt>
+              <dd className="mt-1 font-medium text-foreground">{detail.numOfIps}</dd>
             </div>
             <div>
-              <dt className="text-zinc-500">Need verify email</dt>
-              <dd className="mt-1 font-medium text-zinc-900">{detail.project.needVerifyEmail ? "Yes" : "No"}</dd>
+              <dt className="text-muted-foreground">Need verify email</dt>
+              <dd className="mt-1 font-medium text-foreground">{detail.project.needVerifyEmail ? "Yes" : "No"}</dd>
             </div>
           </dl>
           {detail.keyInfos ? (
-            <div className="mt-4 rounded-xl bg-zinc-50 p-4 text-sm text-zinc-600">
+            <div className="mt-4 rounded-xl bg-surface-muted p-4 text-sm text-muted-foreground">
               Existing key info: {detail.keyInfos.name ?? "Unnamed key"}
             </div>
           ) : null}
@@ -162,7 +162,7 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
                 const serviceUuid = typeof service.uuid === "string" ? service.uuid : null;
 
                 return (
-                <div key={String(service.uuid ?? index)} className="rounded-xl border border-zinc-200 p-4">
+                <div key={String(service.uuid ?? index)} className="rounded-xl border border-border p-4">
                   <JsonBlock value={service} />
                   {canEdit && serviceUuid ? (
                     <div className="mt-3">

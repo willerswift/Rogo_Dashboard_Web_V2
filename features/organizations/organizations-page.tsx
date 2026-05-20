@@ -166,7 +166,7 @@ export function OrganizationsPage() {
           <div className="overflow-x-auto">
             <table className="min-w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-neutral-800 leading-[18px] font-sans">
+                <tr className="border-b border-border text-[12px] font-bold uppercase tracking-wider text-neutral-500 leading-[18px] font-sans">
                   <th className="px-6 py-4 text-left">Name</th>
                   <th className="px-6 py-4 text-left">Org ID</th>
                   <th className="px-6 py-4 text-left">Status</th>
@@ -177,30 +177,30 @@ export function OrganizationsPage() {
               </thead>
               <tbody>
                 {sortedOrganizations.map((organization) => (
-                  <tr key={organization.uuid ?? organization.orgId} className="border-b border-zinc-100 align-top">
+                  <tr key={organization.uuid ?? organization.orgId} className="border-b border-border-muted align-top hover:bg-surface-muted transition-colors">
                     <td className="px-6 py-4">
-                      <div className="font-medium text-zinc-900">{organization.name}</div>
+                      <div className="font-medium text-foreground">{organization.name}</div>
                       {organization.description ? (
-                        <div className="mt-1 text-xs text-zinc-500">{organization.description}</div>
+                        <div className="mt-1 text-xs text-neutral-500">{organization.description}</div>
                       ) : null}
                     </td>
-                    <td className="px-6 py-4 text-zinc-600">
+                    <td className="px-6 py-4 text-neutral-500">
                       <InlineCode value={organization.orgId} />
                     </td>
                     <td className="px-6 py-4">
                       <StatusBadge value={organization.status} />
                     </td>
-                    <td className="px-6 py-4 text-zinc-600">
+                    <td className="px-6 py-4 text-neutral-500">
                       {formatOwnerEmail(organization.owner, "—")}
                     </td>
-                    <td className="px-6 py-4 text-zinc-500 text-xs">
+                    <td className="px-6 py-4 text-neutral-500 text-xs">
                       {organization.createdDate ? new Date(organization.createdDate).toLocaleDateString() : "—"}
                     </td>
                     <td className="py-4 pr-6 text-right">
                       <div className="flex justify-end gap-2">
                         <Link
                           href={`/organizations/${organization.orgId}`}
-                          className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-300 px-3 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+                          className="inline-flex h-[40px] items-center justify-center rounded-full border border-border bg-surface px-4 py-2 text-[14px] font-semibold text-foreground transition hover:bg-surface-muted font-heading"
                         >
                           Detail
                         </Link>

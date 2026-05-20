@@ -10,7 +10,7 @@ const TABS = [
 
 export function SettingsTabs({ activeTab, onChange }: { activeTab: string; onChange: (id: string) => void }) {
   return (
-    <div className="flex border-b border-neutral-200 mb-8">
+    <div className="flex border-b border-border mb-8">
       {TABS.map((tab) => (
         <button
           key={tab.id}
@@ -19,7 +19,7 @@ export function SettingsTabs({ activeTab, onChange }: { activeTab: string; onCha
             "px-6 py-4 text-[14px] font-semibold transition-all relative font-heading",
             activeTab === tab.id
               ? "text-primary-300"
-              : "text-neutral-500 hover:text-neutral-700"
+              : "text-neutral-500 hover:text-foreground"
           )}
         >
           {tab.label}

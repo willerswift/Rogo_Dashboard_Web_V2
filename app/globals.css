@@ -61,6 +61,10 @@
 :root {
   --background: #ffffff;
   --foreground: #4a4a4a;
+  --surface: #ffffff;
+  --surface-muted: #f9fafb;
+  --border: #e8e8e8;
+  --border-muted: #f3f4f6;
   
   /* Themeable variables */
   --brand-primary: #fd3566;
@@ -109,9 +113,40 @@
   --dialog-border: #F3F4F6;
 }
 
+.dark {
+  --background: #0E0E22;
+  --foreground: #F1F1F3;
+  --surface: #14142F;
+  --surface-muted: #1B1B3A;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-muted: rgba(255, 255, 255, 0.04);
+
+  /* Adjust primary variants for dark mode if needed, or keep dynamic */
+  --primary-100: color-mix(in srgb, var(--brand-primary), black 60%);
+  --primary-200: color-mix(in srgb, var(--brand-primary), black 30%);
+  
+  --neutral-100: #14142F; /* Match surface */
+  --neutral-200: #1B1B3A; /* Match surface-muted */
+  --neutral-300: #2D2D4D;
+  --neutral-400: #4B4B6F;
+  --neutral-500: #9CA3AF; /* Muted text */
+  --neutral-600: #D1D5DB;
+  --neutral-700: #E5E7EB;
+  --neutral-800: #F3F4F6;
+  --neutral-900: #F9FAFB;
+  --neutral-1000: #FFFFFF;
+
+  --dialog-border: rgba(255, 255, 255, 0.12);
+  --dialog-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-border-muted: var(--border-muted);
   
   --color-primary-100: var(--primary-100);
   --color-primary-200: var(--primary-200);
@@ -171,7 +206,22 @@
 }
 
 * {
-  border-color: var(--neutral-200);
+  border-color: var(--border);
+}
+
+/* Autofill Overrides */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--foreground);
+  -webkit-box-shadow: 0 0 0px 1000px var(--surface) inset;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 html {
@@ -180,12 +230,12 @@ html {
 
 body {
   background: var(--background);
-  color: var(--neutral-900);
+  color: var(--foreground);
   font-family: var(--font-sans);
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--accent) 24%, white);
+  background: color-mix(in srgb, var(--brand-primary) 24%, white);
   color: var(--foreground);
 }
 
@@ -196,4 +246,64 @@ a {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--neutral-300);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-400);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Global scrollbar for main content */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neutral-200);
+  border-radius: 10px;
+  border: 2px solid var(--background);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-300);
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid var(--background);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }

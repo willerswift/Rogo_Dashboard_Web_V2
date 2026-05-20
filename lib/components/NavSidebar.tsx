@@ -40,7 +40,7 @@ export function NavSidebar() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
-        "relative flex h-screen flex-col border-r border-neutral-200 bg-white shadow-[2px_0_8px_rgba(0,0,0,0.02)] transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] px-4 py-6 z-[100]",
+        "relative flex h-screen flex-col border-r border-border bg-surface shadow-[2px_0_8px_rgba(0,0,0,0.02)] transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] px-4 py-6 z-[100]",
         isCollapsed ? "w-[80px]" : "w-[260px]"
       )}
     >
@@ -57,7 +57,7 @@ export function NavSidebar() {
             />
           </div>
           <div className={cn("flex items-center gap-3 transition-all duration-500", isCollapsed ? "opacity-0 w-0 translate-x-10" : "opacity-100 w-auto translate-x-0")}>
-            <div className="h-8 w-[1px] bg-neutral-200 mx-1" />
+            <div className="h-8 w-[1px] bg-border mx-1" />
             <div className="text-[10px] font-bold leading-tight text-neutral-400 uppercase tracking-wider whitespace-nowrap">
               Partner<br/>Admin
             </div>
@@ -79,10 +79,10 @@ export function NavSidebar() {
                 isCollapsed ? "justify-center px-0 py-3" : "px-3 py-2",
                 isActive
                   ? "bg-primary-300/10 text-primary-300 font-semibold"
-                  : "text-neutral-900 font-normal hover:bg-neutral-50 hover:text-neutral-900"
+                  : "text-foreground font-normal hover:bg-surface-muted hover:text-foreground"
                 )}
                 >
-                <Icon className={cn("size-[22px] shrink-0 transition-all duration-500", isCollapsed ? "mx-0" : "mr-3", isActive ? "text-primary-300" : "text-neutral-900 stroke-[1.5px]")} />
+                <Icon className={cn("size-[22px] shrink-0 transition-all duration-500", isCollapsed ? "mx-0" : "mr-3", isActive ? "text-primary-300" : "text-foreground stroke-[1.5px]")} />
                 <span className={cn(
                   "truncate whitespace-nowrap text-[14px] leading-[21px] font-sans transition-all duration-500",
                   isCollapsed ? "opacity-0 w-0 -translate-x-4" : "opacity-100 w-auto translate-x-0"
@@ -97,7 +97,7 @@ export function NavSidebar() {
         })}
       </nav>
 
-      <div className={cn("mt-auto pt-6 border-t border-neutral-100 transition-all duration-500", isCollapsed ? "px-0" : "")}>
+      <div className={cn("mt-auto pt-6 border-t border-border-muted transition-all duration-500", isCollapsed ? "px-0" : "")}>
         <button 
           onClick={handleLogout}
           className={cn(

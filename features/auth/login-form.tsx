@@ -78,11 +78,11 @@ export function LoginForm() {
       <div className="space-y-5">
         {/* Email Field */}
         <div className="space-y-2.5">
-          <label className="text-[13px] font-semibold text-zinc-700" htmlFor="email">
+          <label className="text-[13px] font-semibold text-foreground" htmlFor="email">
             Email Address
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-[#3B4AD0]">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-primary-300">
               <Mail className="h-[18px] w-[18px]" />
             </div>
             <input
@@ -91,8 +91,8 @@ export function LoginForm() {
               placeholder="name@company.com"
               {...register("email")}
               className={cn(
-                "block w-full h-10 pl-11 pr-3 bg-white rounded-[6px] border border-[#E5E7EB] text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
-                "autofill:shadow-[0_0_0_30px_white_inset]",
+                "block w-full h-10 pl-11 pr-3 bg-surface rounded-[6px] border border-border text-sm placeholder:text-neutral-500 text-foreground focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
+                "autofill:shadow-[0_0_0_1000px_var(--surface)_inset] autofill:text-fill-foreground",
                 errors.email && "border-red-500 focus:border-red-500 focus:ring-red-500/10"
               )}
             />
@@ -104,11 +104,11 @@ export function LoginForm() {
 
         {/* Password Field */}
         <div className="space-y-2.5">
-          <label className="text-[13px] font-semibold text-zinc-700" htmlFor="password">
+          <label className="text-[13px] font-semibold text-foreground" htmlFor="password">
             Password
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-[#3B4AD0]">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-primary-300">
               <Lock className="h-[18px] w-[18px]" />
             </div>
             <input
@@ -117,15 +117,15 @@ export function LoginForm() {
               placeholder="••••••••"
               {...register("password")}
               className={cn(
-                "block w-full h-10 pl-11 pr-11 bg-white rounded-[6px] border border-[#E5E7EB] text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
-                "autofill:shadow-[0_0_0_30px_white_inset]",
+                "block w-full h-10 pl-11 pr-11 bg-surface rounded-[6px] border border-border text-sm placeholder:text-neutral-500 text-foreground focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
+                "autofill:shadow-[0_0_0_1000px_var(--surface)_inset] autofill:text-fill-foreground",
                 errors.password && "border-red-500 focus:border-red-500 focus:ring-red-500/10"
               )}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-[#5E618E] hover:text-[#3B4AD0] transition-colors"
+              className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-neutral-400 hover:text-primary-300 transition-colors"
             >
               {showPassword ? (
                 <EyeOff className="h-[18px] w-[18px]" />
@@ -145,7 +145,7 @@ export function LoginForm() {
           <CheckboxInput
             {...register("rememberMe")}
           />
-          <span className="text-[13px] font-medium text-zinc-600 group-hover:text-zinc-900 transition-colors">Remember me</span>
+          <span className="text-[13px] font-medium text-muted-foreground group-hover:text-foreground transition-colors">Remember me</span>
         </label>
         <Link
           href="/forgot-password"
@@ -167,7 +167,7 @@ export function LoginForm() {
       </button>
 
       <div className="pt-4 text-center">
-        <p className="text-[13px] text-zinc-600">
+        <p className="text-[13px] text-muted-foreground">
           Don't have an account?{" "}
           <Link href="/register" className="text-[14px] font-semibold hover:underline font-heading" style={{ color: 'var(--brand-primary)' }}>
             Register

@@ -95,25 +95,25 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
   if (!org) return <EmptyState title="Not found" description="Select an organization from the tree." />;
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-700">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-700 transition-colors duration-500">
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h1 className="text-[28px] font-bold font-heading text-neutral-1000 tracking-tight">{org.name}</h1>
-          <div className="flex items-center h-6 px-2.5 rounded-lg bg-primary-100 text-[11px] font-bold text-primary-300 uppercase">
+          <h1 className="text-[28px] font-bold font-heading text-foreground tracking-tight">{org.name}</h1>
+          <div className="flex items-center h-6 px-2.5 rounded-lg bg-primary-100/20 text-[11px] font-bold text-primary-300 uppercase">
             ID: {org.orgId}
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center h-7 px-3 rounded-full bg-primary-100 text-[10px] font-bold text-primary-300 uppercase tracking-wider">
+          <div className="flex items-center h-7 px-3 rounded-full bg-primary-100/20 text-[10px] font-bold text-primary-300 uppercase tracking-wider">
             ORG
           </div>
-          <div className="flex items-center h-7 px-3 rounded-full bg-neutral-100 text-[12px] font-bold text-neutral-600 gap-1.5">
+          <div className="flex items-center h-7 px-3 rounded-full bg-surface-muted border border-border text-[12px] font-bold text-neutral-500 gap-1.5">
             <Users className="size-3" />
             {members.length} Members
           </div>
-          <div className="flex items-center h-7 px-3 rounded-full bg-neutral-100 text-[12px] font-bold text-neutral-600 gap-1.5">
+          <div className="flex items-center h-7 px-3 rounded-full bg-surface-muted border border-border text-[12px] font-bold text-neutral-500 gap-1.5">
             <LayoutDashboard className="size-3" />
             {projects.length} Projects
           </div>
@@ -123,7 +123,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
       {/* Projects Section */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold font-heading text-neutral-900 tracking-tight">Projects in Organization</h3>
+          <h3 className="text-xl font-bold font-heading text-foreground tracking-tight">Projects in Organization</h3>
           <div className="flex items-center gap-3">
             <SearchInput
               placeholder="Search projects, id, time..."
@@ -141,10 +141,10 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
           </div>
         </div>
 
-        <div className="overflow-visible rounded-2xl border border-neutral-200 bg-white shadow-sm">
+        <div className="overflow-visible rounded-2xl border border-border bg-surface shadow-sm">
           <table className="w-full text-left text-sm border-collapse">
             <thead>
-              <tr className="bg-neutral-50/50 border-b border-neutral-100 text-[12px] font-bold uppercase tracking-wider text-neutral-800 leading-[18px] font-sans">
+              <tr className="bg-surface-muted/50 border-b border-border text-[12px] font-bold uppercase tracking-wider text-neutral-500 leading-[18px] font-sans">
                 <th className="px-6 py-4">Name</th>
                 <th className="px-6 py-4">Project ID</th>
                 <th className="px-6 py-4">Status</th>
@@ -153,7 +153,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-50">
+            <tbody className="divide-y divide-border-muted">
               {filteredProjects.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-20 text-center text-neutral-400 font-medium">
@@ -167,8 +167,8 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                     onClick={() => router.push(`/overview?orgId=${orgId}&projectId=${project.uuid}`)}
                     className={cn(
                       "group transition-colors cursor-pointer",
-                      idx % 2 === 1 ? "bg-neutral-50/30" : "bg-white",
-                      "hover:bg-primary-100/30"
+                      idx % 2 === 1 ? "bg-surface-muted/30" : "bg-surface",
+                      "hover:bg-primary-300/5"
                     )}
                   >
                     <td className="px-6 py-4">
@@ -190,7 +190,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                           }}
                           className={cn(
                             "flex items-center justify-center transition-colors shrink-0 p-0 outline-none -mt-[1px]",
-                            openUuidId === project.uuid ? "text-primary-300" : "text-neutral-300 hover:text-primary-300"
+                            openUuidId === project.uuid ? "text-primary-300" : "text-neutral-400 hover:text-primary-300"
                           )}
                           title="View full ID"
                         >
@@ -200,7 +200,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                         {openUuidId === project.uuid && (
                           <div
                             ref={uuidRef}
-                            className="absolute bottom-full mb-3 left-0 z-[100] w-[280px] rounded-xl border border-neutral-200 bg-white p-3 shadow-2xl animate-in fade-in zoom-in duration-200"
+                            className="absolute bottom-full mb-3 left-0 z-[100] w-[280px] rounded-xl border border-border bg-surface p-3 shadow-2xl animate-in fade-in zoom-in duration-200"
                           >
                             <div className="space-y-2">
                               <div className="flex items-center justify-between gap-2">
@@ -233,14 +233,14 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                                 </button>
                               </div>
 
-                              <div className="rounded-lg border border-primary-100 bg-primary-100/30 p-2">
+                              <div className="rounded-lg border border-primary-300/20 bg-primary-300/10 p-2">
                                 <div className="text-[12px] font-medium text-primary-300 break-all leading-relaxed font-mono tracking-tight">
                                   {project.uuid}
                                 </div>
                               </div>
                             </div>
                             {/* Little arrow */}
-                            <div className="absolute top-full left-3 -mt-1.5 h-3 w-3 rotate-45 border-b border-r border-neutral-200 bg-white" />
+                            <div className="absolute top-full left-3 -mt-1.5 h-3 w-3 rotate-45 border-b border-r border-border bg-surface" />
                           </div>
                         )}
                       </div>
@@ -260,7 +260,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                             e.stopPropagation();
                             setOpenMenuId(openMenuId === project.uuid ? null : project.uuid);
                           }}
-                          className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-900 transition-all"
+                          className="rounded-lg p-1.5 text-neutral-400 hover:bg-surface-muted hover:text-foreground transition-all"
                         >
                           <MoreVertical className="size-4" />
                         </button>
@@ -268,7 +268,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                         {openMenuId === project.uuid && (
                           <div
                             ref={menuRef}
-                            className="absolute right-0 top-full z-20 mt-1 w-48 origin-top-right overflow-hidden rounded-xl border border-neutral-100 bg-white shadow-xl animate-in fade-in zoom-in-95 duration-150"
+                            className="absolute right-0 top-full z-20 mt-1 w-48 origin-top-right overflow-hidden rounded-xl border border-border bg-surface shadow-xl animate-in fade-in zoom-in-95 duration-150"
                           >
                             <div className="py-1">
                               <button
@@ -278,12 +278,12 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                                   setIsRenameOpen(true);
                                   setOpenMenuId(null);
                                 }}
-                                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-[14px] font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors"
+                                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-[14px] font-semibold text-foreground hover:bg-surface-muted transition-colors"
                               >
                                 <Pencil className="size-4" />
                                 Rename Project
                               </button>
-                              <div className="h-px bg-neutral-100" />
+                              <div className="h-px bg-border-muted" />
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -291,7 +291,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                                   setIsDeleteOpen(true);
                                   setOpenMenuId(null);
                                 }}
-                                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-[14px] font-semibold text-primary-300 hover:bg-neutral-50 transition-colors"
+                                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-[14px] font-semibold text-primary-300 hover:bg-surface-muted transition-colors"
                               >
                                 <Trash2 className="size-4" />
                                 Delete Project
@@ -307,13 +307,13 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
             </tbody>
           </table>
 
-          <div className="flex items-center justify-between bg-white border-t border-neutral-100 px-6 py-4">
-            <div className="text-[13px] font-medium text-neutral-400">
-              Showing <span className="text-neutral-900 font-bold">1</span> to <span className="text-neutral-900 font-bold">{projects.length}</span> of <span className="text-neutral-900 font-bold">{projects.length}</span> entries
+          <div className="flex items-center justify-between bg-surface border-t border-border px-6 py-4">
+            <div className="text-[13px] font-medium text-neutral-500">
+              Showing <span className="text-foreground font-bold">1</span> to <span className="text-foreground font-bold">{projects.length}</span> of <span className="text-foreground font-bold">{projects.length}</span> entries
             </div>
             <div className="flex gap-2">
-              <button disabled className="h-9 px-4 rounded-lg border border-neutral-200 bg-white text-[16px] font-semibold text-neutral-400 hover:bg-neutral-50 disabled:opacity-30 transition-all font-heading">Previous</button>
-              <button disabled className="h-9 px-4 rounded-lg border border-neutral-200 bg-white text-[16px] font-semibold text-neutral-400 hover:bg-neutral-50 disabled:opacity-30 transition-all font-heading">Next</button>
+              <button disabled className="h-9 px-4 rounded-lg border border-border bg-surface text-[16px] font-semibold text-neutral-400 hover:bg-surface-muted disabled:opacity-30 transition-all font-heading">Previous</button>
+              <button disabled className="h-9 px-4 rounded-lg border border-border bg-surface text-[16px] font-semibold text-neutral-400 hover:bg-surface-muted disabled:opacity-30 transition-all font-heading">Next</button>
             </div>
           </div>
         </div>

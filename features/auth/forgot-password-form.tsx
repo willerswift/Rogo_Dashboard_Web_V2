@@ -43,13 +43,13 @@ export function ForgotPasswordForm() {
 
   if (isSent) {
     return (
-      <div className="space-y-6 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
+      <div className="space-y-6 text-center transition-colors duration-500">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100/20 text-green-500">
           <Mail className="h-6 w-6" />
         </div>
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-[#111827]">Check your email</h2>
-          <p className="text-sm text-zinc-500">
+          <h2 className="text-2xl font-bold text-foreground">Check your email</h2>
+          <p className="text-sm text-neutral-500">
             We&apos;ve sent a password reset link to your email address.
           </p>
         </div>
@@ -69,11 +69,11 @@ export function ForgotPasswordForm() {
     <form className="space-y-7" onSubmit={onSubmit}>
       <div className="space-y-5">
         <div className="space-y-2.5">
-          <label className="text-[13px] font-semibold text-zinc-700" htmlFor="email">
+          <label className="text-[13px] font-semibold text-foreground" htmlFor="email">
             Email Address
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-[#3B4AD0]">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-primary-300">
               <Mail className="h-[18px] w-[18px]" />
             </div>
             <input
@@ -82,8 +82,8 @@ export function ForgotPasswordForm() {
               placeholder="name@company.com"
               {...register("email")}
               className={cn(
-                "block w-full h-10 pl-11 pr-3 bg-white rounded-[6px] border border-[#E5E7EB] text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
-                "autofill:shadow-[0_0_0_30px_white_inset]",
+                "block w-full h-10 pl-11 pr-3 bg-surface rounded-[6px] border border-border text-sm placeholder:text-neutral-500 text-foreground focus:outline-none focus:ring-2 focus:ring-primary-300/10 focus:border-primary-300 transition-all",
+                "autofill:shadow-[0_0_0_1000px_var(--surface)_inset] autofill:text-fill-foreground",
                 errors.email && "border-red-500 focus:border-red-500 focus:ring-red-500/10"
               )}
             />

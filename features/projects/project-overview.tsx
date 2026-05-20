@@ -70,7 +70,7 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
   const displayId = project.uuid || projectId;
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-700">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-700 transition-colors duration-500">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div className="space-y-2">
@@ -78,8 +78,8 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
             <div className="flex items-center justify-center size-10 rounded-xl bg-gradient-to-br from-[var(--brand-primary)] to-[color-mix(in srgb, var(--brand-primary), black 10%)] text-white shadow-sm shadow-[var(--brand-primary)]/20">
               <LayoutDashboard className="size-5" />
             </div>
-            <h1 className="text-[28px] font-bold font-heading text-neutral-1000 tracking-tight leading-none">{project.name}</h1>
-            <div className="flex items-center h-7 px-3 rounded-full bg-[#E1F7F1] text-[11px] font-bold text-[#1FC16B] uppercase tracking-wider leading-none ml-2">
+            <h1 className="text-[28px] font-bold font-heading text-foreground tracking-tight leading-none">{project.name}</h1>
+            <div className="flex items-center h-7 px-3 rounded-full bg-green-100/20 text-[11px] font-bold text-[#1FC16B] uppercase tracking-wider leading-none ml-2">
               ACTIVE
             </div>
           </div>
@@ -93,7 +93,7 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
             <Pencil className="size-4" />
             Rename
           </SecondaryButton>
-          <SecondaryButton onClick={() => setIsDeleteOpen(true)} className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200">
+          <SecondaryButton onClick={() => setIsDeleteOpen(true)} className="text-red-600 hover:text-red-700 hover:bg-red-500/10 border-red-200 dark:border-red-900/50">
             <Trash2 className="size-4" />
             Delete
           </SecondaryButton>
@@ -105,7 +105,7 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
         <div className="px-6 py-4">
           <dl className="grid gap-4 text-sm md:grid-cols-2 xl:grid-cols-4">
             <div>
-              <dt className="flex items-center gap-1.5 text-zinc-500">
+              <dt className="flex items-center gap-1.5 text-neutral-500">
                 <Fingerprint className="size-4" />
                 <span>Project ID</span>
               </dt>
@@ -115,7 +115,7 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
                   onClick={() => handleCopy(displayId)}
                   className={cn(
                     "flex items-center justify-center transition-colors shrink-0 p-1.5 rounded-md",
-                    copiedId === displayId ? "text-green-600 bg-green-50" : "text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
+                    copiedId === displayId ? "text-green-600 bg-green-500/10" : "text-neutral-400 hover:bg-surface-muted hover:text-foreground"
                   )}
                   title="Copy full ID"
                 >
@@ -129,11 +129,11 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
             </div>
 
             <div>
-              <dt className="flex items-center gap-1.5 text-zinc-500">
+              <dt className="flex items-center gap-1.5 text-neutral-500">
                 <Activity className="size-4" />
                 <span>Status</span>
               </dt>
-              <dd className="mt-2 flex items-center gap-2 font-medium text-zinc-900">
+              <dd className="mt-2 flex items-center gap-2 font-medium text-foreground">
                 <div className="relative flex items-center justify-center">
                   <div className="absolute h-3 w-3 rounded-full bg-[#1FC16B] opacity-20 animate-ping" />
                   <div className="relative h-2 w-2 rounded-full bg-[#1FC16B] shadow-sm" />
@@ -143,21 +143,21 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
             </div>
 
             <div>
-              <dt className="flex items-center gap-1.5 text-zinc-500">
+              <dt className="flex items-center gap-1.5 text-neutral-500">
                 <Calendar className="size-4" />
                 <span>Created</span>
               </dt>
-              <dd className="mt-2 font-medium text-zinc-900">
+              <dd className="mt-2 font-medium text-foreground">
                 {project.createdAt ? formatDate(project.createdAt) : "—"}
               </dd>
             </div>
 
             <div>
-              <dt className="flex items-center gap-1.5 text-zinc-500">
+              <dt className="flex items-center gap-1.5 text-neutral-500">
                 <CalendarDays className="size-4" />
                 <span>Last Updated</span>
               </dt>
-              <dd className="mt-2 font-medium text-zinc-900">
+              <dd className="mt-2 font-medium text-foreground">
                 {project.updatedAt ? formatDate(project.updatedAt) : "—"}
               </dd>
             </div>
