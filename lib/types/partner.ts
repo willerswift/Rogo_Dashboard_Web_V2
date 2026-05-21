@@ -65,6 +65,8 @@ export type Organization = {
   ownerId: string
   createdBy: string
   createdDate?: string
+  createdAt?: string
+  updatedAt?: string
   branding?: OrganizationBranding
 }
 

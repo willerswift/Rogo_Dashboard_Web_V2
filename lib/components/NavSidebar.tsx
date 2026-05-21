@@ -20,7 +20,7 @@ const ICONS = {
 
 export function NavSidebar() {
   const pathname = usePathname();
-  const { logoUrl, faviconUrl } = useTheme();
+  const { logoUrl, faviconUrl, themeMode } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
   
   // Sidebar is collapsed by default, expands when hovered
@@ -46,7 +46,7 @@ export function NavSidebar() {
     >
       <div className={cn("flex items-center mb-10 transition-all duration-500", isCollapsed ? "px-0 justify-center" : "pl-3")}>
         <div className={cn("flex items-center overflow-hidden", isCollapsed ? "gap-0" : "gap-3")}>
-          <div className={cn("relative h-8 shrink-0 transition-all duration-500", isCollapsed ? "w-8" : "w-[120px]")}>
+          <div className={cn("relative shrink-0 transition-all duration-500", isCollapsed ? "size-[40px]" : "h-8 w-[120px]")}>
             <Image 
               src={isCollapsed ? faviconUrl : logoUrl} 
               alt="Rogo" 
@@ -78,11 +78,15 @@ export function NavSidebar() {
                 "group relative flex items-center transition-all duration-500 overflow-hidden font-sans rounded-lg",
                 isCollapsed ? "justify-center px-0 py-3" : "px-3 py-2",
                 isActive
-                  ? "bg-primary-300/20 text-primary-300 dark:text-white font-semibold"
+                  ? "bg-primary-300/20 dark:text-white font-semibold"
                   : "text-foreground font-normal hover:bg-surface-muted hover:text-foreground"
                 )}
+              style={isActive && themeMode === 'light' ? { color: 'var(--brand-primary)' } : undefined}
                 >
-                <Icon className={cn("size-[22px] shrink-0 transition-all duration-500", isCollapsed ? "mx-0" : "mr-3", isActive ? "text-primary-300 dark:text-white" : "text-foreground stroke-[1.5px]")} />
+                <Icon 
+                  className={cn("size-[22px] shrink-0 transition-all duration-500", isCollapsed ? "mx-0" : "mr-3", isActive ? "dark:text-white" : "text-foreground stroke-[1.5px]")} 
+                  style={isActive && themeMode === 'light' ? { color: 'var(--brand-primary)' } : undefined}
+                />
                 <span className={cn(
                   "truncate whitespace-nowrap text-[14px] leading-[21px] font-sans transition-all duration-500",
                   isCollapsed ? "opacity-0 w-0 -translate-x-4" : "opacity-100 w-auto translate-x-0"
@@ -90,7 +94,10 @@ export function NavSidebar() {
                   {item.title}
                 </span>
                 {isActive && (
-                  <div className="absolute right-0 top-0 h-full w-[3px] rounded-l-full bg-primary-300" />
+                  <div 
+                    className="absolute right-0 top-0 h-full w-[3px] rounded-l-full bg-primary-300" 
+                    style={themeMode === 'light' ? { backgroundColor: 'var(--brand-primary)' } : undefined}
+                  />
                 )}
             </Link>
           );
@@ -101,11 +108,12 @@ export function NavSidebar() {
         <button 
           onClick={handleLogout}
           className={cn(
-            "flex h-10 w-full items-center rounded-lg text-primary-300 hover:bg-primary-300/10 transition-all duration-500 font-sans",
+            "flex h-10 w-full items-center rounded-lg hover:bg-primary-300/10 transition-all duration-500 font-sans",
             isCollapsed ? "justify-center px-0" : "px-3"
           )}
+          style={themeMode === 'light' ? { color: 'var(--brand-primary)' } : { color: 'var(--brand-primary)' }}
         >
-          <LogOut className={cn("size-[20px] text-primary-300 shrink-0 transition-all duration-500", isCollapsed ? "" : "mr-3")} />
+          <LogOut className={cn("size-[20px] shrink-0 transition-all duration-500", isCollapsed ? "" : "mr-3")} />
           <span className={cn(
             "text-[14px] font-medium font-sans transition-all duration-500 truncate whitespace-nowrap",
             isCollapsed ? "opacity-0 w-0 -translate-x-4" : "opacity-100 w-auto translate-x-0"

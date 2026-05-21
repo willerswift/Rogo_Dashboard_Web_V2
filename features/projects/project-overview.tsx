@@ -83,13 +83,12 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
       <BreadcrumbHeader
         items={[
           { label: partnerName, href: "/overview?view=partner" },
-          { 
-            label: org ? org.name : "No Organization", 
-            href: org ? `/overview?orgId=${org.orgId}` : undefined
-          },
+          ...(project.orgId && org && org.orgId === project.orgId
+            ? [{ label: org.name, href: `/overview?orgId=${org.orgId}` }]
+            : [{ label: "No Organization" }]),
           { label: project.name, active: true }
         ]}
-        backHref={org ? `/overview?orgId=${org.orgId}` : "/overview?view=partner"}
+        backHref={project.orgId && org && org.orgId === project.orgId ? `/overview?orgId=${org.orgId}` : "/overview?view=partner"}
         breadcrumbAddon={
           <div className="flex items-center h-8 px-3 rounded-full bg-primary-100/20 text-[12px] font-bold text-primary-300 uppercase tracking-tight">
             ID: {displayId.slice(0, 8)}

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Search, ChevronDown, ChevronRight, Building2, FolderIcon, Dot, Plus } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Search, ChevronDown, ChevronRight, Building2, FolderIcon, Dot, Plus, ShieldCheck, Check } from "lucide-react";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { listOrganizations } from "@/lib/api/organization";
 import { listProjects } from "@/lib/api/project";
@@ -12,7 +12,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { CreateOrganizationDialog } from "@/features/organizations/CreateOrganizationDialog";
 
 export function AccessTreeSidebar() {
-  const { session, accessScope, setAccessScope } = usePartnerContext();
+  const { session, setSession, accessScope, setAccessScope } = usePartnerContext();
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -24,9 +24,47 @@ export function AccessTreeSidebar() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showCreateOrg, setShowCreateOrg] = useState(false);
+  
+  const [showPartnerDropdown, setShowPartnerDropdown] = useState(false);
+  const partnerDropdownRef = useRef<HTMLDivElement>(null);
 
   const activeOrgId = searchParams.get("orgId");
   const activeProjectId = searchParams.get("projectId");
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (partnerDropdownRef.current && !partnerDropdownRef.current.contains(event.target as Node)) {
+        setShowPartnerDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSwitchPartner = async (newPartnerId: string) => {
+    if (newPartnerId === partnerId) {
+      setShowPartnerDropdown(false);
+      return;
+    }
+    try {
+      const res = await fetch("/api/session/active-partner", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ activePartnerId: newPartnerId }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSession(data.session);
+        setShowPartnerDropdown(false);
+        router.push(pathname); // Clear any specific project/org selection
+      } else {
+        console.error("Failed to switch partner");
+      }
+    } catch (e) {
+      console.error("Error switching partner", e);
+    }
+  };
 
   const loadTree = useCallback(async () => {
     if (!partnerId) return;
@@ -122,8 +160,11 @@ export function AccessTreeSidebar() {
   return (
     <aside className="h-screen w-[280px] border-r border-border bg-surface overflow-hidden flex flex-col font-sans transition-colors duration-500">
       {/* 1. Partner Switcher */}
-      <div className="p-4 border-b border-border">
-        <div className="flex h-[40px] items-center justify-between gap-2 rounded-[4px] border border-border bg-surface-muted px-4 hover:border-primary-300 cursor-pointer transition-all">
+      <div className="p-4 border-b border-border relative" ref={partnerDropdownRef}>
+        <div 
+          onClick={() => setShowPartnerDropdown(!showPartnerDropdown)}
+          className="flex h-[40px] items-center justify-between gap-2 rounded-[4px] border border-border bg-surface-muted px-4 hover:border-primary-300 cursor-pointer transition-all"
+        >
           <div className="flex items-center gap-2 truncate">
             <span className="text-[14px] font-normal text-neutral-500 leading-[21px]">
               Partner:
@@ -132,8 +173,58 @@ export function AccessTreeSidebar() {
               {session.activePartnerId || "Rogo"}
             </span>
           </div>
-          <ChevronDown className="size-4 text-neutral-400 shrink-0" />
+          <ChevronDown className={cn("size-4 text-neutral-400 shrink-0 transition-transform duration-200", showPartnerDropdown ? "rotate-180" : "")} />
         </div>
+
+        {/* Dropdown Menu */}
+        {showPartnerDropdown && (
+          <div className="absolute top-[64px] left-4 right-4 bg-surface border border-border rounded-lg shadow-panel z-50 overflow-hidden flex flex-col">
+            <div className="px-4 py-3 border-b border-border">
+              <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">SWITCH PARTNER</span>
+            </div>
+            <div className="max-h-[300px] overflow-y-auto p-2 space-y-1 custom-scrollbar">
+              {session.partnerIds.map((pid) => {
+                const isActive = pid === session.activePartnerId;
+                return (
+                  <button
+                    key={pid}
+                    onClick={() => handleSwitchPartner(pid)}
+                    className={cn(
+                      "group w-full flex items-center justify-between p-2 rounded-[16px] transition-all text-left",
+                      isActive 
+                        ? "bg-primary-300/10 text-primary-300" 
+                        : "hover:bg-neutral-50 text-neutral-600"
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      {isActive ? (
+                        <div className="flex items-center justify-center size-[42px] rounded-[12px] bg-primary-300 text-white shrink-0 shadow-sm transition-all duration-300">
+                          <ShieldCheck className="size-[22px]" />
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center size-[42px] rounded-[12px] bg-surface-muted text-neutral-400 shrink-0 border border-border group-hover:bg-surface group-hover:text-primary-300 group-hover:border-transparent group-hover:shadow-sm transition-all duration-300">
+                          <Building2 className="size-[22px]" />
+                        </div>
+                      )}
+                      <div className="flex flex-col">
+                        <span className={cn("text-[15px] font-bold tracking-tight transition-colors", isActive ? "text-primary-300" : "text-neutral-500 group-hover:text-primary-300")}>{pid}</span>
+                        {isActive && <span className="text-[10px] font-bold uppercase tracking-wider opacity-80 mt-0">ACTIVE SESSION</span>}
+                      </div>
+                    </div>
+                    {isActive && (
+                      <div className="flex items-center justify-center size-6 rounded-full bg-primary-300 mr-2">
+                        <Check className="size-3 text-white stroke-[3px]" />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="px-4 py-3 bg-surface-muted border-t border-border">
+              <span className="text-xs text-neutral-400 italic">{session.partnerIds.length} partners available</span>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col flex-1 overflow-hidden">
@@ -210,11 +301,11 @@ export function AccessTreeSidebar() {
               {/* Partner Root */}
               <div 
                 onClick={() => router.push(`${pathname}?view=partner`)}
-                className="flex items-center gap-4 py-2 text-[14px] text-foreground whitespace-nowrap px-0 cursor-pointer hover:bg-neutral-50 rounded-md transition-colors"
+                className="group flex items-center gap-4 py-2 text-[14px] text-foreground whitespace-nowrap px-0 cursor-pointer hover:bg-neutral-50 rounded-md transition-colors"
               >
-                <FolderIcon className="size-5 text-neutral-400 fill-neutral-400" />
-                <div className="flex items-center gap-1.5">
-                  <span className="text-neutral-500 font-normal">Partner:</span>
+                <FolderIcon className="size-5 text-neutral-400 fill-neutral-400 transition-colors group-hover:text-primary-300 group-hover:fill-primary-300" />
+                <div className="flex items-center gap-1.5 transition-colors group-hover:text-primary-300">
+                  <span className="text-neutral-500 font-normal transition-colors group-hover:text-primary-300">Partner:</span>
                   <span className="font-bold uppercase tracking-tight">{session.activePartnerId || "ROGO"}</span>
                 </div>
               </div>
@@ -274,13 +365,13 @@ export function AccessTreeSidebar() {
                     <button
                       onClick={() => handleSelectProject(project.uuid)}
                       className={cn(
-                        "flex w-full items-center gap-3 rounded-md py-2 pl-[22px] pr-2 text-[14px] transition-all relative whitespace-nowrap outline-none",
+                        "group flex w-full items-center gap-3 rounded-md py-2 pl-[2px] pr-2 text-[14px] transition-all relative whitespace-nowrap outline-none",
                         activeProjectId === project.uuid
                           ? "text-primary-300 font-semibold bg-primary-300/5 ring-1 ring-primary-300/20"
-                          : "text-neutral-600 font-medium hover:bg-neutral-50"
+                          : "text-neutral-600 font-medium hover:bg-neutral-50 hover:text-primary-300"
                       )}
                     >
-                      <Dot className={cn("size-[18px] shrink-0", activeProjectId === project.uuid ? "text-primary-300" : "text-green-500")} />
+                      <Dot className={cn("size-[18px] shrink-0 transition-colors", activeProjectId === project.uuid ? "text-primary-300" : "text-green-500 group-hover:text-primary-300")} />
                       <span className="truncate">{project.name}</span>
                     </button>
                   </div>
@@ -328,13 +419,13 @@ function OrgProjectsList({ projects, activeProjectId, onSelect, searchQuery }: {
           key={p.uuid}
           onClick={() => onSelect(p.uuid)}
           className={cn(
-            "flex w-full items-center gap-3 rounded-md py-2 pl-[38px] pr-2 text-[14px] transition-all relative whitespace-nowrap outline-none",
+            "group flex w-full items-center gap-3 rounded-md py-2 pl-[38px] pr-2 text-[14px] transition-all relative whitespace-nowrap outline-none",
             activeProjectId === p.uuid
               ? "text-primary-300 font-semibold bg-primary-300/5 ring-1 ring-primary-300/20"
-              : "text-neutral-600 font-medium hover:bg-neutral-50"
+              : "text-neutral-600 font-medium hover:bg-neutral-50 hover:text-primary-300"
           )}
         >
-          <Dot className={cn("size-[18px] shrink-0", activeProjectId === p.uuid ? "text-primary-300" : "text-green-500")} />
+          <Dot className={cn("size-[18px] shrink-0 transition-colors", activeProjectId === p.uuid ? "text-primary-300" : "text-green-500 group-hover:text-primary-300")} />
           <span className="truncate">{p.name}</span>
         </button>
       ))}

@@ -2,7 +2,30 @@
 
 This file serves as a persistent record of work completed, current status, and pending tasks. It should be updated at the end of every working session to ensure continuity.
 
-## Latest Update: May 20, 2026
+## Latest Update: May 21, 2026
+
+### Work Completed
+- **Re-implemented Partner Switcher Dropdown**:
+    - **Interactive Menu**: Restored the interactive dropdown menu when clicking the "Partner: ROGO" header in the Access Tree Sidebar, which was lost during a previous code merge.
+    - **Visual Sync**: Built the dropdown to perfectly match the provided design screenshots, featuring a floating absolute-positioned panel, rounded-xl styling, and custom scrollbars.
+    - **Active State Highlights**: Used dynamic primary global colors (`bg-primary-300`, `text-primary-300`) for the currently active session. Replaced the generic shield with a `ShieldCheck` icon, and replaced the trailing checkmark with a solid primary-colored circle containing a bold white `Check` to exactly match the reference designs. Added a clear "ACTIVE SESSION" badge.
+    - **Hover UI Refinements**: Refined the hover states for inactive partners to match specific visual aesthetics: The outer row turns light gray (`hover:bg-neutral-50`), the text becomes primary-colored (`group-hover:text-primary-300`), and the inner icon box transitions to a clean white background with a soft drop shadow (`group-hover:bg-surface`, `group-hover:shadow-sm`).
+    - **Functionality**: Re-wired the `handleSwitchPartner` logic to call the `/api/session/active-partner` POST endpoint. Upon a successful response, the local session context is updated, and `router.push(pathname)` clears URL parameters to refresh the active Partner tree accurately. Added `useRef` to handle closing the dropdown when clicking outside.
+- **NavSidebar Active State Fix**:
+    - **Primary Icon/Text Color**: Replaced Tailwind `text-primary-300` classes in the main `NavSidebar` component with dynamic inline styles (`style={{ color: 'var(--brand-primary)' }}`) for the active tab icon, text, and active indicator bar, specifically linked to the `themeMode`. This ensures that in light mode, the selected menu item (e.g., "Users & Permissions") correctly inherits the dynamically configured global primary color, rather than falling back to white or defaulting incorrectly due to OS-level `prefers-color-scheme: dark` media queries intercepting the icon's SVG stroke. Preserved `text-white` behavior for dark mode.
+    - **Favicon Size Adjustment**: Increased the size of the collapsed state logo (favicon) from 32x32px (`h-8 w-8`) to 40x40px (`size-[40px]`) for better visibility and proportional alignment within the sidebar.
+- **Standalone Project Breadcrumb Fix**: 
+    - Resolved a state hydration bug where standalone projects (projects without an organization) incorrectly displayed the name of a previously viewed organization in the breadcrumb header.
+    - Updated `project-overview.tsx` to explicitly verify `project.orgId === org.orgId` before rendering the organization segment. If the project lacks an `orgId`, it properly falls back to displaying "No Organization" and routes the back button to the Partner Overview.
+- **Organization Table Dates Fix**:
+    - Identified a data mapping gap where the backend database provided `createdAt` and `updatedAt` for organizations, but the frontend was only looking for a legacy `createdDate` field.
+    - Updated the `Organization` type definition in `lib/types/partner.ts` to strictly support both `createdAt` and `updatedAt`.
+    - Modified `partner-overview.tsx` to properly format and display these dates in the Partner Overview table, replacing the empty "—" placeholders.
+- **Sidebar Alignment and Visual Enhancements**:
+    - **Primary Icon Hover Color**: Added dynamic primary color transitions (`group-hover:text-primary-300`) to the icons (Organization building, Project dot, Partner folder) and text elements in the Access Tree sidebar. This ensures the icons transition to the primary brand color on hover, rather than defaulting to generic or invisible colors in light mode.
+    - **Standalone Project Alignment**: Adjusted the indentation of standalone projects from `pl-[22px]` to `pl-[2px]` in the Access Tree sidebar. This perfectly aligns the center of the project's green dot with the vertical axis of the organization expansion arrows, creating a cleaner and more structured hierarchy.
+
+## Previous Update: May 20, 2026
 
 ### Work Completed
 - **Refined Breadcrumb Header Layout & Spacing**:

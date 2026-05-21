@@ -174,11 +174,10 @@ export function PartnerOverview() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-[13px] font-medium text-neutral-500">
-                      {org.createdDate ? formatDate(org.createdDate) : "—"}
+                      {(org.createdAt || org.createdDate) ? formatDate((org.createdAt || org.createdDate) as string) : "—"}
                     </td>
                     <td className="px-6 py-4 text-[13px] font-medium text-neutral-500">
-                      {/* Assuming createdDate as fallback if updatedAt not available */}
-                      {org.createdDate ? formatDate(org.createdDate) : "—"}
+                      {org.updatedAt ? formatDate(org.updatedAt) : "—"}
                     </td>
                   </tr>
                 ))
