@@ -5,6 +5,7 @@ import { Search, ChevronDown, ChevronRight, Building2, FolderIcon, Dot, Plus, Sh
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { listOrganizations } from "@/lib/api/organization";
 import { listProjects } from "@/lib/api/project";
+import { updateActivePartner } from "@/lib/api/auth";
 import type { OrgWithOwner, Project } from "@/lib/types/partner";
 import { cn } from "@/lib/utils/cn";
 import { projectEvents } from "@/lib/utils/events";
@@ -48,19 +49,10 @@ export function AccessTreeSidebar() {
       return;
     }
     try {
-      const res = await fetch("/api/session/active-partner", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ activePartnerId: newPartnerId }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setSession(data.session);
-        setShowPartnerDropdown(false);
-        router.push(pathname); // Clear any specific project/org selection
-      } else {
-        console.error("Failed to switch partner");
-      }
+      const data = await updateActivePartner(newPartnerId);
+      setSession(data.session);
+      setShowPartnerDropdown(false);
+      router.push(pathname); // Clear any specific project/org selection
     } catch (e) {
       console.error("Error switching partner", e);
     }

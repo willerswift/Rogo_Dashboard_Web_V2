@@ -7,38 +7,69 @@ interface ThemeContextType {
   logoUrl: string;
   faviconUrl: string;
   themeMode: "light" | "dark";
-  setBranding: (color: string, logo: string, favicon: string) => void;
+  setBranding: (partnerId: string | null, color: string, logo: string, favicon: string) => void;
+  loadBrandingForPartner: (partnerId: string) => void;
   toggleTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const DEFAULT_COLOR = "#fd3566";
+const DEFAULT_LOGO_LIGHT = "/Rogo logo_light.svg";
+const DEFAULT_LOGO_DARK = "/LogoRogo.svg";
+const DEFAULT_FAVICON = "/web_icon.png";
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [primaryColor, setPrimaryColor] = useState("#fd3566");
-  const [logoUrl, setLogoUrl] = useState("/Rogo logo_light.svg");
-  const [faviconUrl, setFaviconUrl] = useState("/web_icon.png");
+  const [primaryColor, setPrimaryColor] = useState(DEFAULT_COLOR);
+  const [logoUrl, setLogoUrl] = useState(DEFAULT_LOGO_LIGHT);
+  const [faviconUrl, setFaviconUrl] = useState(DEFAULT_FAVICON);
   const [themeMode, setThemeMode] = useState<"light" | "dark">("light");
 
-  useEffect(() => {
-    // Load from localStorage on mount
-    const savedColor = localStorage.getItem("rogo-primary-color");
-    const savedLogo = localStorage.getItem("rogo-logo-url");
-    const savedFavicon = localStorage.getItem("rogo-favicon-url");
-    const savedTheme = localStorage.getItem("rogo-theme-mode") as "light" | "dark";
-    
+  const loadBrandingForPartner = (partnerId: string) => {
+    const savedColor = localStorage.getItem(`rogo-primary-color-${partnerId}`) || localStorage.getItem("rogo-primary-color");
+    const savedLogo = localStorage.getItem(`rogo-logo-url-${partnerId}`) || localStorage.getItem("rogo-logo-url");
+    const savedFavicon = localStorage.getItem(`rogo-favicon-url-${partnerId}`) || localStorage.getItem("rogo-favicon-url");
+    const savedTheme = localStorage.getItem("rogo-theme-mode") as "light" | "dark" | null;
+
+    const currentTheme = savedTheme || "light";
+
     if (savedColor) {
       setPrimaryColor(savedColor);
       document.documentElement.style.setProperty("--brand-primary", savedColor);
+    } else {
+      setPrimaryColor(DEFAULT_COLOR);
+      document.documentElement.style.setProperty("--brand-primary", DEFAULT_COLOR);
     }
+
     if (savedLogo) {
       setLogoUrl(savedLogo);
+    } else {
+      setLogoUrl(currentTheme === "dark" ? DEFAULT_LOGO_DARK : DEFAULT_LOGO_LIGHT);
     }
+
     if (savedFavicon) {
       setFaviconUrl(savedFavicon);
-      // Update real favicon
       const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
       if (link) link.href = savedFavicon;
+    } else {
+      setFaviconUrl(DEFAULT_FAVICON);
+      const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+      if (link) link.href = DEFAULT_FAVICON;
     }
+
+    if (currentTheme) {
+      setThemeMode(currentTheme);
+      if (currentTheme === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    }
+  };
+
+  useEffect(() => {
+    // Initial global load (will be overridden by PartnerSync if a partner is active)
+    const savedTheme = localStorage.getItem("rogo-theme-mode") as "light" | "dark";
     if (savedTheme) {
       setThemeMode(savedTheme);
       if (savedTheme === "dark") {
@@ -49,14 +80,21 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const setBranding = (color: string, logo: string, favicon: string) => {
+  const setBranding = (partnerId: string | null, color: string, logo: string, favicon: string) => {
     setPrimaryColor(color);
     setLogoUrl(logo);
     setFaviconUrl(favicon);
     document.documentElement.style.setProperty("--brand-primary", color);
-    localStorage.setItem("rogo-primary-color", color);
-    localStorage.setItem("rogo-logo-url", logo);
-    localStorage.setItem("rogo-favicon-url", favicon);
+    
+    if (partnerId) {
+      localStorage.setItem(`rogo-primary-color-${partnerId}`, color);
+      localStorage.setItem(`rogo-logo-url-${partnerId}`, logo);
+      localStorage.setItem(`rogo-favicon-url-${partnerId}`, favicon);
+    } else {
+      localStorage.setItem("rogo-primary-color", color);
+      localStorage.setItem("rogo-logo-url", logo);
+      localStorage.setItem("rogo-favicon-url", favicon);
+    }
 
     // Update real favicon
     const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
@@ -68,10 +106,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setThemeMode(nextTheme);
     localStorage.setItem("rogo-theme-mode", nextTheme);
     
-    // Update logo based on theme
-    const nextLogo = nextTheme === "dark" ? "/LogoRogo.svg" : "/Rogo logo_light.svg";
-    setLogoUrl(nextLogo);
-    localStorage.setItem("rogo-logo-url", nextLogo);
+    // Update logo based on theme (fallback if no partner specific logo is set)
+    // Here we should ideally check if a partner logo exists, but for simplicity we rely on the saved URL if it exists.
+    // To properly handle theme toggle for custom logos, we might need a dark-mode variant logo.
+    // For now, if they haven't set a custom logo, we toggle it.
+    if (logoUrl === DEFAULT_LOGO_LIGHT || logoUrl === DEFAULT_LOGO_DARK) {
+      const nextLogo = nextTheme === "dark" ? DEFAULT_LOGO_DARK : DEFAULT_LOGO_LIGHT;
+      setLogoUrl(nextLogo);
+    }
 
     if (nextTheme === "dark") {
       document.documentElement.classList.add("dark");
@@ -81,7 +123,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <ThemeContext.Provider value={{ primaryColor, logoUrl, faviconUrl, themeMode, setBranding, toggleTheme }}>
+    <ThemeContext.Provider value={{ primaryColor, logoUrl, faviconUrl, themeMode, setBranding, loadBrandingForPartner, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -8,9 +8,13 @@ import { ColorConfigDialog } from "./ColorConfigDialog";
 import { cn } from "@/lib/utils/cn";
 import { useTheme } from "@/lib/components/ThemeProvider";
 import { extractColorsFromLogo, fileToBase64 } from "@/lib/utils/colors";
+import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 
 export function BrandingTab() {
   const { primaryColor: globalColor, logoUrl: globalLogo, faviconUrl: globalFavicon, setBranding } = useTheme();
+  const { session } = usePartnerContext();
+  const partnerId = session.activePartnerId;
+
   const [logo, setLogo] = useState<File | string>(globalLogo);
   const [favicon, setFavicon] = useState<File | string>(globalFavicon);
   const [primaryColor, setPrimaryColor] = useState(globalColor);
@@ -76,7 +80,7 @@ export function BrandingTab() {
   const handleSave = async () => {
     const finalLogo = logo instanceof File ? await fileToBase64(logo) : logo;
     const finalFavicon = favicon instanceof File ? await fileToBase64(favicon) : favicon;
-    setBranding(primaryColor, finalLogo, finalFavicon);
+    setBranding(partnerId, primaryColor, finalLogo, finalFavicon);
   };
 
   return (
@@ -162,7 +166,7 @@ export function BrandingTab() {
             setPrimaryColor(defaultColor);
             setLogo(defaultLogo);
             setFavicon(defaultFavicon);
-            setBranding(defaultColor, defaultLogo, defaultFavicon);
+            setBranding(partnerId, defaultColor, defaultLogo, defaultFavicon);
           }}>
             Reset to default
           </SecondaryButton>

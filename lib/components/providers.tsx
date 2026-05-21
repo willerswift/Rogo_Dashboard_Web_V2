@@ -3,11 +3,24 @@
 import { useState, useEffect, type ReactNode } from "react";
 import { Toaster } from "sonner";
 
-import { PartnerProvider } from "@/lib/hooks/usePartnerContext";
+import { PartnerProvider, usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import type { PartnerSession } from "@/lib/types/partner";
 import { sessionEvents } from "@/lib/utils/events";
 import { SessionTimeoutDialog } from "./SessionTimeoutDialog";
-import { ThemeProvider } from "./ThemeProvider";
+import { ThemeProvider, useTheme } from "./ThemeProvider";
+
+function ThemePartnerSync() {
+  const { session } = usePartnerContext();
+  const { loadBrandingForPartner } = useTheme();
+
+  useEffect(() => {
+    if (session.activePartnerId) {
+      loadBrandingForPartner(session.activePartnerId);
+    }
+  }, [session.activePartnerId, loadBrandingForPartner]);
+
+  return null;
+}
 
 export function Providers({
   children,
@@ -36,6 +49,7 @@ export function Providers({
   return (
     <ThemeProvider>
       <PartnerProvider initialSession={initialSession}>
+        <ThemePartnerSync />
         {children}
         <Toaster
           position="top-right"

@@ -23,3 +23,10 @@ export function syncSession() {
     method: "POST",
   });
 }
+
+export function updateActivePartner(activePartnerId: string) {
+  return apiClient<{ session: PartnerSession }>("/api/session/active-partner", {
+    method: "POST",
+    body: { activePartnerId },
+  });
+}
