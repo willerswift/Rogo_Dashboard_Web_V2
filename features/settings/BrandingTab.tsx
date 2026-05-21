@@ -105,15 +105,15 @@ export function BrandingTab() {
         <Panel title="BRAND COLORS">
           <div className="px-6 py-4 space-y-4">
             <div className="space-y-1">
-              <h3 className="text-sm font-bold text-neutral-800 dark:text-neutral-200">Primary Color</h3>
-              <p className="text-[13px] text-neutral-500 dark:text-neutral-400">
+              <h3 className="text-sm font-bold text-neutral-800">Primary Color</h3>
+              <p className="text-[13px] text-neutral-500">
                 Used for primary buttons, active states, and key visual highlights.
               </p>
             </div>
             
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-surface-muted px-3 py-2 h-[56px] w-fit focus-within:border-primary-200 transition-all group">
+                <div className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-3 py-2 h-[56px] w-fit focus-within:border-primary-200 transition-all group">
                   <div 
                     className="h-10 w-10 rounded-lg shrink-0 cursor-pointer transition-transform hover:scale-105 active:scale-95" 
                     style={{ backgroundColor: primaryColor }}
@@ -123,7 +123,7 @@ export function BrandingTab() {
                   <input
                     value={primaryColor}
                     onChange={(e) => setPrimaryColor(e.target.value)}
-                    className="w-[85px] text-[15px] font-medium text-neutral-700 dark:text-neutral-300 font-mono tracking-wider outline-none bg-transparent"
+                    className="w-[85px] text-[15px] font-medium text-neutral-700 font-mono tracking-wider outline-none bg-transparent"
                     placeholder="#000000"
                   />
                 </div>
@@ -141,45 +141,13 @@ export function BrandingTab() {
                       <div 
                         className={cn(
                           "h-10 w-10 rounded-full border-2 transition-colors",
-                          primaryColor.toUpperCase() === c.toUpperCase() ? "border-neutral-800 dark:border-neutral-200" : "border-neutral-100 dark:border-neutral-800"
+                          primaryColor.toUpperCase() === c.toUpperCase() ? "border-neutral-800" : "border-neutral-100"
                         )}
                         style={{ backgroundColor: c }}
                       />
-                      <span className="text-[10px] font-bold text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300 uppercase tracking-wider">{c}</span>
+                      <span className="text-[10px] font-bold text-neutral-400 group-hover:text-neutral-600 uppercase tracking-wider">{c}</span>
                     </button>
                   ))}
-                </div>
-              </div>
-
-              <div className="space-y-2 max-w-[320px]">
-                <span className="text-[11px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">Access Scope</span>
-                <div className="flex p-1 justify-center items-start self-stretch gap-1 rounded-full bg-neutral-100 dark:bg-neutral-800 transition-colors">
-                  <button
-                    className="flex flex-1 flex-col justify-center items-center py-2 px-3 rounded-full transition-all whitespace-nowrap bg-white dark:bg-surface shadow-sm"
-                    style={{ 
-                      fontFamily: 'SF Pro Display, sans-serif', 
-                      fontSize: '12px', 
-                      fontWeight: 700,
-                      lineHeight: '18px',
-                      color: primaryColor,
-                      textAlign: 'center'
-                    }}
-                  >
-                    Partner View
-                  </button>
-                  <button
-                    className="flex flex-1 flex-col justify-center items-center py-2 px-3 rounded-full transition-all whitespace-nowrap"
-                    style={{ 
-                      fontFamily: 'SF Pro Display, sans-serif', 
-                      fontSize: '12px', 
-                      fontWeight: 700,
-                      lineHeight: '18px',
-                      color: '#8E8E8E',
-                      textAlign: 'center'
-                    }}
-                  >
-                    Project view
-                  </button>
                 </div>
               </div>
             </div>
