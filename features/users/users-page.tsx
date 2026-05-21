@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
-import { UserPlus, Trash2, Pencil, UserMinus, Users, LayoutGrid, Copy, Check } from "lucide-react";
+import { UserPlus, Trash2, Pencil, UserMinus, Users, LayoutGrid, Copy, Check, ArrowUpDown } from "lucide-react";
 
 import { listProjects, listProjectUsers } from "@/lib/api/project";
 import { listOrganizations, listOrganizationUsers } from "@/lib/api/organization";
@@ -21,10 +21,11 @@ import {
 import { DataTable, type DataTableColumn } from "@/lib/components/DataTable";
 import { Avatar } from "@/lib/components/ui/avatar";
 import { cn } from "@/lib/utils/cn";
+import { formatPermissionUpdateDate } from "@/lib/utils/format";
 import { GrantAccessDialog } from "./GrantAccessDialog";
 
 export function UsersPage() {
-  const { session, accessScope, setAccessScope } = usePartnerContext();
+  const { session, accessScope } = usePartnerContext();
   const searchParams = useSearchParams();
   const orgId = searchParams.get("orgId");
   const projectId = searchParams.get("projectId");
@@ -39,9 +40,11 @@ export function UsersPage() {
   const [permissionRecords, setPermissionRecords] = useState<PermissionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showGrantAccess, setShowGrantAccess] = useState(false);
+  const [initialUserId, setInitialUserId] = useState<string | null>(null);
   const [viewingProjectsFor, setViewingProjectsFor] = useState<{user: UserPartner} | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [projectSearch, setProjectSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
 
   const activeProject = useMemo(() => projects.find(p => p.uuid === projectId), [projects, projectId]);
   const activeOrg = useMemo(() => {
@@ -222,6 +225,20 @@ export function UsersPage() {
     });
   }, [viewingProjectsFor, getUserProjectData, projectSearch]);
 
+  const sortedUsers = useMemo(() => {
+    const list = [...users];
+    list.sort((a, b) => {
+      const recA = permissionRecords.find(r => r.ownerId === a.user.ownerId);
+      const recB = permissionRecords.find(r => r.ownerId === b.user.ownerId);
+      
+      const timeA = recA?.updatedDate ? new Date(recA.updatedDate).getTime() : 0;
+      const timeB = recB?.updatedDate ? new Date(recB.updatedDate).getTime() : 0;
+
+      return sortOrder === "newest" ? timeB - timeA : timeA - timeB;
+    });
+    return list;
+  }, [users, permissionRecords, sortOrder]);
+
   const columns = useMemo<DataTableColumn<UserWithNumProject>[]>(() => {
     if (accessScope === "project") {
       return [
@@ -377,6 +394,28 @@ export function UsersPage() {
         },
       },
       {
+        id: "updatedAt",
+        header: (
+          <div className="flex items-center gap-2">
+            <span>TIME UPDATE</span>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setSortOrder(prev => prev === "newest" ? "oldest" : "newest");
+              }}
+              className="p-1 hover:bg-neutral-100 rounded transition-colors"
+            >
+              <ArrowUpDown className="size-3" />
+            </button>
+          </div>
+        ),
+        headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider",
+        cell: ({ user }) => {
+          const record = permissionRecords.find(r => r.ownerId === user.ownerId);
+          return <span className="text-[13px] text-neutral-500">{formatPermissionUpdateDate(record?.updatedDate)}</span>;
+        },
+      },
+      {
         id: "actions",
         header: "",
         className: "text-right",
@@ -401,8 +440,8 @@ export function UsersPage() {
     if (activeProject) return "Users with project access";
     if (activeOrg) return "Users with access to this organization";
     if (accessScope === "project") return "Users with project access";
-    return "Partner Users";
-  }, [activeOrg, activeProject, accessScope]);
+    return `Users permissions within partner ${session.activePartnerId || "Partner"}`;
+  }, [activeOrg, activeProject, accessScope, session.activePartnerId]);
 
   const rootName = useMemo(() => {
     if (activeOrg) return activeOrg.name;
@@ -468,14 +507,17 @@ export function UsersPage() {
 
         {/* Bottom Tier: Context Title & Action Button */}
         <div className="flex items-center justify-between">
-          <h2 className="text-[18px] font-bold text-foreground tracking-tight font-heading">
+          <h2 className="text-[18px] font-bold text-neutral-800 tracking-tight font-heading">
             {subTitle}
           </h2>
 
           {canAddUser && (
             <PrimaryButton
               type="button"
-              onClick={() => setShowGrantAccess(true)}
+              onClick={() => {
+                setInitialUserId(null);
+                setShowGrantAccess(true);
+              }}
               className="transition-all"
             >
               <UserPlus className="size-4" />
@@ -490,13 +532,20 @@ export function UsersPage() {
       ) : (
         <DataTable
           columns={columns}
-          data={users}
+          data={sortedUsers}
+          onRowClick={(user) => {
+            setInitialUserId(user.user.ownerId);
+            setShowGrantAccess(true);
+          }}
           emptyTitle="No users found"
           emptyDescription={projectId ? "This project doesn't have any specific user permissions yet." : "Add or attach a user to grant them access."}
           emptyAction={projectId && (
             <PrimaryButton
               type="button"
-              onClick={() => setShowGrantAccess(true)}
+              onClick={() => {
+                setInitialUserId(null);
+                setShowGrantAccess(true);
+              }}
               className="transition-all mt-2"
             >
               <UserPlus className="size-4" />
@@ -508,12 +557,13 @@ export function UsersPage() {
 
       <GrantAccessDialog
         open={showGrantAccess}
-        onClose={() => setShowGrantAccess(false)}
-        orgs={orgs}
-        projects={projects}
+        onClose={() => {
+          setShowGrantAccess(false);
+          setInitialUserId(null);
+        }}
         users={users}
-        activeOrgId={orgId}
-        activeProjectId={projectId}
+        permissionRecords={permissionRecords}
+        initialUserId={initialUserId}
         onGrant={handleGrantAccess}
       />
 

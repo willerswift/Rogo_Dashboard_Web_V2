@@ -30,6 +30,7 @@ export function DataTable<T>({
   emptyTitle = "No records yet",
   emptyDescription = "The layout is ready for data once the API wiring lands.",
   emptyAction,
+  onRowClick,
 }: {
   title?: string;
   description?: string;
@@ -40,6 +41,7 @@ export function DataTable<T>({
   emptyTitle?: string;
   emptyDescription?: string;
   emptyAction?: ReactNode;
+  onRowClick?: (row: T) => void;
 }) {
   const hasHeader = title || description || toolbar;
 
@@ -76,7 +78,14 @@ export function DataTable<T>({
             <TableBody>
               {data.length > 0 ? (
                 data.map((row, rowIndex) => (
-                  <TableRow key={rowIndex} className="group hover:bg-surface-muted border-border-muted transition-colors">
+                  <TableRow 
+                    key={rowIndex} 
+                    className={cn(
+                      "group border-border-muted transition-colors",
+                      onRowClick ? "cursor-pointer hover:bg-primary-100/5" : "hover:bg-surface-muted"
+                    )}
+                    onClick={() => onRowClick?.(row)}
+                  >
                     {columns.map((column) => (
                       <TableCell key={column.id} className={cn("px-6 py-4 text-[13px] text-foreground", column.className)}>
                         {column.cell(row)}

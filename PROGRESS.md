@@ -5,7 +5,28 @@ This file serves as a persistent record of work completed, current status, and p
 ## Latest Update: May 21, 2026
 
 ### Work Completed
-- **Re-implemented Partner Switcher Dropdown**:
+- **Refined Partner Switcher UI & UX**:
+    - **Backdrop & Z-Index Overlay**: Increased the partner switcher backdrop z-index to `z-[110]` and the dropdown menu to `z-[120]`. This ensures the dropdown correctly overlaps all other layout elements, including the navigation sidebars.
+    - **Visual Sync with Design**:
+        - Updated the active partner selection row to use a `8px` border-radius (`rounded-[8px]`).
+        - Refined the "ACTIVE SESSION" badge color to `neutral-600` and removed opacity for better contrast.
+        - Redesigned the check icon to remove the background circle, styling the tick icon directly with the primary theme color.
+    - **Favicon & Icon Styling**:
+        - Standardized all partner favicons and fallback icons to exactly `32x32px` (`size-[32px]`).
+        - Implemented a conditional white background box with `4px` border-radius that only appears for the **Active Partner**, allowing inactive partner icons to display directly on the dropdown background with grayscale and opacity effects.
+        - Removed the `shadow-sm` dropshadow from all favicon containers and used `size-full` for icons to fill their containers without internal padding.
+- **Enhanced Sidebar Layout Integrity**:
+    - **Z-Index Optimization for Dialogs**: Lowered the `NavSidebar` z-index from `100` to `z-40` and explicitly set the `AccessTreeSidebar` to `z-40` with `relative` positioning. This ensures that both sidebars are positioned below the overlays (`z-50`+) of all application dialogs (Create Organization, Grant Access, etc.), effectively "disabling" them and placing them behind the backdrop when a modal is active.
+- **Grant Access Dialog Refinements**:
+    - **Branded Header Styling**: Updated the dialog header to a dual-tone design: "Give permission within " is now `neutral-600`, while the partner name (e.g., "ROGO") is highlighted in the **primary brand color**.
+    - **Optimized User Selection**:
+        - Updated the username font size to **14px** for platform-wide consistency.
+        - Removed the primary outline (`ring`) from selected users and set a standard **8px border-radius**.
+    - **Enhanced Interaction Model**: 
+        - Integrated `onRowClick` support into the `DataTable` component. 
+        - Clicking any user row in the permissions table now automatically opens the `GrantAccessDialog` with that specific user pre-selected and their current permissions/projects pre-loaded.
+    - **Context-Aware Title & Hierarchy**: Updated the `UsersPage` title to "Users permissions within partner {partnerName}" and styled it in `neutral-800`.
+- **Enhanced Sidebar Layout Integrity**:
     - **Interactive Menu**: Restored the interactive dropdown menu when clicking the "Partner: ROGO" header in the Access Tree Sidebar, which was lost during a previous code merge.
     - **Visual Sync**: Built the dropdown to perfectly match the provided design screenshots, featuring a floating absolute-positioned panel, rounded-xl styling, and custom scrollbars.
     - **Active State Highlights**: Used dynamic primary global colors (`bg-primary-300`, `text-primary-300`) for the currently active session. Replaced the generic shield with a `ShieldCheck` icon, and replaced the trailing checkmark with a solid primary-colored circle containing a bold white `Check` to exactly match the reference designs. Added a clear "ACTIVE SESSION" badge.
@@ -31,6 +52,10 @@ This file serves as a persistent record of work completed, current status, and p
 ## Previous Update: May 20, 2026
 
 ### Work Completed
+- **Enhanced Partner Switcher Dropdown**:
+    - **Backdrop Overlay**: Added a dark full-screen backdrop (`bg-black/20`) that appears behind the dropdown when switching partners to focus the user's attention.
+    - **Dynamic Favicon Sync**: Fetched and displayed each individual partner's configured favicon directly inside the dropdown list without a surrounding background box. If a favicon is not configured, it gracefully falls back to the default `Building2` or `Shield` icon.
+    - **Color Sync & Active Styling**: Ensured the active partner text and badges synchronize automatically with that specific partner's primary brand color. Applied a rounded border to the active selection row to distinguish it further. Inactive items display the favicon in grayscale which transitions to full color on hover.
 - **Refined Breadcrumb Header Layout & Spacing**:
     - **Single-line Layout**: Moved organization statistical badges (Member count, Project count) into the same horizontal line as the breadcrumb navigation.
     - **ID Placement**: Added a `breadcrumbAddon` slot to render the ID tag immediately adjacent to the rightmost breadcrumb segment, decoupling it from the right-aligned stats.

@@ -40,7 +40,7 @@ export function NavSidebar() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
-        "relative flex h-screen flex-col border-r border-border bg-surface transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] px-4 py-6 z-[100]",
+        "relative flex h-screen flex-col border-r border-border bg-surface transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] px-4 py-6 z-40",
         isCollapsed ? "w-[80px]" : "w-[260px]"
       )}
     >

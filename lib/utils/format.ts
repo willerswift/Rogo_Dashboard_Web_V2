@@ -20,6 +20,20 @@ export function formatCustomDateTime(dateString?: string): string {
 }
 
 /**
+ * Formats an ISO date string into HH:mm - dd/MM/yyyy format.
+ */
+export function formatPermissionUpdateDate(dateString?: string): string {
+  if (!dateString) {
+    return '—';
+  }
+  try {
+    return format(new Date(dateString), 'HH:mm - dd/MM/yyyy');
+  } catch {
+    return '—';
+  }
+}
+
+/**
  * Legacy alias for formatCustomDateTime
  */
 export function formatDate(dateString?: string): string {

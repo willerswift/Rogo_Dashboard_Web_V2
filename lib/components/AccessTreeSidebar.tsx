@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Search, ChevronDown, ChevronRight, Building2, FolderIcon, Dot, Plus, ShieldCheck, Check } from "lucide-react";
+import { Search, ChevronDown, ChevronRight, Building2, FolderIcon, Dot, Plus, Shield, Check } from "lucide-react";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { listOrganizations } from "@/lib/api/organization";
 import { listProjects } from "@/lib/api/project";
@@ -28,9 +28,25 @@ export function AccessTreeSidebar() {
   
   const [showPartnerDropdown, setShowPartnerDropdown] = useState(false);
   const partnerDropdownRef = useRef<HTMLDivElement>(null);
+  
+  const [partnerBrandings, setPartnerBrandings] = useState<Record<string, { color: string; favicon: string }>>({});
 
   const activeOrgId = searchParams.get("orgId");
   const activeProjectId = searchParams.get("projectId");
+
+  // Load partner brandings
+  useEffect(() => {
+    if (typeof window !== "undefined" && session?.partnerIds) {
+      const brandings: Record<string, { color: string; favicon: string }> = {};
+      session.partnerIds.forEach((pid) => {
+        brandings[pid] = {
+          color: localStorage.getItem(`rogo-primary-color-${pid}`) || "#FD3566",
+          favicon: localStorage.getItem(`rogo-favicon-url-${pid}`) || "",
+        };
+      });
+      setPartnerBrandings(brandings);
+    }
+  }, [session?.partnerIds]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -150,7 +166,7 @@ export function AccessTreeSidebar() {
   };
 
   return (
-    <aside className="h-screen w-[280px] border-r border-border bg-surface overflow-hidden flex flex-col font-sans transition-colors duration-500">
+    <aside className="relative z-40 h-screen w-[280px] border-r border-border bg-surface overflow-hidden flex flex-col font-sans transition-colors duration-500">
       {/* 1. Partner Switcher */}
       <div className="p-4 border-b border-border relative" ref={partnerDropdownRef}>
         <div 
@@ -170,52 +186,67 @@ export function AccessTreeSidebar() {
 
         {/* Dropdown Menu */}
         {showPartnerDropdown && (
-          <div className="absolute top-[64px] left-4 right-4 bg-surface border border-border rounded-lg shadow-panel z-50 overflow-hidden flex flex-col">
-            <div className="px-4 py-3 border-b border-border">
-              <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">SWITCH PARTNER</span>
-            </div>
-            <div className="max-h-[300px] overflow-y-auto p-2 space-y-1 custom-scrollbar">
-              {session.partnerIds.map((pid) => {
-                const isActive = pid === session.activePartnerId;
-                return (
-                  <button
-                    key={pid}
-                    onClick={() => handleSwitchPartner(pid)}
-                    className={cn(
-                      "group w-full flex items-center justify-between p-2 rounded-[16px] transition-all text-left",
-                      isActive 
-                        ? "bg-primary-300/10 text-primary-300" 
-                        : "hover:bg-neutral-50 text-neutral-600"
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      {isActive ? (
-                        <div className="flex items-center justify-center size-[42px] rounded-[12px] bg-primary-300 text-white shrink-0 shadow-sm transition-all duration-300">
-                          <ShieldCheck className="size-[22px]" />
+          <>
+            <div 
+              className="fixed inset-0 bg-black/20 z-[110] transition-opacity"
+              onClick={() => setShowPartnerDropdown(false)}
+            />
+            <div className="absolute top-[64px] left-4 right-4 bg-surface border border-border rounded-lg shadow-panel z-[120] overflow-hidden flex flex-col">
+              <div className="px-4 py-3 border-b border-border">
+                <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">SWITCH PARTNER</span>
+              </div>
+              <div className="max-h-[300px] overflow-y-auto p-2 space-y-1 custom-scrollbar">
+                {session.partnerIds.map((pid) => {
+                  const isActive = pid === session.activePartnerId;
+                  const branding = partnerBrandings[pid] || { color: "#FD3566", favicon: "" };
+                  const hasFavicon = !!branding.favicon;
+                  
+                  return (
+                    <button
+                      key={pid}
+                      onClick={() => handleSwitchPartner(pid)}
+                      className={cn(
+                        "group w-full flex items-center justify-between p-2 rounded-[8px] transition-all text-left",
+                        isActive 
+                          ? "bg-primary-300/10 text-primary-300" 
+                          : "hover:bg-neutral-50 text-neutral-600"
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        {hasFavicon ? (
+                          <div className={cn(
+                            "flex items-center justify-center shrink-0 transition-all duration-300 size-[32px] overflow-hidden",
+                            isActive ? "bg-white rounded-[4px]" : "grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100"
+                          )}>
+                            <img src={branding.favicon} alt={pid} className="size-full object-contain" />
+                          </div>
+                        ) : (
+                          <div className={cn(
+                            "flex items-center justify-center shrink-0 transition-all duration-300 size-[32px]",
+                            isActive ? "bg-white rounded-[4px] text-primary-300" : "text-neutral-400 group-hover:text-primary-300"
+                          )}>
+                            {isActive ? <Shield className="size-full" strokeWidth={2} /> : <Building2 className="size-full" />}
+                          </div>
+                        )}
+                        <div className="flex flex-col">
+                          <span className={cn("text-[15px] font-bold tracking-tight transition-colors", isActive ? "text-primary-300" : "text-neutral-500 group-hover:text-primary-300")}>{pid}</span>
+                          {isActive && <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 mt-0">ACTIVE SESSION</span>}
                         </div>
-                      ) : (
-                        <div className="flex items-center justify-center size-[42px] rounded-[12px] bg-surface-muted text-neutral-400 shrink-0 border border-border group-hover:bg-surface group-hover:text-primary-300 group-hover:border-transparent group-hover:shadow-sm transition-all duration-300">
-                          <Building2 className="size-[22px]" />
+                      </div>
+                      {isActive && (
+                        <div className="flex items-center justify-center mr-4">
+                          <Check className="size-5 text-primary-300 stroke-[3px]" />
                         </div>
                       )}
-                      <div className="flex flex-col">
-                        <span className={cn("text-[15px] font-bold tracking-tight transition-colors", isActive ? "text-primary-300" : "text-neutral-500 group-hover:text-primary-300")}>{pid}</span>
-                        {isActive && <span className="text-[10px] font-bold uppercase tracking-wider opacity-80 mt-0">ACTIVE SESSION</span>}
-                      </div>
-                    </div>
-                    {isActive && (
-                      <div className="flex items-center justify-center size-6 rounded-full bg-primary-300 mr-2">
-                        <Check className="size-3 text-white stroke-[3px]" />
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="px-4 py-3 bg-surface-muted border-t border-border">
+                <span className="text-xs text-neutral-400 italic">{session.partnerIds.length} partners available</span>
+              </div>
             </div>
-            <div className="px-4 py-3 bg-surface-muted border-t border-border">
-              <span className="text-xs text-neutral-400 italic">{session.partnerIds.length} partners available</span>
-            </div>
-          </div>
+          </>
         )}
       </div>
 
