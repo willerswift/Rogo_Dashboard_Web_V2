@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { Search, ChevronDown, ChevronRight, Building2, FolderIcon, Dot, Plus, Shield, Check } from "lucide-react";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { listOrganizations } from "@/lib/api/organization";
@@ -11,6 +11,10 @@ import { cn } from "@/lib/utils/cn";
 import { projectEvents } from "@/lib/utils/events";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { CreateOrganizationDialog } from "@/features/organizations/CreateOrganizationDialog";
+import { useIsAdmin } from "@/lib/hooks/useIsAdmin";
+import { getUserAccessibleOrgIds, getUserAccessibleProjectIds } from "@/lib/utils/permissions";
+import { getOrganization } from "@/lib/api/organization";
+import { getProjectDetail } from "@/lib/api/project";
 
 export function AccessTreeSidebar() {
   const { session, setSession, accessScope, setAccessScope } = usePartnerContext();
@@ -18,6 +22,11 @@ export function AccessTreeSidebar() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const partnerId = session.activePartnerId;
+  const isAdmin = useIsAdmin();
+
+  // Danh sách org/project mà non-admin user có quyền xem
+  const accessibleOrgIds = useMemo(() => getUserAccessibleOrgIds(session), [session]);
+  const accessibleProjectIds = useMemo(() => getUserAccessibleProjectIds(session), [session]);
 
   const [orgs, setOrgs] = useState<OrgWithOwner[]>([]);
   const [allProjects, setAllProjects] = useState<Project[]>([]);
@@ -78,18 +87,51 @@ export function AccessTreeSidebar() {
     if (!partnerId) return;
     try {
       setLoading(true);
-      const [nextOrgs, nextProjects] = await Promise.all([
-        listOrganizations(partnerId),
-        listProjects(partnerId),
-      ]);
-      setOrgs(nextOrgs);
-      setAllProjects(nextProjects);
+
+      if (isAdmin) {
+        // Admin: gọi API list đầy đủ như cũ
+        const [nextOrgs, nextProjects] = await Promise.all([
+          listOrganizations(partnerId),
+          listProjects(partnerId),
+        ]);
+        setOrgs(nextOrgs);
+        setAllProjects(nextProjects);
+      } else {
+        // Non-admin: fetch từng org/project theo IDs từ ABAC session
+        const orgIds = getUserAccessibleOrgIds(session);
+        const projectIds = getUserAccessibleProjectIds(session);
+
+        // Fetch từng org riêng lẻ
+        const fetchedOrgs = await Promise.all(
+          orgIds.map((orgId) =>
+            getOrganization(partnerId, orgId).catch((e) => {
+              console.warn(`Cannot load org ${orgId}:`, e);
+              return null;
+            }),
+          ),
+        );
+
+        // Fetch từng project riêng lẻ
+        const fetchedProjects = await Promise.all(
+          projectIds.map((projectId) =>
+            getProjectDetail(partnerId, projectId)
+              .then((res) => res.project)
+              .catch((e) => {
+                console.warn(`Cannot load project ${projectId}:`, e);
+                return null;
+              }),
+          ),
+        );
+
+        setOrgs(fetchedOrgs.filter((o): o is NonNullable<typeof o> => o !== null));
+        setAllProjects(fetchedProjects.filter((p): p is NonNullable<typeof p> => p !== null));
+      }
     } catch (error) {
       console.error("Failed to load access tree", error);
     } finally {
       setLoading(false);
     }
-  }, [partnerId]);
+  }, [partnerId, isAdmin, session]);
 
   useEffect(() => {
     const run = async () => {
@@ -109,14 +151,27 @@ export function AccessTreeSidebar() {
   // Handle search filtering and auto-expansion
   const normalizedSearch = search.toLowerCase().trim();
 
-  const filteredOrgs = orgs.filter(org => {
+  // Với non-admin: chỉ hiện orgs/projects mà user có quyền xem
+  const permissionFilteredOrgs = isAdmin
+    ? orgs
+    : orgs.filter((org) => accessibleOrgIds.includes(org.orgId));
+
+  const permissionFilteredProjects = isAdmin
+    ? allProjects
+    : allProjects.filter(
+        (p) =>
+          accessibleProjectIds.includes(p.uuid) ||
+          (p.orgId && accessibleOrgIds.includes(p.orgId)),
+      );
+
+  const filteredOrgs = permissionFilteredOrgs.filter(org => {
     if (!normalizedSearch) return true;
     const matchesOrg = org.name.toLowerCase().includes(normalizedSearch);
-    const matchesAnyProject = allProjects.some(p => p.orgId === org.orgId && p.name.toLowerCase().includes(normalizedSearch));
+    const matchesAnyProject = permissionFilteredProjects.some(p => p.orgId === org.orgId && p.name.toLowerCase().includes(normalizedSearch));
     return matchesOrg || matchesAnyProject;
   });
 
-  const filteredStandaloneProjects = allProjects.filter(p => {
+  const filteredStandaloneProjects = permissionFilteredProjects.filter(p => {
     if (p.orgId) return false;
     if (!normalizedSearch) return true;
     return p.name.toLowerCase().includes(normalizedSearch);
@@ -167,86 +222,103 @@ export function AccessTreeSidebar() {
 
   return (
     <aside className="relative z-40 h-screen w-[280px] border-r border-border bg-surface overflow-hidden flex flex-col font-sans transition-colors duration-500">
-      {/* 1. Partner Switcher */}
+      {/* 1. Partner Switcher - chỉ hiện với admin */}
       <div className="p-4 border-b border-border relative" ref={partnerDropdownRef}>
-        <div 
-          onClick={() => setShowPartnerDropdown(!showPartnerDropdown)}
-          className="flex h-[40px] items-center justify-between gap-2 rounded-[4px] border border-border bg-surface-muted px-4 hover:border-primary-300 cursor-pointer transition-all"
-        >
-          <div className="flex items-center gap-2 truncate">
-            <span className="text-[14px] font-normal text-neutral-500 leading-[21px]">
-              Partner:
-            </span>
-            <span className="text-[14px] font-bold text-foreground leading-[21px]">
-              {session.activePartnerId || "Rogo"}
-            </span>
-          </div>
-          <ChevronDown className={cn("size-4 text-neutral-400 shrink-0 transition-transform duration-200", showPartnerDropdown ? "rotate-180" : "")} />
-        </div>
-
-        {/* Dropdown Menu */}
-        {showPartnerDropdown && (
+        {/* Admin: hiện partner switcher đầy đủ; User: chỉ hiện partner name tĩnh */}
+        {isAdmin ? (
           <>
             <div 
-              className="fixed inset-0 bg-black/20 z-[110] transition-opacity"
-              onClick={() => setShowPartnerDropdown(false)}
-            />
-            <div className="absolute top-[64px] left-4 right-4 bg-surface border border-border rounded-lg shadow-panel z-[120] overflow-hidden flex flex-col">
-              <div className="px-4 py-3 border-b border-border">
-                <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">SWITCH PARTNER</span>
+              onClick={() => setShowPartnerDropdown(!showPartnerDropdown)}
+              className="flex h-[40px] items-center justify-between gap-2 rounded-[4px] border border-border bg-surface-muted px-4 hover:border-primary-300 cursor-pointer transition-all"
+            >
+              <div className="flex items-center gap-2 truncate">
+                <span className="text-[14px] font-normal text-neutral-500 leading-[21px]">
+                  Partner:
+                </span>
+                <span className="text-[14px] font-bold text-foreground leading-[21px]">
+                  {session.activePartnerId || "Rogo"}
+                </span>
               </div>
-              <div className="max-h-[300px] overflow-y-auto p-2 space-y-1 custom-scrollbar">
-                {session.partnerIds.map((pid) => {
-                  const isActive = pid === session.activePartnerId;
-                  const branding = partnerBrandings[pid] || { color: "#FD3566", favicon: "" };
-                  const hasFavicon = !!branding.favicon;
-                  
-                  return (
-                    <button
-                      key={pid}
-                      onClick={() => handleSwitchPartner(pid)}
-                      className={cn(
-                        "group w-full flex items-center justify-between p-2 rounded-[8px] transition-all text-left",
-                        isActive 
-                          ? "bg-primary-300/10 text-primary-300" 
-                          : "hover:bg-neutral-50 text-neutral-600"
-                      )}
-                    >
-                      <div className="flex items-center gap-3">
-                        {hasFavicon ? (
-                          <div className={cn(
-                            "flex items-center justify-center shrink-0 transition-all duration-300 size-[32px] overflow-hidden",
-                            isActive ? "bg-white rounded-[4px]" : "grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100"
-                          )}>
-                            <img src={branding.favicon} alt={pid} className="size-full object-contain" />
-                          </div>
-                        ) : (
-                          <div className={cn(
-                            "flex items-center justify-center shrink-0 transition-all duration-300 size-[32px]",
-                            isActive ? "bg-white rounded-[4px] text-primary-300" : "text-neutral-400 group-hover:text-primary-300"
-                          )}>
-                            {isActive ? <Shield className="size-full" strokeWidth={2} /> : <Building2 className="size-full" />}
-                          </div>
-                        )}
-                        <div className="flex flex-col">
-                          <span className={cn("text-[15px] font-bold tracking-tight transition-colors", isActive ? "text-primary-300" : "text-neutral-500 group-hover:text-primary-300")}>{pid}</span>
-                          {isActive && <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 mt-0">ACTIVE SESSION</span>}
-                        </div>
-                      </div>
-                      {isActive && (
-                        <div className="flex items-center justify-center mr-4">
-                          <Check className="size-5 text-primary-300 stroke-[3px]" />
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="px-4 py-3 bg-surface-muted border-t border-border">
-                <span className="text-xs text-neutral-400 italic">{session.partnerIds.length} partners available</span>
-              </div>
+              <ChevronDown className={cn("size-4 text-neutral-400 shrink-0 transition-transform duration-200", showPartnerDropdown ? "rotate-180" : "")} />
             </div>
+
+            {/* Dropdown Menu */}
+            {showPartnerDropdown && (
+              <>
+                <div 
+                  className="fixed inset-0 bg-black/20 z-[110] transition-opacity"
+                  onClick={() => setShowPartnerDropdown(false)}
+                />
+                <div className="absolute top-[64px] left-4 right-4 bg-surface border border-border rounded-lg shadow-panel z-[120] overflow-hidden flex flex-col">
+                  <div className="px-4 py-3 border-b border-border">
+                    <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">SWITCH PARTNER</span>
+                  </div>
+                  <div className="max-h-[300px] overflow-y-auto p-2 space-y-1 custom-scrollbar">
+                    {session.partnerIds.map((pid) => {
+                      const isActive = pid === session.activePartnerId;
+                      const branding = partnerBrandings[pid] || { color: "#FD3566", favicon: "" };
+                      const hasFavicon = !!branding.favicon;
+                      
+                      return (
+                        <button
+                          key={pid}
+                          onClick={() => handleSwitchPartner(pid)}
+                          className={cn(
+                            "group w-full flex items-center justify-between p-2 rounded-[8px] transition-all text-left",
+                            isActive 
+                              ? "bg-primary-300/10 text-primary-300" 
+                              : "hover:bg-neutral-50 text-neutral-600"
+                          )}
+                        >
+                          <div className="flex items-center gap-3">
+                            {hasFavicon ? (
+                              <div className={cn(
+                                "flex items-center justify-center shrink-0 transition-all duration-300 size-[32px] overflow-hidden",
+                                isActive ? "bg-white rounded-[4px]" : "grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100"
+                              )}>
+                                <img src={branding.favicon} alt={pid} className="size-full object-contain" />
+                              </div>
+                            ) : (
+                              <div className={cn(
+                                "flex items-center justify-center shrink-0 transition-all duration-300 size-[32px]",
+                                isActive ? "bg-white rounded-[4px] text-primary-300" : "text-neutral-400 group-hover:text-primary-300"
+                              )}>
+                                {isActive ? <Shield className="size-full" strokeWidth={2} /> : <Building2 className="size-full" />}
+                              </div>
+                            )}
+                            <div className="flex flex-col">
+                              <span className={cn("text-[15px] font-bold tracking-tight transition-colors", isActive ? "text-primary-300" : "text-neutral-500 group-hover:text-primary-300")}>{pid}</span>
+                              {isActive && <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 mt-0">ACTIVE SESSION</span>}
+                            </div>
+                          </div>
+                          {isActive && (
+                            <div className="flex items-center justify-center mr-4">
+                              <Check className="size-5 text-primary-300 stroke-[3px]" />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="px-4 py-3 bg-surface-muted border-t border-border">
+                    <span className="text-xs text-neutral-400 italic">{session.partnerIds.length} partners available</span>
+                  </div>
+                </div>
+              </>
+            )}
           </>
+        ) : (
+          /* Non-admin: chỉ hiện tên partner, không switch được */
+          <div className="flex h-[40px] items-center gap-2 rounded-[4px] border border-border bg-surface-muted px-4">
+            <div className="flex items-center gap-2 truncate">
+              <span className="text-[14px] font-normal text-neutral-500 leading-[21px]">
+                Partner:
+              </span>
+              <span className="text-[14px] font-bold text-foreground leading-[21px]">
+                {session.activePartnerId || "Rogo"}
+              </span>
+            </div>
+          </div>
         )}
       </div>
 
@@ -401,13 +473,16 @@ export function AccessTreeSidebar() {
                 ))}
               </div>
 
-              <button
-                onClick={() => setShowCreateOrg(true)}
-                className="flex w-full items-center gap-1.5 py-2 px-2 text-[14px] font-semibold text-primary-300 hover:bg-primary-300/10 rounded-xl transition-colors mt-2 font-heading whitespace-nowrap outline-none"
-              >
-                <Plus className="size-5" />
-                <span>Create New Organization</span>
-              </button>
+              {/* Chỉ admin mới có thể tạo org mới */}
+              {isAdmin && (
+                <button
+                  onClick={() => setShowCreateOrg(true)}
+                  className="flex w-full items-center gap-1.5 py-2 px-2 text-[14px] font-semibold text-primary-300 hover:bg-primary-300/10 rounded-xl transition-colors mt-2 font-heading whitespace-nowrap outline-none"
+                >
+                  <Plus className="size-5" />
+                  <span>Create New Organization</span>
+                </button>
+              )}
             </div>
           )}
         </div>

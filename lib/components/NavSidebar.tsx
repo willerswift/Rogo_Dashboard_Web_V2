@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, UserCircle, Settings, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Users, UserCircle, Settings, LogOut, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -10,21 +10,33 @@ import { cn } from "@/lib/utils/cn";
 import { NAV_ITEMS } from "@/lib/config/navigation";
 import { logout } from "@/lib/api/auth";
 import { useTheme } from "./ThemeProvider";
+import { useIsAdmin } from "@/lib/hooks/useIsAdmin";
 
 const ICONS = {
   Overview: LayoutDashboard,
   Users: Users,
   Account: UserCircle,
   Settings: Settings,
+  MyPermissions: ShieldCheck,
 };
 
 export function NavSidebar() {
   const pathname = usePathname();
   const { logoUrl, faviconUrl, themeMode } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
+  const isAdmin = useIsAdmin();
   
   // Sidebar is collapsed by default, expands when hovered
   const isCollapsed = !isHovered;
+
+  // Lọc nav items theo quyền admin/user
+  const visibleNavItems = NAV_ITEMS.filter((item) => {
+    // adminOnly items chỉ hiện với admin
+    if (item.adminOnly && !isAdmin) return false;
+    // userOnly items chỉ hiện với non-admin
+    if ("userOnly" in item && item.userOnly && isAdmin) return false;
+    return true;
+  });
 
   const handleLogout = async () => {
     try {
@@ -59,14 +71,18 @@ export function NavSidebar() {
           <div className={cn("flex items-center gap-3 transition-all duration-500", isCollapsed ? "opacity-0 w-0 translate-x-10" : "opacity-100 w-auto translate-x-0")}>
             <div className="h-8 w-[1px] bg-border mx-1" />
             <div className="text-[10px] font-bold leading-tight text-neutral-400 uppercase tracking-wider whitespace-nowrap">
-              Partner<br/>Admin
+              {isAdmin ? (
+                <>Partner<br/>Admin</>
+              ) : (
+                <>Partner<br/>User</>
+              )}
             </div>
           </div>
         </div>
       </div>
 
       <nav className="flex-1 space-y-1 overflow-x-hidden">
-        {NAV_ITEMS.map((item) => {
+        {visibleNavItems.map((item) => {
           const Icon = ICONS[item.icon as keyof typeof ICONS] || LayoutDashboard;
           const isActive = pathname.startsWith(item.href);
 

@@ -6,7 +6,7 @@ import { Plus, MoreVertical, Users, LayoutDashboard, Pencil, Trash2, Info, Copy,
 import { useRouter } from "next/navigation";
 
 import { getOrganization, listOrganizationUsers } from "@/lib/api/organization";
-import { listProjects } from "@/lib/api/project";
+import { listProjects, getProjectDetail } from "@/lib/api/project";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import type { OrgWithOwner, Project, OrganizationMember } from "@/lib/types/partner";
 import { LoadingBlock, EmptyState, PrimaryButton, SearchInput } from "@/features/shared/ui";
@@ -16,12 +16,21 @@ import { formatDate } from "@/lib/utils/format";
 import { CreateProjectDialog } from "./CreateProjectDialog";
 import { RenameProjectDialog } from "./RenameProjectDialog";
 import { DeleteProjectDialog } from "./DeleteProjectDialog";
+import { useIsAdmin } from "@/lib/hooks/useIsAdmin";
+import { getUserAccessibleProjectIds, hasOrgPermission } from "@/lib/utils/permissions";
+
 
 export function OrganizationOverview({ orgId }: { orgId: string }) {
   const { session } = usePartnerContext();
   const partnerId = session.activePartnerId;
   const partnerName = session.activePartnerId || "ROGO";
   const router = useRouter();
+  const isAdmin = useIsAdmin();
+
+  // Kiểm tra quyền tạo project trong org này
+  const canCreateProject = isAdmin || hasOrgPermission(session, orgId, "project:edit");
+  // Kiểm tra quyền edit project (dùng làm gãrd cho actions menu)
+  const canEditProjects = isAdmin;
 
   const [org, setOrg] = useState<OrgWithOwner | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -42,20 +51,49 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
     if (!partnerId || !orgId) return;
     try {
       setLoading(true);
-      const [nextOrg, nextProjects, nextMembers] = await Promise.all([
-        getOrganization(partnerId, orgId),
-        listProjects(partnerId, orgId),
-        listOrganizationUsers(partnerId, orgId),
-      ]);
-      setOrg(nextOrg);
-      setProjects(nextProjects);
-      setMembers(nextMembers);
+
+      if (isAdmin) {
+        // Admin: gọi đầy đủ APIs
+        const [nextOrg, nextProjects, nextMembers] = await Promise.all([
+          getOrganization(partnerId, orgId),
+          listProjects(partnerId, orgId),
+          listOrganizationUsers(partnerId, orgId),
+        ]);
+        setOrg(nextOrg);
+        setProjects(nextProjects);
+        setMembers(nextMembers);
+      } else {
+        // Non-admin: chỉ fetch những gì có quyền
+        const projectIds = getUserAccessibleProjectIds(session);
+
+        const [nextOrg, fetchedProjects] = await Promise.all([
+          getOrganization(partnerId, orgId),
+          Promise.all(
+            projectIds.map((projectId) =>
+              getProjectDetail(partnerId, projectId)
+                .then((res) => res.project)
+                .catch((e) => {
+                  console.warn(`Cannot load project ${projectId}:`, e);
+                  return null;
+                }),
+            ),
+          ),
+        ]);
+
+        setOrg(nextOrg);
+        // Chỉ lấy project thuộc org này
+        const orgProjects = fetchedProjects
+          .filter((p): p is Project => p !== null)
+          .filter((p) => p.orgId === orgId);
+        setProjects(orgProjects);
+        setMembers([]); // Non-admin không có quyền listOrganizationUsers
+      }
     } catch {
       toast.error("Failed to load organization details");
     } finally {
       setLoading(false);
     }
-  }, [partnerId, orgId]);
+  }, [partnerId, orgId, isAdmin, session]);
 
   useEffect(() => {
     void load();
@@ -136,13 +174,16 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-[240px]"
             />
-            <PrimaryButton
-              onClick={() => setIsCreateOpen(true)}
-              className="transition-all"
-            >
-              <Plus className="size-4 stroke-[3px]" />
-              Create Project
-            </PrimaryButton>
+            {/* Chỉ hiện nút Create Project nếu có quyền */}
+            {canCreateProject && (
+              <PrimaryButton
+                onClick={() => setIsCreateOpen(true)}
+                className="transition-all"
+              >
+                <Plus className="size-4 stroke-[3px]" />
+                Create Project
+              </PrimaryButton>
+            )}
           </div>
         </div>
 
@@ -155,13 +196,14 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Created</th>
                 <th className="px-6 py-4">Updated</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+                {/* Chỉ hiện cột Actions nếu có quyền edit */}
+                {canEditProjects && <th className="px-6 py-4 text-right">Actions</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-border-muted">
               {filteredProjects.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-20 text-center text-neutral-400 font-medium">
+                  <td colSpan={canEditProjects ? 6 : 5} className="px-6 py-20 text-center text-neutral-400 font-medium">
                     {searchQuery ? "No projects found matching your search." : "No projects found in this organization."}
                   </td>
                 </tr>
@@ -258,54 +300,57 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                     </td>
                     <td className="px-6 py-4 text-[13px] font-medium text-neutral-500">{project.createdAt ? formatDate(project.createdAt) : "—"}</td>
                     <td className="px-6 py-4 text-[13px] font-medium text-neutral-500">{project.updatedAt ? formatDate(project.updatedAt) : "—"}</td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="relative inline-block text-left">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setOpenMenuId(openMenuId === project.uuid ? null : project.uuid);
-                          }}
-                          className="rounded-lg p-1.5 text-neutral-400 hover:bg-surface-muted hover:text-foreground transition-all"
-                        >
-                          <MoreVertical className="size-4" />
-                        </button>
-
-                        {openMenuId === project.uuid && (
-                          <div
-                            ref={menuRef}
-                            className="absolute right-0 top-full z-20 mt-1 w-48 origin-top-right overflow-hidden rounded-xl border border-border bg-surface animate-in fade-in zoom-in-95 duration-150"
+                    {/* Actions column chỉ hiện với admin */}
+                    {canEditProjects && (
+                      <td className="px-6 py-4 text-right">
+                        <div className="relative inline-block text-left">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenMenuId(openMenuId === project.uuid ? null : project.uuid);
+                            }}
+                            className="rounded-lg p-1.5 text-neutral-400 hover:bg-surface-muted hover:text-foreground transition-all"
                           >
-                            <div className="py-1">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedProject(project);
-                                  setIsRenameOpen(true);
-                                  setOpenMenuId(null);
-                                }}
-                                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-[14px] font-semibold text-foreground hover:bg-surface-muted transition-colors"
-                              >
-                                <Pencil className="size-4" />
-                                Rename Project
-                              </button>
-                              <div className="h-px bg-border-muted" />
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedProject(project);
-                                  setIsDeleteOpen(true);
-                                  setOpenMenuId(null);
-                                }}
-                                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-[14px] font-semibold text-primary-300 hover:bg-surface-muted transition-colors"
-                              >
-                                <Trash2 className="size-4" />
-                                Delete Project
-                              </button>
+                            <MoreVertical className="size-4" />
+                          </button>
+
+                          {openMenuId === project.uuid && (
+                            <div
+                              ref={menuRef}
+                              className="absolute right-0 top-full z-20 mt-1 w-48 origin-top-right overflow-hidden rounded-xl border border-border bg-surface animate-in fade-in zoom-in-95 duration-150"
+                            >
+                              <div className="py-1">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedProject(project);
+                                    setIsRenameOpen(true);
+                                    setOpenMenuId(null);
+                                  }}
+                                  className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-[14px] font-semibold text-foreground hover:bg-surface-muted transition-colors"
+                                >
+                                  <Pencil className="size-4" />
+                                  Rename Project
+                                </button>
+                                <div className="h-px bg-border-muted" />
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedProject(project);
+                                    setIsDeleteOpen(true);
+                                    setOpenMenuId(null);
+                                  }}
+                                  className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-[14px] font-semibold text-primary-300 hover:bg-surface-muted transition-colors"
+                                >
+                                  <Trash2 className="size-4" />
+                                  Delete Project
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </div>
-                    </td>
+                          )}
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}

@@ -5,10 +5,12 @@ import { toast } from "sonner";
 import { Building2, LayoutDashboard, Users, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { listOrganizations, listOrganizationUsers } from "@/lib/api/organization";
-import { listProjects } from "@/lib/api/project";
+import { listOrganizations, listOrganizationUsers, getOrganization } from "@/lib/api/organization";
+import { listProjects, getProjectDetail } from "@/lib/api/project";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
-import type { OrgWithOwner, Project, OrganizationMember } from "@/lib/types/partner";
+import { useIsAdmin } from "@/lib/hooks/useIsAdmin";
+import { getUserAccessibleOrgIds, getUserAccessibleProjectIds } from "@/lib/utils/permissions";
+import type { OrgWithOwner, Project } from "@/lib/types/partner";
 import { LoadingBlock, SearchInput } from "@/features/shared/ui";
 import { cn } from "@/lib/utils/cn";
 import { formatDate } from "@/lib/utils/format";
@@ -22,6 +24,7 @@ export function PartnerOverview() {
   const { session } = usePartnerContext();
   const partnerId = session.activePartnerId;
   const router = useRouter();
+  const isAdmin = useIsAdmin();
 
   const [orgSummaries, setOrgSummaries] = useState<OrgSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,20 +34,55 @@ export function PartnerOverview() {
     if (!partnerId) return;
     try {
       setLoading(true);
-      
-      // 1. Fetch organizations and all partner projects
-      const [orgs, allProjects] = await Promise.all([
-        listOrganizations(partnerId),
-        listProjects(partnerId),
-      ]);
 
-      // 2. Fetch member counts for each organization in parallel
-      // (This is okay because typically there aren't hundreds of orgs)
+      let orgs: OrgWithOwner[] = [];
+      let allProjects: Project[] = [];
+
+      if (isAdmin) {
+        // Admin: gọi list API đầy đủ
+        [orgs, allProjects] = await Promise.all([
+          listOrganizations(partnerId),
+          listProjects(partnerId),
+        ]);
+      } else {
+        // Non-admin: chỉ fetch những org/project mà user có quyền
+        const orgIds = getUserAccessibleOrgIds(session);
+        const projectIds = getUserAccessibleProjectIds(session);
+
+        const [fetchedOrgs, fetchedProjects] = await Promise.all([
+          Promise.all(
+            orgIds.map((orgId) =>
+              getOrganization(partnerId, orgId).catch((e) => {
+                console.warn(`Cannot load org ${orgId}:`, e);
+                return null;
+              }),
+            ),
+          ),
+          Promise.all(
+            projectIds.map((projectId) =>
+              getProjectDetail(partnerId, projectId)
+                .then((res) => res.project)
+                .catch((e) => {
+                  console.warn(`Cannot load project ${projectId}:`, e);
+                  return null;
+                }),
+            ),
+          ),
+        ]);
+
+        orgs = fetchedOrgs.filter((o): o is OrgWithOwner => o !== null);
+        allProjects = fetchedProjects.filter((p): p is Project => p !== null);
+      }
+
+      // Build org summaries với project count và member count
       const summaries = await Promise.all(
         orgs.map(async (org) => {
           try {
-            const members = await listOrganizationUsers(partnerId, org.orgId);
-            const orgProjects = allProjects.filter(p => p.orgId === org.orgId);
+            // Non-admin không có quyền listOrganizationUsers → bỏ qua member count
+            const members = isAdmin
+              ? await listOrganizationUsers(partnerId, org.orgId)
+              : [];
+            const orgProjects = allProjects.filter((p) => p.orgId === org.orgId);
             return {
               ...org,
               projectCount: orgProjects.length,
@@ -52,14 +90,14 @@ export function PartnerOverview() {
             };
           } catch (error) {
             console.error(`Failed to fetch users for org ${org.orgId}`, error);
-            const orgProjects = allProjects.filter(p => p.orgId === org.orgId);
+            const orgProjects = allProjects.filter((p) => p.orgId === org.orgId);
             return {
               ...org,
               projectCount: orgProjects.length,
               memberCount: 0,
             };
           }
-        })
+        }),
       );
 
       setOrgSummaries(summaries);
@@ -69,7 +107,8 @@ export function PartnerOverview() {
     } finally {
       setLoading(false);
     }
-  }, [partnerId]);
+  }, [partnerId, isAdmin, session]);
+
 
   useEffect(() => {
     void load();
