@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { RegisterForm } from "@/features/auth/register-form";
+import { BrandedAuthLogo } from "@/lib/components/BrandedAuthLogo";
 
 export default function RegisterPage() {
   return (
@@ -18,15 +19,7 @@ export default function RegisterPage() {
 
         <div className="relative z-10 flex h-full w-full flex-col justify-between p-14 text-white">
           <div className="space-y-16">
-            <div className="flex items-center">
-              <Image
-                src="/LogoRogo.svg"
-                alt="Rogo Logo"
-                width={130}
-                height={36}
-                className="h-auto w-auto"
-              />
-            </div>
+            <BrandedAuthLogo />
 
             <div className="max-w-md space-y-7">
               <h1 className="text-[40px] font-bold leading-[1.1] tracking-tight text-white">

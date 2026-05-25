@@ -8,7 +8,7 @@ import { Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-import { login } from "@/lib/api/auth";
+import { login, updateActivePartner } from "@/lib/api/auth";
 import { cn } from "@/lib/utils/cn";
 import { CheckboxInput } from "@/features/shared/ui";
 
@@ -52,7 +52,7 @@ export function LoginForm() {
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      await login(values);
+      const { session } = await login(values);
       
       // Handle Remember Me
       if (values.rememberMe) {
@@ -63,6 +63,16 @@ export function LoginForm() {
         localStorage.removeItem("rogo-remember-email");
         localStorage.removeItem("rogo-remember-password");
         localStorage.removeItem("rogo-remember-me");
+      }
+
+      // Restore last active partner if it belongs to this user
+      const lastPartner = localStorage.getItem("rogo-last-active-partner");
+      if (lastPartner && session.partnerIds.includes(lastPartner) && session.activePartnerId !== lastPartner) {
+        try {
+          await updateActivePartner(lastPartner);
+        } catch (e) {
+          console.warn("Failed to restore last active partner", e);
+        }
       }
 
       toast.success("Signed in successfully.");

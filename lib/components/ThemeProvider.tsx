@@ -33,9 +33,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     const currentTheme = savedTheme || "light";
 
+    // Save as last active partner for login redirect
+    localStorage.setItem("rogo-last-active-partner", partnerId);
+
     if (savedColor) {
       setPrimaryColor(savedColor);
       document.documentElement.style.setProperty("--brand-primary", savedColor);
+      // Update global fallback for auth pages to the last active partner branding
+      localStorage.setItem("rogo-primary-color", savedColor);
     } else {
       setPrimaryColor(DEFAULT_COLOR);
       document.documentElement.style.setProperty("--brand-primary", DEFAULT_COLOR);
@@ -43,12 +48,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     if (savedLogo) {
       setLogoUrl(savedLogo);
+      localStorage.setItem("rogo-logo-url", savedLogo);
     } else {
       setLogoUrl(currentTheme === "dark" ? DEFAULT_LOGO_DARK : DEFAULT_LOGO_LIGHT);
     }
 
     if (savedFavicon) {
       setFaviconUrl(savedFavicon);
+      localStorage.setItem("rogo-favicon-url", savedFavicon);
       const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
       if (link) link.href = savedFavicon;
     } else {
@@ -68,8 +75,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    // Initial global load (will be overridden by PartnerSync if a partner is active)
+    // Initial global load from localStorage (e.g. for login/register pages)
     const savedTheme = localStorage.getItem("rogo-theme-mode") as "light" | "dark";
+    const savedColor = localStorage.getItem("rogo-primary-color");
+    const savedLogo = localStorage.getItem("rogo-logo-url");
+    const savedFavicon = localStorage.getItem("rogo-favicon-url");
+
     if (savedTheme) {
       setThemeMode(savedTheme);
       if (savedTheme === "dark") {
@@ -77,6 +88,21 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       } else {
         document.documentElement.classList.remove("dark");
       }
+    }
+
+    if (savedColor) {
+      setPrimaryColor(savedColor);
+      document.documentElement.style.setProperty("--brand-primary", savedColor);
+    }
+
+    if (savedLogo) {
+      setLogoUrl(savedLogo);
+    }
+
+    if (savedFavicon) {
+      setFaviconUrl(savedFavicon);
+      const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+      if (link) link.href = savedFavicon;
     }
   }, []);
 
@@ -86,14 +112,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setFaviconUrl(favicon);
     document.documentElement.style.setProperty("--brand-primary", color);
     
+    // Always save to global keys for auth pages fallback
+    localStorage.setItem("rogo-primary-color", color);
+    localStorage.setItem("rogo-logo-url", logo);
+    localStorage.setItem("rogo-favicon-url", favicon);
+
+    // Also save to partner-specific keys if available
     if (partnerId) {
       localStorage.setItem(`rogo-primary-color-${partnerId}`, color);
       localStorage.setItem(`rogo-logo-url-${partnerId}`, logo);
       localStorage.setItem(`rogo-favicon-url-${partnerId}`, favicon);
-    } else {
-      localStorage.setItem("rogo-primary-color", color);
-      localStorage.setItem("rogo-logo-url", logo);
-      localStorage.setItem("rogo-favicon-url", favicon);
     }
 
     // Update real favicon
@@ -106,10 +134,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setThemeMode(nextTheme);
     localStorage.setItem("rogo-theme-mode", nextTheme);
     
-    // Update logo based on theme (fallback if no partner specific logo is set)
-    // Here we should ideally check if a partner logo exists, but for simplicity we rely on the saved URL if it exists.
-    // To properly handle theme toggle for custom logos, we might need a dark-mode variant logo.
-    // For now, if they haven't set a custom logo, we toggle it.
     if (logoUrl === DEFAULT_LOGO_LIGHT || logoUrl === DEFAULT_LOGO_DARK) {
       const nextLogo = nextTheme === "dark" ? DEFAULT_LOGO_DARK : DEFAULT_LOGO_LIGHT;
       setLogoUrl(nextLogo);

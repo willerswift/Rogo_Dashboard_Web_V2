@@ -38,12 +38,21 @@ export default async function RootLayout({
                 try {
                   var color = localStorage.getItem('rogo-primary-color');
                   var theme = localStorage.getItem('rogo-theme-mode');
+                  var logo = localStorage.getItem('rogo-logo-url');
+                  var favicon = localStorage.getItem('rogo-favicon-url');
+                  
                   if (color) {
                     document.documentElement.style.setProperty('--brand-primary', color);
                   }
                   if (theme === 'dark') {
                     document.documentElement.classList.add('dark');
                   }
+                  if (favicon) {
+                    var link = document.querySelector("link[rel~='icon']");
+                    if (link) link.href = favicon;
+                  }
+                  // Store logo in a global for client components to access before mount if needed
+                  window.__ROGO_LOGO__ = logo;
                 } catch (e) {}
               })();
             `,

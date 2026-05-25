@@ -4,6 +4,7 @@ import Image from "next/image";
 import { LoginForm } from "@/features/auth/login-form";
 import { getSessionCookie } from "@/lib/server/session";
 import { getFirstAccessibleHref } from "@/lib/utils/permissions";
+import { BrandedAuthLogo } from "@/lib/components/BrandedAuthLogo";
 
 export default async function LoginPage() {
   const session = await getSessionCookie();
@@ -29,15 +30,7 @@ export default async function LoginPage() {
 
         <div className="relative z-10 flex h-full w-full flex-col justify-between p-14 text-white">
           <div className="space-y-16">
-            <div className="flex items-center">
-              <Image
-                src="/LogoRogo.svg"
-                alt="Rogo Logo"
-                width={130}
-                height={36}
-                className="h-auto w-auto"
-              />
-            </div>
+            <BrandedAuthLogo />
 
             <div className="max-w-md space-y-7">
               <h1 className="text-[40px] font-bold leading-[1.1] tracking-tight text-white">
