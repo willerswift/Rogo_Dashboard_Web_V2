@@ -2,7 +2,30 @@
 
 This file serves as a persistent record of work completed, current status, and pending tasks. It should be updated at the end of every working session to ensure continuity.
 
-## Latest Update: May 21, 2026
+## Latest Update: May 25, 2026
+
+### Work Completed
+- **Resolved Localhost Connection Error**:
+    - Identified that the development server was failing to start due to unresolved merge conflict markers in `lib/components/AccessTreeSidebar.tsx`.
+    - **Manually Resolved Merge Conflicts**:
+        - Merged non-admin permission filtering logic from `Updated upstream` with search filtering optimizations.
+        - Restored the `isAdmin` guard for the partner switcher and "Create New Organization" button.
+        - Fixed broken JSX tag nesting and indentation that were causing compilation failures.
+    - Verified the fix by restarting the Next.js development server and confirming successful compilation and API request handling on port 3000.
+- **Improved Sidebar Structural Integrity**:
+    - Cleaned up redundant UI elements and standardized indentation in `AccessTreeSidebar.tsx` to improve maintainability and prevent future merge issues.
+
+### Current Status
+- Development server is running and accessible at `localhost:3000`.
+- Sidebar component is stable and correctly handles both Admin and Non-Admin view states.
+- Build is passing with new changes.
+
+### Pending Tasks
+1. [ ] Implement real staging credentials verification.
+2. [ ] Expand feature-specific documentation in the `doc/` folder.
+3. [ ] Verify ABAC permission gates with real data.
+
+## Previous Update: May 21, 2026
 
 ### Work Completed
 - **Refined Partner Switcher UI & UX**:

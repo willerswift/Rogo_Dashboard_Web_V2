@@ -234,16 +234,14 @@ export function PasswordInput(
 export function CheckboxInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   const { className, ...inputProps } = props;
   return (
-    <div className={cn("relative size-6 shrink-0", className)}>
+    <div className={cn("relative size-5 shrink-0", className)}>
       <input
         {...inputProps}
         type="checkbox"
-        className="peer size-6 appearance-none rounded-[8px] border border-neutral-400 dark:border-neutral-600 bg-surface-muted transition-all checked:bg-primary-300 checked:border-primary-300 cursor-pointer"
+        className="peer size-full appearance-none rounded-[6px] border border-neutral-400 dark:border-neutral-600 bg-surface-muted transition-all checked:bg-primary-300 checked:border-primary-300 cursor-pointer"
       />
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-white opacity-0 peer-checked:opacity-100 transition-opacity">
-        <div className="flex size-[22px] flex-col items-center justify-center">
-          <Check className="size-3.5" strokeWidth={4} />
-        </div>
+        <Check className="size-[70%]" strokeWidth={4} />
       </div>
     </div>
   );
@@ -323,16 +321,22 @@ export function EmptyState({ title, description }: { title: string; description:
   );
 }
 
-export function StatusBadge({ value }: { value: string }) {
-  const colorClass =
-    value === "ACTIVE" || value === "released"
-      ? "bg-green-100/10 text-green-500 border border-green-500/20"
-      : value === "DISABLED" || value === "DEACTIVATED"
-        ? "bg-red-100/10 text-red-500 border border-red-500/20"
-        : "bg-surface-muted text-neutral-500 border border-border";
+export function StatusBadge({ value, variant = "default" }: { value: string; variant?: "default" | "permission" | "entity" }) {
+  let colorClass = "bg-neutral-100";
+  
+  if (variant === "permission" || value === "ACTIVE" || value === "released") {
+    colorClass = "bg-[hsla(148,72%,44%,0.1)]"; // Green tint
+  } else if (variant === "entity" || value === "PARTNER" || value === "ORG" || value.startsWith("ID:")) {
+    colorClass = "bg-[hsla(241,100%,90%,1)]"; // Blue/Lavender tint
+  } else if (value === "DISABLED" || value === "DEACTIVATED") {
+    colorClass = "bg-red-100";
+  }
 
   return (
-    <span className={cn("inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wider", colorClass)}>
+    <span className={cn(
+      "inline-flex h-[28px] items-center justify-center rounded-full px-3 py-0.5 gap-2 text-[12px] font-bold leading-[18px] text-[#4A4A4A] font-sans transition-colors whitespace-nowrap",
+      colorClass
+    )}>
       {value}
     </span>
   );

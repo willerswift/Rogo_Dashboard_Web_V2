@@ -143,21 +143,21 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
         ]}
         backHref="/overview?view=partner"
         breadcrumbAddon={
-          <div className="flex items-center h-8 px-3 rounded-full bg-primary-100/20 text-[12px] font-bold text-primary-300 uppercase tracking-tight">
+          <div className="flex items-center h-[28px] px-3 rounded-full bg-[hsla(241,100%,90%,1)] text-[12px] font-bold text-[#4A4A4A] uppercase tracking-tight whitespace-nowrap">
             ID: {org.orgId}
           </div>
         }
       >
         <div className="flex items-center gap-3 ml-2">
-          <div className="flex items-center h-7 px-3 rounded-full bg-primary-100/20 text-[10px] font-bold text-primary-300 uppercase tracking-wider">
+          <div className="flex items-center h-[28px] px-3 rounded-full bg-[hsla(241,100%,90%,1)] text-[12px] font-bold text-[#4A4A4A] uppercase tracking-wider">
             ORG
           </div>
-          <div className="flex items-center h-7 px-3 rounded-full bg-surface-muted border border-border text-[12px] font-bold text-neutral-500 gap-1.5">
-            <Users className="size-3" />
+          <div className="flex items-center h-[28px] px-3 rounded-full bg-surface-muted border border-border text-[12px] font-bold text-[#4A4A4A] gap-1.5 whitespace-nowrap">
+            <Users className="size-3.5 text-neutral-400" />
             {members.length} Members
           </div>
-          <div className="flex items-center h-7 px-3 rounded-full bg-surface-muted border border-border text-[12px] font-bold text-neutral-500 gap-1.5">
-            <LayoutDashboard className="size-3" />
+          <div className="flex items-center h-[28px] px-3 rounded-full bg-surface-muted border border-border text-[12px] font-bold text-[#4A4A4A] gap-1.5 whitespace-nowrap">
+            <LayoutDashboard className="size-3.5 text-neutral-400" />
             {projects.length} Projects
           </div>
         </div>
@@ -293,7 +293,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#1FC16B] uppercase tracking-wide">
+                      <div className="flex items-center h-[28px] w-fit px-3 rounded-full bg-[hsla(148,72%,44%,0.1)] gap-1.5 text-[12px] font-bold text-[#4A4A4A] uppercase tracking-wide whitespace-nowrap">
                         <div className="h-2 w-2 rounded-full bg-[#1FC16B]" />
                         Active
                       </div>

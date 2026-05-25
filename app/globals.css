@@ -71,6 +71,7 @@
   --brand-primary-hover: color-mix(in srgb, var(--brand-primary), black 10%);
   
   /* Primary - Derived from --brand-primary */
+  --primary-050: color-mix(in srgb, var(--brand-primary), white 95%);
   --primary-100: color-mix(in srgb, var(--brand-primary), white 80%);
   --primary-200: color-mix(in srgb, var(--brand-primary), white 40%);
   --primary-300: var(--brand-primary);

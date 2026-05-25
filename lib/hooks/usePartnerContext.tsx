@@ -9,6 +9,8 @@ type PartnerContextValue = {
   setSession: (session: PartnerSession) => void;
   accessScope: "partner" | "project";
   setAccessScope: (scope: "partner" | "project") => void;
+  globalSearch: string;
+  setGlobalSearch: (search: string) => void;
 };
 
 const PartnerContext = createContext<PartnerContextValue | null>(null);
@@ -22,8 +24,16 @@ export function PartnerProvider({
 }) {
   const [session, setSession] = useState(initialSession);
   const [accessScope, setAccessScope] = useState<"partner" | "project">("partner");
+  const [globalSearch, setGlobalSearch] = useState("");
   
-  const value = useMemo(() => ({ session, setSession, accessScope, setAccessScope }), [session, accessScope]);
+  const value = useMemo(() => ({ 
+    session, 
+    setSession, 
+    accessScope, 
+    setAccessScope,
+    globalSearch,
+    setGlobalSearch
+  }), [session, accessScope, globalSearch]);
 
   return <PartnerContext.Provider value={value}>{children}</PartnerContext.Provider>;
 }

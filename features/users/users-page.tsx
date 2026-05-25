@@ -25,7 +25,7 @@ import { formatPermissionUpdateDate } from "@/lib/utils/format";
 import { GrantAccessDialog } from "./GrantAccessDialog";
 
 export function UsersPage() {
-  const { session, accessScope } = usePartnerContext();
+  const { session, accessScope, globalSearch } = usePartnerContext();
   const searchParams = useSearchParams();
   const orgId = searchParams.get("orgId");
   const projectId = searchParams.get("projectId");
@@ -41,10 +41,36 @@ export function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [showGrantAccess, setShowGrantAccess] = useState(false);
   const [initialUserId, setInitialUserId] = useState<string | null>(null);
+  const [defaultTab, setDefaultTab] = useState<"partner" | "project">("partner");
   const [viewingProjectsFor, setViewingProjectsFor] = useState<{user: UserPartner} | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [projectSearch, setProjectSearch] = useState("");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+  const [localUpdateTimes, setLocalUpdateTimes] = useState<Record<string, string>>({});
+
+  // Load persistent update times on mount
+  useEffect(() => {
+    if (!partnerId) return;
+    const stored = localStorage.getItem(`rogo-user-updates-${partnerId}`);
+    if (stored) {
+      try {
+        setLocalUpdateTimes(JSON.parse(stored));
+      } catch (e) {
+        console.error("Failed to load local update times", e);
+      }
+    }
+  }, [partnerId]);
+
+  // Persist update times when they change
+  const updateLocalTime = useCallback((userId: string, isoDate: string) => {
+    setLocalUpdateTimes(prev => {
+      const next = { ...prev, [userId]: isoDate };
+      if (partnerId) {
+        localStorage.setItem(`rogo-user-updates-${partnerId}`, JSON.stringify(next));
+      }
+      return next;
+    });
+  }, [partnerId]);
 
   const activeProject = useMemo(() => projects.find(p => p.uuid === projectId), [projects, projectId]);
   const activeOrg = useMemo(() => {
@@ -119,29 +145,43 @@ export function UsersPage() {
       toast.error(error instanceof Error ? error.message : "Failed to delete user.");
     }
   }, [partnerId, loadData]);
+const handleGrantAccess = async (userId: string, projectIds: string[], permissions: string[]) => {
+  console.log("Granting access for", userId, "projects:", projectIds, "permissions:", permissions);
+  if (!partnerId) return;
+  try {
+    const entries: AbacV2Entry[] = [];
 
-  const handleGrantAccess = async (userId: string, projectIds: string[], permissions: string[]) => {
-    console.log("Granting access for", userId, "projects:", projectIds, "permissions:", permissions);
-    if (!partnerId) return;
-    try {
-      // Build ABAC entries from the selected projects
-      const entries: AbacV2Entry[] = [];
-      if (projectIds.length > 0) {
-        entries.push({
-          resources: projectIds.map(id => id === "*" ? `partner:${partnerId}:project/*` : `partner:${partnerId}:project/${id}`),
-          actions: permissions 
-        });
-      }
+    // Separate actions
+    const projectActions = permissions.filter(a => a.startsWith("project"));
+    const partnerActions = permissions.filter(a => !a.startsWith("project"));
 
-      await grantPermissions({
-        ownerId: userId,
-        partnerId,
-        entries
+    // 1. Partner Level Entry
+    if (partnerActions.length > 0) {
+      entries.push({
+        resources: [`partner:${partnerId}`],
+        actions: partnerActions
       });
+    }
 
-      toast.success("Access granted.");
-      await loadData();
-    } catch (error) {
+    // 2. Project Level Entry
+    if (projectActions.length > 0) {
+      entries.push({
+        resources: projectIds.map(id => id === "*" ? `partner:${partnerId}:project/*` : `partner:${partnerId}:project/${id}`),
+        actions: projectActions 
+      });
+    }
+
+    await grantPermissions({
+      ownerId: userId,
+      partnerId,
+      entries
+    });
+
+    // Update local persistent time for immediate and durable feedback
+    updateLocalTime(userId, new Date().toISOString());
+
+    toast.success("Access granted.");
+    await loadData();    } catch (error) {
        toast.error(error instanceof Error ? error.message : "Failed to grant access.");
     }
   };
@@ -226,7 +266,16 @@ export function UsersPage() {
   }, [viewingProjectsFor, getUserProjectData, projectSearch]);
 
   const sortedUsers = useMemo(() => {
-    const list = [...users];
+    let list = [...users];
+
+    if (globalSearch) {
+      const query = globalSearch.toLowerCase();
+      list = list.filter(u => 
+        u.user.name.toLowerCase().includes(query) || 
+        u.user.email.toLowerCase().includes(query)
+      );
+    }
+
     list.sort((a, b) => {
       const recA = permissionRecords.find(r => r.ownerId === a.user.ownerId);
       const recB = permissionRecords.find(r => r.ownerId === b.user.ownerId);
@@ -237,7 +286,7 @@ export function UsersPage() {
       return sortOrder === "newest" ? timeB - timeA : timeA - timeB;
     });
     return list;
-  }, [users, permissionRecords, sortOrder]);
+  }, [users, permissionRecords, sortOrder, globalSearch]);
 
   const columns = useMemo<DataTableColumn<UserWithNumProject>[]>(() => {
     if (accessScope === "project") {
@@ -275,15 +324,20 @@ export function UsersPage() {
               <div className="flex flex-col gap-2 py-1">
                 <div className="flex flex-wrap gap-2">
                   {displayProjects.map((p) => (
-                    <div key={p.uuid} className="flex h-[28px] items-center justify-center gap-2 rounded-full bg-primary-100/10 px-2 py-0.5">
-                      <span className="text-[12px] font-bold text-foreground tracking-tight">{p.name}</span>
-                      <span className="text-[11px] font-bold text-primary-300">{p.uuid.slice(0, 8)}</span>
+                    <div key={p.uuid} className="flex h-[28px] items-center justify-center gap-2 rounded-full bg-[hsla(241,100%,90%,1)] px-3 py-0.5 whitespace-nowrap">
+                      <span className="text-[12px] font-bold text-[#4A4A4A] tracking-tight">{p.name}</span>
+                      <span className="text-[12px] font-bold text-[#3B4AD0] opacity-80">{p.uuid.slice(0, 8)}</span>
                     </div>
                   ))}
                 </div>
                 {extraCount > 0 && (
                   <button
-                    onClick={() => setViewingProjectsFor({ user })}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setInitialUserId(user.ownerId);
+                      setDefaultTab("project");
+                      setShowGrantAccess(true);
+                    }}
                     className="text-[13px] font-bold text-neutral-500 text-left hover:text-foreground transition-colors flex items-center gap-1 w-fit"
                   >
                     View {extraCount} more Project{extraCount !== 1 ? 's' : ''}
@@ -297,10 +351,14 @@ export function UsersPage() {
           },
         },
         {
-          id: "joined",
-          header: "JOINED",
+          id: "updatedAt",
+          header: "TIME UPDATED",
           headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider",
-          cell: () => <span className="text-[13px] text-neutral-500">Oct 12, 2023</span>,
+          cell: ({ user }) => {
+            const record = permissionRecords.find(r => r.ownerId === user.ownerId);
+            const date = localUpdateTimes[user.ownerId] || record?.updatedAt || record?.updatedDate;
+            return <span className="text-[13px] text-neutral-500">{formatPermissionUpdateDate(date)}</span>;
+          },
         },
         {
           id: "actions",
@@ -326,15 +384,20 @@ export function UsersPage() {
         id: "user",
         header: "USER",
         headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider",
-        cell: ({ user }) => (
-          <div className="flex items-center gap-3">
-            <Avatar name={user.name} email={user.email} />
-            <div className="flex flex-col">
-              <span className="text-[14px] font-bold text-foreground leading-tight">{user.name}</span>
-              <span className="text-[12px] text-neutral-500 leading-tight mt-0.5">{user.email}</span>
+        cell: ({ user }) => {
+          const isMe = user.ownerId === session.userId;
+          return (
+            <div className="flex items-center gap-3">
+              <Avatar name={user.name} email={user.email} />
+              <div className="flex flex-col">
+                <span className="text-[14px] font-bold text-foreground leading-tight">
+                  {user.name} {isMe && <span className="text-primary-300 ml-1 font-medium">(you)</span>}
+                </span>
+                <span className="text-[12px] text-neutral-500 leading-tight mt-0.5">{user.email}</span>
+              </div>
             </div>
-          </div>
-        ),
+          );
+        },
       },
       {
         id: "permissions",
@@ -343,19 +406,33 @@ export function UsersPage() {
         cell: ({ user }) => {
           const record = permissionRecords.find(r => r.ownerId === user.ownerId);
           if (!record || !record.abac || !record.abac.length) return <span className="text-neutral-400 text-[12px] italic">No permissions</span>;
-          
+
           const resMap: Record<string, string> = {
             "organization": "ORG",
             "authorization": "AUTH",
-            "projectAuth": "PRJ AUTH",
-            "projectMgmt": "PRJ MQTT",
             "productDev": "PROD",
-            "projectDev": "PRJ PROD",
             "report": "REPORT",
-            "projectReport": "PRJ REPORT",
           };
 
-          const rawActions = record.abac.flatMap(entry => entry.actions);
+          const rawActions = record.abac.flatMap(entry => {
+            const parts = entry.resources[0]?.split(":");
+            if (!parts) return [];
+            const resourcePath = parts[2] || "";
+            const isProjectResource = resourcePath.startsWith("project");
+
+            // Partner view: Only show non-project resources
+            if (isProjectResource) return [];
+
+            // Check if user is Admin at partner level
+            if (entry.actions.includes("*")) return ["*"];
+
+            // Filter actions to match the resource type they are applied to
+            return entry.actions.filter(action => {
+              const [mod] = action.split(":");
+              return !!resMap[mod];
+            });
+          });
+
           const uniqueRawActions = Array.from(new Set(rawActions.map(a => a.trim()))).filter(Boolean);
 
           if (uniqueRawActions.includes("*")) {
@@ -367,7 +444,7 @@ export function UsersPage() {
             const [resource, act] = action.split(":");
             const shortName = resMap[resource] || resource.toUpperCase();
             const effectiveAction = act || "*";
-            
+
             if (!shortNameGroups[shortName]) shortNameGroups[shortName] = new Set();
             shortNameGroups[shortName].add(effectiveAction);
           });
@@ -383,7 +460,9 @@ export function UsersPage() {
               finalBadges.push({ label: `${shortName} VIEW`, isAdmin: false });
             }
           });
-          
+
+          if (finalBadges.length === 0) return <span className="text-neutral-400 text-[12px] italic">No permissions</span>;
+
           return (
             <div className="flex flex-wrap gap-1.5">
               {finalBadges.sort((a, b) => a.label.localeCompare(b.label)).map(badge => (
@@ -392,11 +471,10 @@ export function UsersPage() {
             </div>
           );
         },
-      },
-      {
+      },      {
         id: "updatedAt",
         header: (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 whitespace-nowrap">
             <span>TIME UPDATE</span>
             <button 
               onClick={(e) => {
@@ -412,7 +490,8 @@ export function UsersPage() {
         headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider",
         cell: ({ user }) => {
           const record = permissionRecords.find(r => r.ownerId === user.ownerId);
-          return <span className="text-[13px] text-neutral-500">{formatPermissionUpdateDate(record?.updatedDate)}</span>;
+          const date = localUpdateTimes[user.ownerId] || record?.updatedAt || record?.updatedDate;
+          return <span className="text-[13px] text-neutral-500">{formatPermissionUpdateDate(date)}</span>;
         },
       },
       {
@@ -465,7 +544,7 @@ export function UsersPage() {
               {rootName}
             </h1>
             {displayId && (
-              <span className="inline-flex items-center rounded-md bg-primary-100/10 px-2 py-0.5 text-[10px] font-bold text-primary-300 uppercase">
+              <span className="inline-flex h-[28px] items-center justify-center rounded-full bg-[hsla(241,100%,90%,1)] px-3 py-0.5 text-[12px] font-bold text-[#3B4AD0]">
                 ID: {displayId}
               </span>
             )}
@@ -474,15 +553,15 @@ export function UsersPage() {
           <div className="flex items-center gap-2">
             {/* Type Badge */}
             {activeProject ? (
-              <span className="inline-flex items-center rounded-md bg-green-100/10 px-2 py-0.5 text-[10px] font-bold text-green-600">
+              <span className="inline-flex h-[28px] items-center justify-center rounded-full bg-[hsla(241,100%,90%,1)] px-3 py-0.5 text-[12px] font-bold text-[#3B4AD0]">
                 PRJ
               </span>
             ) : activeOrg ? (
-              <span className="inline-flex items-center rounded-md bg-primary-100/10 px-2 py-0.5 text-[10px] font-bold text-primary-300">
+              <span className="inline-flex h-[28px] items-center justify-center rounded-full bg-[hsla(241,100%,90%,1)] px-3 py-0.5 text-[12px] font-bold text-[#3B4AD0]">
                 ORG
               </span>
             ) : (
-              <span className="inline-flex items-center rounded-md bg-primary-100/10 px-2 py-0.5 text-[10px] font-bold text-primary-300">
+              <span className="inline-flex h-[28px] items-center justify-center rounded-full bg-[hsla(241,100%,90%,1)] px-3 py-0.5 text-[12px] font-bold text-[#3B4AD0]">
                 PARTNER
               </span>
             )}
@@ -516,6 +595,7 @@ export function UsersPage() {
               type="button"
               onClick={() => {
                 setInitialUserId(null);
+                setDefaultTab(accessScope === "project" ? "project" : "partner");
                 setShowGrantAccess(true);
               }}
               className="transition-all"
@@ -533,8 +613,14 @@ export function UsersPage() {
         <DataTable
           columns={columns}
           data={sortedUsers}
+          getRowClassName={(row) => row.user.ownerId === session.userId ? "bg-primary-100/10" : ""}
           onRowClick={(user) => {
+            if (user.user.ownerId === session.userId) {
+              toast.error("You cannot change your own permissions.");
+              return;
+            }
             setInitialUserId(user.user.ownerId);
+            setDefaultTab(accessScope === "project" ? "project" : "partner");
             setShowGrantAccess(true);
           }}
           emptyTitle="No users found"
@@ -562,8 +648,11 @@ export function UsersPage() {
           setInitialUserId(null);
         }}
         users={users}
+        projects={projects}
+        orgs={orgs}
         permissionRecords={permissionRecords}
         initialUserId={initialUserId}
+        defaultTab={defaultTab}
         onGrant={handleGrantAccess}
       />
 
@@ -673,10 +762,8 @@ export function UsersPage() {
 function PermissionBadge({ label, isAdmin }: { label: string; isAdmin: boolean }) {
   return (
     <span className={cn(
-      "inline-flex items-center rounded-full px-2 py-0.5 h-6 text-[10px] font-bold tracking-tight whitespace-nowrap transition-colors",
-      isAdmin 
-        ? "bg-primary-100/20 text-primary-300" // Themed for Admin
-        : "bg-surface-muted text-neutral-500 border border-border" // Standard for View only
+      "inline-flex h-[28px] items-center justify-center rounded-full px-3 py-0.5 text-[12px] font-bold leading-[21px] font-sans whitespace-nowrap transition-colors",
+      "bg-[hsla(148,72%,44%,0.1)] text-[#1F244A]"
     )}>
       {label}
     </span>
