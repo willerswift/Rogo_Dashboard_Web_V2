@@ -9,7 +9,7 @@ import { listOrganizations, listOrganizationUsers, getOrganization } from "@/lib
 import { listProjects, getProjectDetail } from "@/lib/api/project";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { useIsAdmin } from "@/lib/hooks/useIsAdmin";
-import { getUserAccessibleOrgIds, getUserAccessibleProjectIds } from "@/lib/utils/permissions";
+import { getUserAccessibleOrgIds, getUserAccessibleProjectIds, hasPermission } from "@/lib/utils/permissions";
 import type { OrgWithOwner, Project } from "@/lib/types/partner";
 import { LoadingBlock, SearchInput } from "@/features/shared/ui";
 import { cn } from "@/lib/utils/cn";
@@ -38,40 +38,45 @@ export function PartnerOverview() {
       let orgs: OrgWithOwner[] = [];
       let allProjects: Project[] = [];
 
-      if (isAdmin) {
-        // Admin: gọi list API đầy đủ
+      const hasGlobalOrg = hasPermission(session, "organization:view");
+      const hasGlobalProject = hasPermission(session, "projectMgmt:view") || 
+        session.projectResources.some(entry => entry.resources.some(r => r.includes(":project/*")));
+
+      if (isAdmin || (hasGlobalOrg && hasGlobalProject)) {
+        // Admin hoặc global cả 2: gọi list API đầy đủ
         [orgs, allProjects] = await Promise.all([
           listOrganizations(partnerId),
           listProjects(partnerId),
         ]);
       } else {
-        // Non-admin: chỉ fetch những org/project mà user có quyền
-        const orgIds = getUserAccessibleOrgIds(session);
-        const projectIds = getUserAccessibleProjectIds(session);
-
+        // Từng phần riêng lẻ
         const [fetchedOrgs, fetchedProjects] = await Promise.all([
-          Promise.all(
-            orgIds.map((orgId) =>
-              getOrganization(partnerId, orgId).catch((e) => {
-                console.warn(`Cannot load org ${orgId}:`, e);
-                return null;
-              }),
-            ),
-          ),
-          Promise.all(
-            projectIds.map((projectId) =>
-              getProjectDetail(partnerId, projectId)
-                .then((res) => res.project)
-                .catch((e) => {
-                  console.warn(`Cannot load project ${projectId}:`, e);
-                  return null;
-                }),
-            ),
-          ),
+          hasGlobalOrg
+            ? listOrganizations(partnerId)
+            : Promise.all(
+                getUserAccessibleOrgIds(session).map((orgId) =>
+                  getOrganization(partnerId, orgId).catch((e) => {
+                    console.warn(`Cannot load org ${orgId}:`, e);
+                    return null;
+                  }),
+                ),
+              ),
+          hasGlobalProject
+            ? listProjects(partnerId)
+            : Promise.all(
+                getUserAccessibleProjectIds(session).map((projectId) =>
+                  getProjectDetail(partnerId, projectId)
+                    .then((res) => res.project)
+                    .catch((e) => {
+                      console.warn(`Cannot load project ${projectId}:`, e);
+                      return null;
+                    }),
+                ),
+              ),
         ]);
 
-        orgs = fetchedOrgs.filter((o): o is OrgWithOwner => o !== null);
-        allProjects = fetchedProjects.filter((p): p is Project => p !== null);
+        orgs = (Array.isArray(fetchedOrgs) ? fetchedOrgs : [fetchedOrgs]).filter((o): o is OrgWithOwner => o !== null);
+        allProjects = (Array.isArray(fetchedProjects) ? fetchedProjects : [fetchedProjects]).filter((p): p is Project => p !== null);
       }
 
       // Build org summaries với project count và member count

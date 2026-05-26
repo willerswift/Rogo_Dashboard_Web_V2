@@ -89,7 +89,7 @@ export function getUserAccessibleOrgIds(session: PartnerSession): string[] {
   const orgIds = new Set<string>();
 
   for (const entry of session.projectResources) {
-    const canView = entry.actions.some((a) => matchesAction(a, "organization:view"));
+    const canView = entry.actions.some((a) => a === "*" || a.startsWith("organization:"));
     if (!canView) continue;
 
     for (const resource of entry.resources) {
@@ -117,7 +117,14 @@ export function getUserAccessibleProjectIds(session: PartnerSession): string[] {
   const projectIds = new Set<string>();
 
   for (const entry of session.projectResources) {
-    const canView = entry.actions.some((a) => matchesAction(a, "project:view"));
+    const canView = entry.actions.some((a) => 
+      a === "*" ||
+      a.startsWith("project:") || 
+      a.startsWith("projectDev:") || 
+      a.startsWith("projectAuth:") || 
+      a.startsWith("projectReport:") ||
+      a.startsWith("projectMgmt:")
+    );
     if (!canView) continue;
 
     for (const resource of entry.resources) {

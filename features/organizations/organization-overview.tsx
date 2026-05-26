@@ -17,7 +17,7 @@ import { CreateProjectDialog } from "./CreateProjectDialog";
 import { RenameProjectDialog } from "./RenameProjectDialog";
 import { DeleteProjectDialog } from "./DeleteProjectDialog";
 import { useIsAdmin } from "@/lib/hooks/useIsAdmin";
-import { getUserAccessibleProjectIds, hasOrgPermission } from "@/lib/utils/permissions";
+import { getUserAccessibleOrgIds, getUserAccessibleProjectIds, hasPermission, hasOrgPermission } from "@/lib/utils/permissions";
 
 
 export function OrganizationOverview({ orgId }: { orgId: string }) {
@@ -52,18 +52,21 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
     try {
       setLoading(true);
 
-      if (isAdmin) {
-        // Admin: gọi đầy đủ APIs
+      const hasGlobalProject = hasPermission(session, "projectMgmt:view") || 
+        session.projectResources.some(entry => entry.resources.some(r => r.includes(":project/*")));
+
+      if (isAdmin || hasGlobalProject) {
+        // Admin hoặc có global project permission: lấy toàn bộ projects của org này
         const [nextOrg, nextProjects, nextMembers] = await Promise.all([
           getOrganization(partnerId, orgId),
           listProjects(partnerId, orgId),
-          listOrganizationUsers(partnerId, orgId),
+          isAdmin ? listOrganizationUsers(partnerId, orgId) : Promise.resolve([]),
         ]);
         setOrg(nextOrg);
         setProjects(nextProjects);
         setMembers(nextMembers);
       } else {
-        // Non-admin: chỉ fetch những gì có quyền
+        // Non-admin: chỉ fetch những project được gán cụ thể
         const projectIds = getUserAccessibleProjectIds(session);
 
         const [nextOrg, fetchedProjects] = await Promise.all([

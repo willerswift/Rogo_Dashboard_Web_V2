@@ -12,7 +12,7 @@ import { projectEvents } from "@/lib/utils/events";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { CreateOrganizationDialog } from "@/features/organizations/CreateOrganizationDialog";
 import { useIsAdmin } from "@/lib/hooks/useIsAdmin";
-import { getUserAccessibleOrgIds, getUserAccessibleProjectIds } from "@/lib/utils/permissions";
+import { getUserAccessibleOrgIds, getUserAccessibleProjectIds, hasPermission } from "@/lib/utils/permissions";
 import { getOrganization } from "@/lib/api/organization";
 import { getProjectDetail } from "@/lib/api/project";
 
@@ -34,6 +34,12 @@ export function AccessTreeSidebar() {
 
   const accessibleOrgIds = useMemo(() => getUserAccessibleOrgIds(session), [session]);
   const accessibleProjectIds = useMemo(() => getUserAccessibleProjectIds(session), [session]);
+
+  const hasGlobalOrg = useMemo(() => hasPermission(session, "organization:view"), [session]);
+  const hasGlobalProject = useMemo(() => {
+    return hasPermission(session, "projectMgmt:view") || 
+      session.projectResources.some(entry => entry.resources.some(r => r.includes(":project/*")));
+  }, [session]);
 
   const [orgs, setOrgs] = useState<OrgWithOwner[]>([]);
   const [allProjects, setAllProjects] = useState<Project[]>([]);
@@ -94,7 +100,12 @@ export function AccessTreeSidebar() {
     if (!partnerId) return;
     try {
       setLoading(true);
-      if (isAdmin) {
+
+      const hasGlobalOrg = hasPermission(session, "organization:view");
+      const hasGlobalProject = hasPermission(session, "projectMgmt:view") || 
+        session.projectResources.some(entry => entry.resources.some(r => r.includes(":project/*")));
+
+      if (isAdmin || (hasGlobalOrg && hasGlobalProject)) {
         const [nextOrgs, nextProjects] = await Promise.all([
           listOrganizations(partnerId),
           listProjects(partnerId),
@@ -102,16 +113,30 @@ export function AccessTreeSidebar() {
         setOrgs(nextOrgs);
         setAllProjects(nextProjects);
       } else {
-        const orgIds = getUserAccessibleOrgIds(session);
-        const projectIds = getUserAccessibleProjectIds(session);
-        const fetchedOrgs = await Promise.all(
-          orgIds.map((orgId) => getOrganization(partnerId, orgId).catch(() => null))
-        );
-        const fetchedProjects = await Promise.all(
-          projectIds.map((projectId) => getProjectDetail(partnerId, projectId).then((res) => res.project).catch(() => null))
-        );
-        setOrgs(fetchedOrgs.filter((o): o is OrgWithOwner => o !== null));
-        setAllProjects(fetchedProjects.filter((p): p is Project => p !== null));
+        let fetchedOrgs: OrgWithOwner[] = [];
+        if (hasGlobalOrg) {
+          fetchedOrgs = await listOrganizations(partnerId);
+        } else {
+          const orgIds = getUserAccessibleOrgIds(session);
+          const orgsData = await Promise.all(
+            orgIds.map((orgId) => getOrganization(partnerId, orgId).catch(() => null))
+          );
+          fetchedOrgs = orgsData.filter((o): o is OrgWithOwner => o !== null);
+        }
+
+        let fetchedProjects: Project[] = [];
+        if (hasGlobalProject) {
+          fetchedProjects = await listProjects(partnerId);
+        } else {
+          const projectIds = getUserAccessibleProjectIds(session);
+          const projectsData = await Promise.all(
+            projectIds.map((projectId) => getProjectDetail(partnerId, projectId).then((res) => res.project).catch(() => null))
+          );
+          fetchedProjects = projectsData.filter((p): p is Project => p !== null);
+        }
+
+        setOrgs(fetchedOrgs);
+        setAllProjects(fetchedProjects);
       }
     } catch (error) {
       console.error("Failed to load access tree", error);
@@ -130,11 +155,11 @@ export function AccessTreeSidebar() {
 
   const normalizedSearch = globalSearch.toLowerCase().trim();
 
-  const permissionFilteredOrgs = isAdmin
+  const permissionFilteredOrgs = (isAdmin || hasGlobalOrg)
     ? orgs
     : orgs.filter((org) => accessibleOrgIds.includes(org.orgId));
 
-  const permissionFilteredProjects = isAdmin
+  const permissionFilteredProjects = (isAdmin || hasGlobalProject)
     ? allProjects
     : allProjects.filter(
         (p) =>
