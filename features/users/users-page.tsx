@@ -383,36 +383,6 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
               return <span className="text-neutral-400 italic text-[12px]">No projects</span>;
             }
 
-            // Nếu có wildcard (partner:*:project/*): hiện "All Projects" thay vì count sai
-            if (hasWildcard && actualProjects.length >= projects.length) {
-              const displayProjects = actualProjects.slice(0, 3);
-              return (
-                <div className="flex flex-col gap-2 py-1">
-                  <div className="flex flex-wrap gap-2">
-                    {displayProjects.map((p) => (
-                      <div key={p.uuid} className="flex h-[28px] items-center justify-center gap-2 rounded-full bg-[hsla(241,100%,90%,1)] px-3 py-0.5 whitespace-nowrap">
-                        <span className="text-[12px] font-bold text-[#4A4A4A] tracking-tight">{p.name}</span>
-                        <span className="text-[12px] font-bold text-[#3B4AD0] opacity-80">{p.uuid.slice(0, 8)}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setInitialUserId(user.ownerId);
-                      setDefaultTab("project");
-                      setShowGrantAccess(true);
-                    }}
-                    className="text-[13px] font-bold text-neutral-500 text-left hover:text-foreground transition-colors flex items-center gap-1 w-fit"
-                  >
-                    View All {actualProjects.length} Projects
-                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </button>
-                </div>
-              );
-            }
 
             const displayProjects = actualProjects.slice(0, 3);
             const extraCount = actualProjects.length - 3;
