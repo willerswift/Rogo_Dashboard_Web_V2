@@ -8,16 +8,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
 import {
-  createOrganization,
   deleteOrganization,
   listOrganizations,
   updateOrganization,
+  getOrganization,
 } from "@/lib/api/organization";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { usePermission } from "@/lib/hooks/usePermission";
+import { useIsAdmin } from "@/lib/hooks/useIsAdmin";
+import { getUserAccessibleOrgIds } from "@/lib/utils/permissions";
 import type { OrgWithOwner } from "@/lib/types/partner";
 import { formatOwnerEmail } from "@/lib/utils/format";
-import { slugify } from "@/lib/utils/parsing";
 import { CreateOrganizationDialog } from "./CreateOrganizationDialog";
 import {
   EmptyState,
@@ -47,6 +48,8 @@ type EditValues = z.infer<typeof editSchema>;
 export function OrganizationsPage() {
   const { session } = usePartnerContext();
   const canEdit = usePermission("organization:edit");
+  const isAdmin = useIsAdmin();
+  const hasGlobalOrgAccess = usePermission("organization:*");
   const [organizations, setOrganizations] = useState<OrgWithOwner[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<OrgWithOwner | null>(null);
@@ -77,13 +80,26 @@ export function OrganizationsPage() {
 
     try {
       setLoading(true);
-      setOrganizations(await listOrganizations(partnerId));
+      if (isAdmin || hasGlobalOrgAccess) {
+         setOrganizations(await listOrganizations(partnerId));
+      } else {
+        const accessibleOrgIds = getUserAccessibleOrgIds(session);
+        const orgs = await Promise.all(
+          accessibleOrgIds.map((orgId) =>
+            getOrganization(partnerId, orgId).catch((e) => {
+              console.warn(`Cannot load org ${orgId}:`, e);
+              return null;
+            }),
+          ),
+        );
+        setOrganizations(orgs.filter((org): org is OrgWithOwner => org !== null));
+      }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to load organizations.");
     } finally {
       setLoading(false);
     }
-  }, [partnerId]);
+  }, [partnerId, isAdmin, hasGlobalOrgAccess, session]);
 
   useEffect(() => {
     const run = async () => {

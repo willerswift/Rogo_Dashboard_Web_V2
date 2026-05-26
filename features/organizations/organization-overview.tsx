@@ -17,7 +17,7 @@ import { CreateProjectDialog } from "./CreateProjectDialog";
 import { RenameProjectDialog } from "./RenameProjectDialog";
 import { DeleteProjectDialog } from "./DeleteProjectDialog";
 import { useIsAdmin } from "@/lib/hooks/useIsAdmin";
-import { getUserAccessibleOrgIds, getUserAccessibleProjectIds, hasPermission, hasOrgPermission } from "@/lib/utils/permissions";
+import { getUserAccessibleOrgIds, getUserAccessibleProjectIds, hasPermission, hasOrgPermission, hasTrueGlobalProjectAccess } from "@/lib/utils/permissions";
 
 
 export function OrganizationOverview({ orgId }: { orgId: string }) {
@@ -52,8 +52,7 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
     try {
       setLoading(true);
 
-      const hasGlobalProject = hasPermission(session, "projectMgmt:view") || 
-        session.projectResources.some(entry => entry.resources.some(r => r.includes(":project/*")));
+      const hasGlobalProject = hasTrueGlobalProjectAccess(session);
 
       if (isAdmin || hasGlobalProject) {
         // Admin hoặc có global project permission: lấy toàn bộ projects của org này

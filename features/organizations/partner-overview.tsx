@@ -9,7 +9,7 @@ import { listOrganizations, listOrganizationUsers, getOrganization } from "@/lib
 import { listProjects, getProjectDetail } from "@/lib/api/project";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { useIsAdmin } from "@/lib/hooks/useIsAdmin";
-import { getUserAccessibleOrgIds, getUserAccessibleProjectIds, hasPermission } from "@/lib/utils/permissions";
+import { getUserAccessibleOrgIds, getUserAccessibleProjectIds, hasPermission, hasTrueGlobalProjectAccess } from "@/lib/utils/permissions";
 import type { OrgWithOwner, Project } from "@/lib/types/partner";
 import { LoadingBlock, SearchInput } from "@/features/shared/ui";
 import { cn } from "@/lib/utils/cn";
@@ -39,8 +39,7 @@ export function PartnerOverview() {
       let allProjects: Project[] = [];
 
       const hasGlobalOrg = hasPermission(session, "organization:view");
-      const hasGlobalProject = hasPermission(session, "projectMgmt:view") || 
-        session.projectResources.some(entry => entry.resources.some(r => r.includes(":project/*")));
+      const hasGlobalProject = hasTrueGlobalProjectAccess(session);
 
       if (isAdmin || (hasGlobalOrg && hasGlobalProject)) {
         // Admin hoặc global cả 2: gọi list API đầy đủ

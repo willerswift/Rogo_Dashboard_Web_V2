@@ -12,7 +12,7 @@ import { projectEvents } from "@/lib/utils/events";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { CreateOrganizationDialog } from "@/features/organizations/CreateOrganizationDialog";
 import { useIsAdmin } from "@/lib/hooks/useIsAdmin";
-import { getUserAccessibleOrgIds, getUserAccessibleProjectIds, hasPermission } from "@/lib/utils/permissions";
+import { getUserAccessibleOrgIds, getUserAccessibleProjectIds, hasPermission, hasTrueGlobalProjectAccess } from "@/lib/utils/permissions";
 import { getOrganization } from "@/lib/api/organization";
 import { getProjectDetail } from "@/lib/api/project";
 
@@ -36,10 +36,7 @@ export function AccessTreeSidebar() {
   const accessibleProjectIds = useMemo(() => getUserAccessibleProjectIds(session), [session]);
 
   const hasGlobalOrg = useMemo(() => hasPermission(session, "organization:view"), [session]);
-  const hasGlobalProject = useMemo(() => {
-    return hasPermission(session, "projectMgmt:view") || 
-      session.projectResources.some(entry => entry.resources.some(r => r.includes(":project/*")));
-  }, [session]);
+  const hasGlobalProject = useMemo(() => hasTrueGlobalProjectAccess(session), [session]);
 
   const [orgs, setOrgs] = useState<OrgWithOwner[]>([]);
   const [allProjects, setAllProjects] = useState<Project[]>([]);
@@ -102,8 +99,7 @@ export function AccessTreeSidebar() {
       setLoading(true);
 
       const hasGlobalOrg = hasPermission(session, "organization:view");
-      const hasGlobalProject = hasPermission(session, "projectMgmt:view") || 
-        session.projectResources.some(entry => entry.resources.some(r => r.includes(":project/*")));
+      const hasGlobalProject = hasTrueGlobalProjectAccess(session);
 
       if (isAdmin || (hasGlobalOrg && hasGlobalProject)) {
         const [nextOrgs, nextProjects] = await Promise.all([
@@ -161,11 +157,7 @@ export function AccessTreeSidebar() {
 
   const permissionFilteredProjects = (isAdmin || hasGlobalProject)
     ? allProjects
-    : allProjects.filter(
-        (p) =>
-          accessibleProjectIds.includes(p.uuid) ||
-          (p.orgId && accessibleOrgIds.includes(p.orgId)),
-      );
+    : allProjects.filter((p) => accessibleProjectIds.includes(p.uuid));
 
   const filteredOrgs = permissionFilteredOrgs.filter(org => {
     if (!normalizedSearch || accessScope === "partner") return true;

@@ -2,7 +2,47 @@
 
 This file serves as a persistent record of work completed, current status, and pending tasks. It should be updated at the end of every working session to ensure continuity.
 
-## Latest Update: May 25, 2026
+## Latest Update: May 26, 2026
+
+### Work Completed
+- **Fixed Organization and Project Visibility in Access Tree**:
+    - Identified a bug where non-admin users with specific `organization:view` permissions were unable to see any organizations in the Access Tree or Partner Overview.
+    - Updated regex logic in `lib/utils/permissions.ts` (`getUserAccessibleOrgIds` and `getUserAccessibleProjectIds`) to support both colon (`:`) and forward slash (`/`) as separators for resource strings (e.g., `partner:ROGO:organization/123`), matching the recent backend ABAC updates.
+    - Updated `hasOrgPermission`, `hasProjectPermission`, and `projectMgmt:view` permission checks to support the new `/` separator.
+    - Fixed an issue in `AccessTreeSidebar.tsx` where users with `organization:view` were inadvertently granted visibility to all projects within that organization. The sidebar now strictly enforces `project:view` rules, meaning projects are only displayed if the user explicitly has access to them or has global project visibility.
+    - Synchronized the `hasGlobalProject` calculation in `partner-overview.tsx` to properly account for wildcard (`/project/*`) rules.
+- **Fixed 403 Forbidden Error for Global Project Fetching**:
+    - Addressed an issue where users with `organization:view` but without global `project:view` were receiving a `403 Forbidden` error when loading the dashboard or Access Tree.
+    - The UI was incorrectly checking `hasPermission(session, "projectMgmt:view")` to decide whether to fetch *all* projects. However, `projectMgmt:view` was explicitly overloaded in the frontend to return `true` if the user has *any* organization-level access (for sidebar menu visibility).
+    - Changed the `hasGlobalProject` validation in `AccessTreeSidebar.tsx` and `partner-overview.tsx` to explicitly check `hasPermission(session, "project:view")`, ensuring the `listProjects` API is only called when the user actually possesses partner-level project view access.
+- **Fixed Project Fetching in Organization Overview**:
+    - Applied the same `project:view` fix to `organization-overview.tsx`. 
+    - Previously, a user with limited project permissions opening an organization's detail page triggered `listProjects(partnerId, orgId)`, which failed with a `403 Forbidden` because they lacked global/partner-level project permissions.
+    - The page now correctly delegates to fetching individual projects via `getProjectDetail` using the user's specific ABAC project IDs.
+- **Resolved ABAC/RBAC Organization Listing Issue**:
+    - Identified a bug where users with only `organization:view` permissions could not see any organizations on the `/organizations` page. The page was calling `listOrganizations()` which requires admin/partner-level privileges.
+    - Updated `organizations-page.tsx` to utilize `useIsAdmin` and `getUserAccessibleOrgIds` to conditionally load organizations.
+    - Non-admin users now correctly see only the organizations explicitly granted to them via their ABAC resource permissions.
+    - Fixed React hook rule violations by hoisting `usePermission` out of callbacks.
+    - Cleaned up unused imports discovered during the QA phase.
+
+- **Fixed Strict Backend Enforcement of `projectMgmt:view`**:
+    - Identified that the backend strictly enforces `projectMgmt:view` to use the `/api/partner/project/list/:partnerId` endpoint, rejecting even users who possess broad `project:view` permissions.
+    - Previous iterations incorrectly assumed `project:view` plus a wildcard resource (`partner:ROGO/project/*`) was sufficient to trigger a global project fetch.
+    - Introduced a dedicated `hasTrueGlobalProjectAccess` function in `lib/utils/permissions.ts` that strictly checks for `projectMgmt:view` or `*` at the partner level, bypassing all frontend overloads.
+    - Updated `AccessTreeSidebar.tsx`, `partner-overview.tsx`, and `organization-overview.tsx` to use this new explicit check.
+    - Users granted only `project:view` now correctly bypass the global `/list` endpoint and fallback to fetching their explicitly authorized projects one by one, fully resolving the `403 Forbidden` modal sequence.
+
+### Current Status
+- The organizations list accurately reflects the user's ABAC permissions.
+- Build and Typechecks are passing.
+
+### Pending Tasks
+1. [ ] Implement real staging credentials verification.
+2. [ ] Expand feature-specific documentation in the `doc/` folder.
+3. [ ] Verify ABAC permission gates with real data.
+
+## Previous Update: May 25, 2026
 
 ### Work Completed
 - **Resolved Localhost Connection Error**:

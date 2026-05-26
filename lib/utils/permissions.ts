@@ -17,7 +17,9 @@ export function hasPermission(session: PartnerSession, action: string) {
   // Check partner-level resources (admin)
   const hasPartnerLevelPermission = session.projectResources.some((entry) => {
     const hasMatchingResource = entry.resources.some((resource) =>
-      resource.startsWith(`partner:${session.activePartnerId}`),
+      resource === `partner:${session.activePartnerId}` ||
+      resource === `partner:${session.activePartnerId}:*` ||
+      resource === `partner:${session.activePartnerId}/*`
     );
     if (!hasMatchingResource) return false;
     return entry.actions.some((availableAction) => matchesAction(availableAction, action));
@@ -31,9 +33,9 @@ export function hasPermission(session: PartnerSession, action: string) {
     return session.projectResources.some((entry) =>
       entry.resources.some(
         (r) =>
-          r.includes("organization:") ||
-          r.includes("project:") ||
-          r.startsWith(`partner:${session.activePartnerId}`),
+          r.includes("organization:") || r.includes("organization/") ||
+          r.includes("project:") || r.includes("project/") ||
+          r === `partner:${session.activePartnerId}`
       ),
     );
   }
@@ -52,7 +54,8 @@ export function isPartnerAdmin(session: PartnerSession): boolean {
     const hasPartnerResource = entry.resources.some(
       (resource) =>
         resource === `partner:${session.activePartnerId}` ||
-        resource.startsWith(`partner:${session.activePartnerId}:`),
+        resource === `partner:${session.activePartnerId}:*` ||
+        resource === `partner:${session.activePartnerId}/*`
     );
     if (!hasPartnerResource) return false;
 
@@ -82,6 +85,27 @@ export function getFirstAccessibleHref(session: PartnerSession) {
 
 
 /**
+ * Checks if the user actually has global project management access.
+ * This bypasses the overloaded `projectMgmt:view` check used for sidebar visibility.
+ */
+export function hasTrueGlobalProjectAccess(session: PartnerSession): boolean {
+  if (isPartnerAdmin(session)) return true;
+
+  return session.projectResources.some((entry) => {
+    const hasPartnerResource = entry.resources.some(
+      (resource) =>
+        resource === `partner:${session.activePartnerId}` ||
+        resource === `partner:${session.activePartnerId}:*` ||
+        resource === `partner:${session.activePartnerId}/*`
+    );
+    if (!hasPartnerResource) return false;
+
+    return entry.actions.some(
+      (action) => action === "*" || action === "projectMgmt:*" || action === "projectMgmt:view"
+    );
+  });
+}
+/**
  * Lấy danh sách orgId mà user có quyền xem (từ resource "organization:ORG_ID")
  * Dùng cho non-admin user để lọc Access Tree và Overview.
  */
@@ -94,12 +118,12 @@ export function getUserAccessibleOrgIds(session: PartnerSession): string[] {
 
     for (const resource of entry.resources) {
       // Format: organization:ORG_ID hoặc partner:ID:organization:ORG_ID
-      const directMatch = resource.match(/^organization:(.+)$/);
+      const directMatch = resource.match(/^organization[:/](.+)$/);
       if (directMatch?.[1]) {
         orgIds.add(directMatch[1]);
         continue;
       }
-      const nestedMatch = resource.match(/organization:([^:]+)/);
+      const nestedMatch = resource.match(/organization[:/]([^:/]+)/);
       if (nestedMatch?.[1]) {
         orgIds.add(nestedMatch[1]);
       }
@@ -128,12 +152,12 @@ export function getUserAccessibleProjectIds(session: PartnerSession): string[] {
     if (!canView) continue;
 
     for (const resource of entry.resources) {
-      const directMatch = resource.match(/^project:(.+)$/);
+      const directMatch = resource.match(/^project[:/](.+)$/);
       if (directMatch?.[1]) {
         projectIds.add(directMatch[1]);
         continue;
       }
-      const nestedMatch = resource.match(/project:([^:]+)/);
+      const nestedMatch = resource.match(/project[:/]([^:/]+)/);
       if (nestedMatch?.[1]) {
         projectIds.add(nestedMatch[1]);
       }
@@ -152,7 +176,7 @@ export function hasOrgPermission(session: PartnerSession, orgId: string, action:
 
   return session.projectResources.some((entry) => {
     const hasOrgResource = entry.resources.some(
-      (r) => r === `organization:${orgId}` || r.includes(`organization:${orgId}`),
+      (r) => r === `organization:${orgId}` || r === `organization/${orgId}` || r.includes(`organization:${orgId}`) || r.includes(`organization/${orgId}`),
     );
     if (!hasOrgResource) return false;
     return entry.actions.some((a) => matchesAction(a, action));
@@ -172,7 +196,7 @@ export function hasProjectPermission(
 
   return session.projectResources.some((entry) => {
     const hasProjectResource = entry.resources.some(
-      (r) => r === `project:${projectId}` || r.includes(`project:${projectId}`),
+      (r) => r === `project:${projectId}` || r === `project/${projectId}` || r.includes(`project:${projectId}`) || r.includes(`project/${projectId}`),
     );
     if (!hasProjectResource) return false;
     return entry.actions.some((a) => matchesAction(a, action));
