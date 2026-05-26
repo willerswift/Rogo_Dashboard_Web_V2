@@ -1,5 +1,6 @@
 "use client";
 import { useState, useMemo, useEffect } from "react";
+import { toast } from "sonner";
 import { X, Search, Plus, ChevronLeft, Mail, User as UserIcon, Building2, ChevronDown, ChevronRight, FolderIcon, LayoutGrid } from "lucide-react";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import type { UserWithNumProject, PermissionRecord, UserPartner, Project, OrgWithOwner } from "@/lib/types/partner";
@@ -7,6 +8,7 @@ import { Avatar } from "@/lib/components/ui/avatar";
 import { CheckboxInput, PrimaryButton, SearchInput } from "@/features/shared/ui";
 import { cn } from "@/lib/utils/cn";
 import { formatDate } from "@/lib/utils/format";
+
 
 interface GrantAccessDialogProps {
   open: boolean;
@@ -123,11 +125,17 @@ export function GrantAccessDialog({
         setInviteUsername("");
         setInviteError({});
         setFocusedProjectId(null);
-        setProjectPermissionsMap({});
+        // Không reset projectPermissionsMap ở đây - để effect selectedUserId xử lý
         setExpandedOrgs(new Set(orgs.map(o => o.orgId)));
         setApplyToAll(false);
       });
       return () => cancelAnimationFrame(frame);
+    } else {
+      setSelectedUserId(null);
+      setPermissions(initialPermissions);
+      setProjectPermissionsMap({});
+      setFocusedProjectId(null);
+      setApplyToAll(false);
     }
   }, [open, initialUserId, orgs, defaultTab]);
 
@@ -136,6 +144,7 @@ export function GrantAccessDialog({
       if (!isInviting) {
         setPermissions(initialPermissions);
         setProjectPermissionsMap({});
+        setFocusedProjectId(null);
       }
       return;
     }
@@ -144,6 +153,7 @@ export function GrantAccessDialog({
     if (!record || !record.abac) {
       setPermissions(initialPermissions);
       setProjectPermissionsMap({});
+      setFocusedProjectId(null);
       return;
     }
 
@@ -153,19 +163,45 @@ export function GrantAccessDialog({
     record.abac.forEach(entry => {
       const hasAction = (action: string) => entry.actions.some(a => a === action || a === "*");
       
-      if (hasAction("organization:edit")) nextPerms.orgEdit = true;
-      if (hasAction("organization:view")) nextPerms.orgView = true;
-      if (hasAction("authorization:edit")) nextPerms.authPartnerEdit = true;
-      if (hasAction("authorization:view")) nextPerms.authPartnerView = true;
-      if (hasAction("productDev:edit")) nextPerms.prodEdit = true;
-      if (hasAction("productDev:view")) nextPerms.prodView = true;
-      if (hasAction("report:edit") || hasAction("report:view")) nextPerms.reportPartnerEdit = true;
+      // Partner-level permissions
+      entry.resources.forEach(res => {
+        // Chỉ set partner-level perms nếu resource là partner-level (không phải project)
+        const isPartnerLevel = res === `partner:${session.activePartnerId}` || 
+          (res.startsWith(`partner:${session.activePartnerId}`) && !res.includes(":project/"));
+        
+        if (isPartnerLevel) {
+          if (hasAction("organization:edit")) nextPerms.orgEdit = true;
+          if (hasAction("organization:view")) nextPerms.orgView = true;
+          if (hasAction("authorization:edit")) nextPerms.authPartnerEdit = true;
+          if (hasAction("authorization:view")) nextPerms.authPartnerView = true;
+          if (hasAction("productDev:edit")) nextPerms.prodEdit = true;
+          if (hasAction("productDev:view")) nextPerms.prodView = true;
+          if (hasAction("report:edit") || hasAction("report:view")) nextPerms.reportPartnerEdit = true;
+          if (hasAction("projectMgmt:edit")) nextPerms.mqttEdit = true;
+          if (hasAction("projectMgmt:view")) nextPerms.mqttView = true;
+        }
+      });
 
+      // Project-level permissions - pre-tick projects và permissions của chúng
       entry.resources.forEach(res => {
         const match = res.match(new RegExp(`^partner:${session.activePartnerId}:project/(.+)$`));
         if (match) {
           const pid = match[1];
-          if (pid !== "*") {
+          if (pid === "*") {
+            // Wildcard: áp dụng cho tất cả projects (set applyToAll)
+            setApplyToAll(true);
+            // Pre-tick TẤT CẢ các project có trong hệ thống với các quyền của wildcard
+            projects.forEach(p => {
+              const current = nextProjectPermsMap[p.uuid] || { ...initialProjectPermissions };
+              if (hasAction("projectDev:edit")) current.devEdit = true;
+              if (hasAction("projectDev:view")) current.devView = true;
+              if (hasAction("projectAuth:edit")) current.authEdit = true;
+              if (hasAction("projectAuth:view")) current.authView = true;
+              if (hasAction("projectReport:edit") || hasAction("projectReport:view")) current.report = true;
+              nextProjectPermsMap[p.uuid] = current;
+            });
+          } else {
+            // Pre-tick project này
             const current = nextProjectPermsMap[pid] || { ...initialProjectPermissions };
             if (hasAction("projectDev:edit")) current.devEdit = true;
             if (hasAction("projectDev:view")) current.devView = true;
@@ -180,6 +216,13 @@ export function GrantAccessDialog({
 
     setPermissions(nextPerms);
     setProjectPermissionsMap(nextProjectPermsMap);
+    // Focus vào project đầu tiên nếu có
+    const firstProjectId = Object.keys(nextProjectPermsMap)[0];
+    if (firstProjectId) {
+      setFocusedProjectId(firstProjectId);
+    } else {
+      setFocusedProjectId(null);
+    }
   }, [selectedUserId, permissionRecords, session.activePartnerId, isInviting]);
 
   const sortedUserList = useMemo(() => {
@@ -218,36 +261,50 @@ export function GrantAccessDialog({
     setIsSubmitting(true);
     try {
       if (onGrant) {
-        const actions: string[] = [];
-        if (permissions.orgEdit) actions.push("organization:edit");
-        if (permissions.orgView) actions.push("organization:view");
-        if (permissions.authPartnerEdit) actions.push("authorization:edit");
-        if (permissions.authPartnerView) actions.push("authorization:view");
-        if (permissions.prodEdit) actions.push("productDev:edit");
-        if (permissions.prodView) actions.push("productDev:view");
+        // Partner-level actions
+        const partnerActions: string[] = [];
+        if (permissions.orgEdit) partnerActions.push("organization:edit");
+        if (permissions.orgView) partnerActions.push("organization:view");
+        if (permissions.authPartnerEdit) partnerActions.push("authorization:edit");
+        if (permissions.authPartnerView) partnerActions.push("authorization:view");
+        if (permissions.prodEdit) partnerActions.push("productDev:edit");
+        if (permissions.prodView) partnerActions.push("productDev:view");
         if (permissions.reportPartnerEdit) {
-          actions.push("report:edit");
-          actions.push("report:view");
+          partnerActions.push("report:edit");
+          partnerActions.push("report:view");
         }
+        if (permissions.mqttEdit) partnerActions.push("projectMgmt:edit");
+        if (permissions.mqttView) partnerActions.push("projectMgmt:view");
         
-        // Project-level actions (from the representative focused project)
-        const pPerms = focusedProjectId ? projectPermissionsMap[focusedProjectId] : null;
-        if (pPerms) {
-          if (pPerms.devEdit) actions.push("projectDev:edit");
-          if (pPerms.devView) actions.push("projectDev:view");
-          if (pPerms.authEdit) actions.push("projectAuth:edit");
-          if (pPerms.authView) actions.push("projectAuth:view");
+        // Project-level actions: merge từ tất cả projects trong map
+        const projectActions = new Set<string>();
+        Object.values(projectPermissionsMap).forEach(pPerms => {
+          if (pPerms.devEdit) projectActions.add("projectDev:edit");
+          if (pPerms.devView) projectActions.add("projectDev:view");
+          if (pPerms.authEdit) projectActions.add("projectAuth:edit");
+          if (pPerms.authView) projectActions.add("projectAuth:view");
           if (pPerms.report) {
-            actions.push("projectReport:edit");
-            actions.push("projectReport:view");
+            projectActions.add("projectReport:edit");
+            projectActions.add("projectReport:view");
           }
-        }
+        });
         
-        const projectIds = Object.keys(projectPermissionsMap);
-        if (projectIds.length === 0) projectIds.push("*");
+        // Gộp tất cả actions để truyền sang handleGrantAccess
+        const allActions = [...partnerActions, ...Array.from(projectActions)];
+        
+        const projectIds = applyToAll ? ["*"] : Object.keys(projectPermissionsMap);
+        // Cho phép bỏ chọn toàn bộ quyền nếu user đã có bản ghi phân quyền trước đó (để thực hiện revoke toàn bộ)
+        const hasExistingRecord = permissionRecords.some(r => r.ownerId === selectedUserId);
+        const isClearingAll = projectIds.length === 0 && partnerActions.length === 0;
+
+        if (isClearingAll && !hasExistingRecord) {
+          toast.error("Please select at least one permission.");
+          setIsSubmitting(false);
+          return;
+        }
         
         if (selectedUserId) {
-          await onGrant(selectedUserId, projectIds, actions);
+          await onGrant(selectedUserId, projectIds, allActions);
         }
       }
       onClose();
@@ -257,6 +314,7 @@ export function GrantAccessDialog({
       setIsSubmitting(false);
     }
   };
+
 
   const updatePerm = (key: keyof PermissionsState, val: boolean) => {
     setPermissions(prev => ({ ...prev, [key]: val }));
@@ -285,9 +343,35 @@ export function GrantAccessDialog({
     setProjectPermissionsMap(prev => {
       const next = { ...prev };
       if (next[projectId]) {
+        // De-select: xóa project khỏi map
         delete next[projectId];
+        // Nếu project này đang được focus, chuyển focus sang project khác
+        if (focusedProjectId === projectId) {
+          const remaining = Object.keys(next);
+          setFocusedProjectId(remaining.length > 0 ? remaining[remaining.length - 1] : null);
+        }
       } else {
-        next[projectId] = { ...initialProjectPermissions };
+        // Select: thêm project vào map với permissions hiện tại (nếu có)
+        // Kiểm tra xem user đã có quyền trước chưa
+        const existingRecord = permissionRecords.find(r => r.ownerId === selectedUserId);
+        const existingPerms = { ...initialProjectPermissions };
+        
+        if (existingRecord?.abac) {
+          existingRecord.abac.forEach(entry => {
+            const hasAction = (action: string) => entry.actions.some(a => a === action || a === "*");
+            entry.resources.forEach(res => {
+              if (res === `partner:${session.activePartnerId}:project/${projectId}`) {
+                if (hasAction("projectDev:edit")) existingPerms.devEdit = true;
+                if (hasAction("projectDev:view")) existingPerms.devView = true;
+                if (hasAction("projectAuth:edit")) existingPerms.authEdit = true;
+                if (hasAction("projectAuth:view")) existingPerms.authView = true;
+                if (hasAction("projectReport:edit") || hasAction("projectReport:view")) existingPerms.report = true;
+              }
+            });
+          });
+        }
+        
+        next[projectId] = existingPerms;
         setFocusedProjectId(projectId);
       }
       return next;

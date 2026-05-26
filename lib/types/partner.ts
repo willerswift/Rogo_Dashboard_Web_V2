@@ -172,6 +172,9 @@ export type UserPartner = {
   email: string
   name: string
   status: number
+  userId?: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 export type UserWithNumProject = {

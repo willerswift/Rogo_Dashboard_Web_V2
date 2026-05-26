@@ -8,7 +8,7 @@ import { UserPlus, Trash2, Pencil, UserMinus, Users, LayoutGrid, Copy, Check, Ar
 import { listProjects, listProjectUsers } from "@/lib/api/project";
 import { listOrganizations, listOrganizationUsers } from "@/lib/api/organization";
 import { deletePartnerUser, listPartnerUsers } from "@/lib/api/user";
-import { listPermissionRecords, grantPermissions } from "@/lib/api/permission";
+import { listPermissionRecords, grantPermissions, revokePermissions } from "@/lib/api/permission";
 import { usePartnerContext } from "@/lib/hooks/usePartnerContext";
 import { usePermission } from "@/lib/hooks/usePermission";
 import type { PermissionRecord, Project, UserWithNumProject, OrgWithOwner, UserPartner, AbacV2Entry } from "@/lib/types/partner";
@@ -46,31 +46,7 @@ export function UsersPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [projectSearch, setProjectSearch] = useState("");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
-  const [localUpdateTimes, setLocalUpdateTimes] = useState<Record<string, string>>({});
 
-  // Load persistent update times on mount
-  useEffect(() => {
-    if (!partnerId) return;
-    const stored = localStorage.getItem(`rogo-user-updates-${partnerId}`);
-    if (stored) {
-      try {
-        setLocalUpdateTimes(JSON.parse(stored));
-      } catch (e) {
-        console.error("Failed to load local update times", e);
-      }
-    }
-  }, [partnerId]);
-
-  // Persist update times when they change
-  const updateLocalTime = useCallback((userId: string, isoDate: string) => {
-    setLocalUpdateTimes(prev => {
-      const next = { ...prev, [userId]: isoDate };
-      if (partnerId) {
-        localStorage.setItem(`rogo-user-updates-${partnerId}`, JSON.stringify(next));
-      }
-      return next;
-    });
-  }, [partnerId]);
 
   const activeProject = useMemo(() => projects.find(p => p.uuid === projectId), [projects, projectId]);
   const activeOrg = useMemo(() => {
@@ -146,51 +122,131 @@ export function UsersPage() {
     }
   }, [partnerId, loadData]);
 const handleGrantAccess = async (userId: string, projectIds: string[], permissions: string[]) => {
-  console.log("Granting access for", userId, "projects:", projectIds, "permissions:", permissions);
   if (!partnerId) return;
   try {
-    const entries: AbacV2Entry[] = [];
+    // 1. Tìm bản ghi hiện tại của user để so sánh
+    const currentRecord = permissionRecords.find(r => r.ownerId === userId);
 
-    // Separate actions
-    const projectActions = permissions.filter(a => a.startsWith("project"));
-    const partnerActions = permissions.filter(a => !a.startsWith("project"));
+    // Phân biệt chính xác partner-level và project-level
+    // Các project-level actions thực sự bắt đầu bằng: projectDev, projectAuth, hoặc projectReport
+    const projectLevelActions = permissions.filter(a => 
+      a.startsWith("projectDev") || a.startsWith("projectAuth") || a.startsWith("projectReport")
+    );
+    const partnerLevelActions = permissions.filter(a => 
+      !a.startsWith("projectDev") && !a.startsWith("projectAuth") && !a.startsWith("projectReport")
+    );
 
-    // 1. Partner Level Entry
-    if (partnerActions.length > 0) {
-      entries.push({
+    // Tách các actions, resources cũ
+    const oldPartnerActions: string[] = [];
+    const oldProjectResources = new Set<string>();
+    const oldProjectActions = new Set<string>();
+
+    if (currentRecord?.abac) {
+      currentRecord.abac.forEach(entry => {
+        entry.resources.forEach(res => {
+          const isPartner = res === `partner:${partnerId}` || (res.startsWith(`partner:${partnerId}`) && !res.includes(":project/"));
+          if (isPartner) {
+            entry.actions.forEach(act => oldPartnerActions.push(act));
+          } else if (res.includes(":project/")) {
+            oldProjectResources.add(res);
+            entry.actions.forEach(act => oldProjectActions.add(act));
+          }
+        });
+      });
+    }
+
+    // A. XỬ LÝ REVOKE (THU HỒI QUYỀN BỊ BỎ CHỌN)
+    if (currentRecord) {
+      // 1. Partner Level Revoke
+      const partnerActionsToRevoke = oldPartnerActions.filter(act => !partnerLevelActions.includes(act));
+      if (partnerActionsToRevoke.length > 0) {
+        await revokePermissions({
+          ownerId: userId,
+          partnerId,
+          resources: [`partner:${partnerId}`],
+          actions: partnerActionsToRevoke,
+        });
+      }
+
+      // 2. Project Level Revoke
+      const targetProjectResources = projectLevelActions.length > 0 && projectIds.length > 0
+        ? (projectIds[0] === "*" ? [`partner:${partnerId}:project/*`] : projectIds.map(id => `partner:${partnerId}:project/${id}`))
+        : [];
+
+      // Các project resources cũ không còn được chọn nữa -> Revoke hoàn toàn trên các resources này
+      const projectResourcesToRevoke = Array.from(oldProjectResources).filter(res => !targetProjectResources.includes(res));
+      if (projectResourcesToRevoke.length > 0) {
+        await revokePermissions({
+          ownerId: userId,
+          partnerId,
+          resources: projectResourcesToRevoke,
+        });
+      }
+
+      // Các project actions cũ không còn được chọn nữa -> Revoke trên các project resources chung (vẫn được giữ lại)
+      const commonProjectResources = targetProjectResources.filter(res => oldProjectResources.has(res));
+      const projectActionsToRevoke = Array.from(oldProjectActions).filter(act => !projectLevelActions.includes(act));
+      if (commonProjectResources.length > 0 && projectActionsToRevoke.length > 0) {
+        await revokePermissions({
+          ownerId: userId,
+          partnerId,
+          resources: commonProjectResources,
+          actions: projectActionsToRevoke,
+        });
+      }
+    }
+
+    // B. XỬ LÝ GRANT (CẤP THÊM QUYỀN MỚI CHỌN)
+    const entriesToGrant: AbacV2Entry[] = [];
+
+    // Partner Level Grant
+    const partnerActionsToGrant = currentRecord
+      ? partnerLevelActions.filter(act => !oldPartnerActions.includes(act))
+      : partnerLevelActions;
+    if (partnerActionsToGrant.length > 0) {
+      entriesToGrant.push({
         resources: [`partner:${partnerId}`],
-        actions: partnerActions
+        actions: partnerActionsToGrant,
       });
     }
 
-    // 2. Project Level Entry
-    if (projectActions.length > 0) {
-      entries.push({
-        resources: projectIds.map(id => id === "*" ? `partner:${partnerId}:project/*` : `partner:${partnerId}:project/${id}`),
-        actions: projectActions 
+    // Project Level Grant
+    if (projectLevelActions.length > 0 && projectIds.length > 0) {
+      const targetProjectResources = projectIds[0] === "*"
+        ? [`partner:${partnerId}:project/*`]
+        : projectIds.map(id => `partner:${partnerId}:project/${id}`);
+
+      // Grant các actions được tích chọn lên các project tương ứng
+      entriesToGrant.push({
+        resources: targetProjectResources,
+        actions: projectLevelActions,
       });
     }
 
-    await grantPermissions({
-      ownerId: userId,
-      partnerId,
-      entries
-    });
-
-    // Update local persistent time for immediate and durable feedback
-    updateLocalTime(userId, new Date().toISOString());
-
-    toast.success("Access granted.");
-    await loadData();    } catch (error) {
-       toast.error(error instanceof Error ? error.message : "Failed to grant access.");
+    if (entriesToGrant.length > 0) {
+      await grantPermissions({
+        ownerId: userId,
+        partnerId,
+        entries: entriesToGrant,
+      });
     }
-  };
 
-  const getUserProjectData = useCallback((ownerId: string) => {
+    toast.success("Access updated successfully.");
+    
+    // Luôn reload data để lấy dữ liệu mới nhất, không cache cũ
+    await loadData();
+  } catch (error) {
+    toast.error(error instanceof Error ? error.message : "Failed to update access.");
+  }
+};
+
+
+  const getUserProjectData = useCallback((ownerId: string): { project: Project; actions: string[]; hasWildcard?: boolean }[] => {
     const record = permissionRecords.find(r => r.ownerId === ownerId);
     if (!record || !record.abac) return [];
 
     const projectDataMap = new Map<string, { project: Project; actions: string[] }>();
+    let hasWildcard = false;
     const allProjectsActions: string[] = [];
 
     record.abac.forEach(entry => {
@@ -199,6 +255,7 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
         if (match) {
           const id = match[1];
           if (id === "*") {
+            hasWildcard = true;
             allProjectsActions.push(...entry.actions);
           } else {
             const project = projects.find(p => p.uuid === id);
@@ -212,6 +269,7 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
       });
     });
 
+    // Nếu có wildcard: chỉ expand thêm những project CHƯА có trong map
     if (allProjectsActions.length > 0) {
       projects.forEach(p => {
         const existing = projectDataMap.get(p.uuid) || { project: p, actions: [] };
@@ -220,11 +278,15 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
       });
     }
 
-    return Array.from(projectDataMap.values()).map(item => ({
+    const result = Array.from(projectDataMap.values()).map(item => ({
       ...item,
-      actions: Array.from(new Set(item.actions))
+      actions: Array.from(new Set(item.actions)),
+      hasWildcard,
     }));
+
+    return result;
   }, [permissionRecords, projects, partnerId]);
+
 
   const filteredUserProjects = useMemo(() => {
     if (!viewingProjectsFor) return [];
@@ -280,8 +342,11 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
       const recA = permissionRecords.find(r => r.ownerId === a.user.ownerId);
       const recB = permissionRecords.find(r => r.ownerId === b.user.ownerId);
       
-      const timeA = recA?.updatedDate ? new Date(recA.updatedDate).getTime() : 0;
-      const timeB = recB?.updatedDate ? new Date(recB.updatedDate).getTime() : 0;
+      const dateA = recA?.updatedDate || a.user.updatedAt;
+      const dateB = recB?.updatedDate || b.user.updatedAt;
+
+      const timeA = dateA ? new Date(dateA).getTime() : 0;
+      const timeB = dateB ? new Date(dateB).getTime() : 0;
 
       return sortOrder === "newest" ? timeB - timeA : timeA - timeB;
     });
@@ -312,14 +377,46 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
           cell: ({ user }) => {
             const userProjectData = getUserProjectData(user.ownerId);
             const actualProjects = userProjectData.map(d => d.project);
+            const hasWildcard = userProjectData[0]?.hasWildcard ?? false;
 
-            const displayProjects = actualProjects.slice(0, 3);
-            const extraCount = actualProjects.length - 3;
-            
             if (actualProjects.length === 0) {
               return <span className="text-neutral-400 italic text-[12px]">No projects</span>;
             }
 
+            // Nếu có wildcard (partner:*:project/*): hiện "All Projects" thay vì count sai
+            if (hasWildcard && actualProjects.length >= projects.length) {
+              const displayProjects = actualProjects.slice(0, 3);
+              return (
+                <div className="flex flex-col gap-2 py-1">
+                  <div className="flex flex-wrap gap-2">
+                    {displayProjects.map((p) => (
+                      <div key={p.uuid} className="flex h-[28px] items-center justify-center gap-2 rounded-full bg-[hsla(241,100%,90%,1)] px-3 py-0.5 whitespace-nowrap">
+                        <span className="text-[12px] font-bold text-[#4A4A4A] tracking-tight">{p.name}</span>
+                        <span className="text-[12px] font-bold text-[#3B4AD0] opacity-80">{p.uuid.slice(0, 8)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setInitialUserId(user.ownerId);
+                      setDefaultTab("project");
+                      setShowGrantAccess(true);
+                    }}
+                    className="text-[13px] font-bold text-neutral-500 text-left hover:text-foreground transition-colors flex items-center gap-1 w-fit"
+                  >
+                    View All {actualProjects.length} Projects
+                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+              );
+            }
+
+            const displayProjects = actualProjects.slice(0, 3);
+            const extraCount = actualProjects.length - 3;
+            
             return (
               <div className="flex flex-col gap-2 py-1">
                 <div className="flex flex-wrap gap-2">
@@ -354,9 +451,9 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
           id: "updatedAt",
           header: "TIME UPDATED",
           headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider",
-          cell: ({ user }) => {
+           cell: ({ user }) => {
             const record = permissionRecords.find(r => r.ownerId === user.ownerId);
-            const date = localUpdateTimes[user.ownerId] || record?.updatedAt || record?.updatedDate;
+            const date = record?.updatedDate || user.updatedAt;
             return <span className="text-[13px] text-neutral-500">{formatPermissionUpdateDate(date)}</span>;
           },
         },
@@ -412,6 +509,7 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
             "authorization": "AUTH",
             "productDev": "PROD",
             "report": "REPORT",
+            "projectMgmt": "PRJ",
           };
 
           const rawActions = record.abac.flatMap(entry => {
@@ -490,8 +588,9 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
         headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider",
         cell: ({ user }) => {
           const record = permissionRecords.find(r => r.ownerId === user.ownerId);
-          const date = localUpdateTimes[user.ownerId] || record?.updatedAt || record?.updatedDate;
+          const date = record?.updatedDate || user.updatedAt;
           return <span className="text-[13px] text-neutral-500">{formatPermissionUpdateDate(date)}</span>;
+
         },
       },
       {
@@ -513,7 +612,8 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
         ),
       },
     ];
-  }, [accessScope, permissionRecords, canDelete, handleDeleteUser]);
+  }, [accessScope, permissionRecords, canDelete, handleDeleteUser, getUserProjectData, projects, session.userId, setInitialUserId, setDefaultTab, setShowGrantAccess]);
+
 
   const subTitle = useMemo(() => {
     if (activeProject) return "Users with project access";
