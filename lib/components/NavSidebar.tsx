@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, UserCircle, Settings, LogOut, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, Users, UserCircle, Settings, LogOut, ShieldCheck, Package } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -15,6 +15,7 @@ import { useIsAdmin } from "@/lib/hooks/useIsAdmin";
 const ICONS = {
   Overview: LayoutDashboard,
   Users: Users,
+  Products: Package,
   Account: UserCircle,
   Settings: Settings,
   MyPermissions: ShieldCheck,

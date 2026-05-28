@@ -22,6 +22,13 @@ export const NAV_ITEMS = [
     userOnly: true,
   },
   {
+    title: "Products",
+    href: "/products",
+    permission: "productDev:view",
+    icon: "Products",
+    adminOnly: false,
+  },
+  {
     title: "Account",
     href: "/account",
     permission: "projectMgmt:view",
