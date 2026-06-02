@@ -2,7 +2,43 @@
 
 This file serves as a persistent record of work completed, current status, and pending tasks. It should be updated at the end of every working session to ensure continuity.
 
-## Latest Update: May 26, 2026
+## Latest Update: June 2, 2026
+
+### Work Completed
+- **Fixed Navigation Test Drift**:
+    - Resolved a test failure in [lib/server/access.test.ts](file:///Users/sonnguyen/Desktop/RogoGithub/Rogo_Dashboard_V2/lib/server/access.test.ts) by updating the expected allowed navigation titles to match the current items specified in [lib/config/navigation.ts](file:///Users/sonnguyen/Desktop/RogoGithub/Rogo_Dashboard_V2/lib/config/navigation.ts).
+- **Default Products View Mode Change**:
+    - Modified [features/products/products-page.tsx](file:///Users/sonnguyen/Desktop/RogoGithub/Rogo_Dashboard_V2/features/products/products-page.tsx) to set the default view mode of products to `"table"` (List mode) instead of `"grid"` mode, as requested. Grid view remains available as the secondary toggleable mode.
+- **Fixed Grid View Horizontal Spacing**:
+    - Removed the hardcoded `max-w-[285px]` restriction from the product cards in [features/products/products-page.tsx](file:///Users/sonnguyen/Desktop/RogoGithub/Rogo_Dashboard_V2/features/products/products-page.tsx#L435). This allows cards to expand cleanly to fill the responsive CSS grid cells (which have a minimum width of `260px` and dynamically share the remaining row width). This ensures that the horizontal gap between cards is exactly equal to the vertical gap (`gap-4`, i.e., `16px`).
+- **Optimized Product Image Card Layout & Spacing**:
+    - Retained the large product image height (`max-h-[160px]`) in [features/products/products-page.tsx](file:///Users/sonnguyen/Desktop/RogoGithub/Rogo_Dashboard_V2/features/products/products-page.tsx#L472).
+    - Set the image container to a fixed `h-[232px]` and `w-full` with layout alignment `items-end` and a bottom padding of `pb-5` (20px) in [features/products/products-page.tsx](file:///Users/sonnguyen/Desktop/RogoGithub/Rogo_Dashboard_V2/features/products/products-page.tsx#L438). This achieves a completely symmetrical layout where the product image has exactly 20px of gap at the bottom (above the divider line), exactly 20px of gap at the top (underneath the absolute status badges), and aligns perfectly with the `p-5` (20px) top padding of the card body details section below the divider line.
+    - Added premium, dynamic styling to the circular `img` wrapper in [features/products/products-page.tsx](file:///Users/sonnguyen/Desktop/RogoGithub/Rogo_Dashboard_V2/features/products/products-page.tsx#L472):
+        - Gradient background starting from white and fading to a soft brand-primary tint using CSS `color-mix`.
+        - Symmetrical brand-tinted border (`border-[color-mix(...)]`).
+        - Premium glassmorphism appearance using an inset white shadow (`shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),...]`).
+        - Active dynamic interactive animations (scale, color blend border shift, and a soft brand-colored shadow glow on hover).
+- **Fixed Modal Height Overflow and Scroll Cut-off**:
+    - Identified a bug where very tall modals (such as the Create Product modal containing over 20 fields) overflowed the screen viewport. Because of the flex centering and lack of scrolling on the modal card itself, the top (header and close button) and bottom (submit buttons) became cut off and unreachable.
+    - Updated the global [features/shared/ui.tsx](file:///Users/sonnguyen/Desktop/RogoGithub/Rogo_Dashboard_V2/features/shared/ui.tsx#L45-L65) `Modal` component:
+        - Capped the modal maximum height at `max-h-[90vh]`.
+        - Configured the modal wrapper to use `flex flex-col` and `overflow-hidden`.
+        - Wrapped the children container in `overflow-y-auto` and `flex-1`.
+        - This ensures the header and buttons are always fixed in place, while long forms scroll smoothly and fit perfectly on any laptop or desktop screen size.
+- **Aligned Product Detail Image Border**:
+    - Removed `max-w-[280px]` and `mx-auto` from the product detail image preview frame in [features/products/products-page.tsx](file:///Users/sonnguyen/Desktop/RogoGithub/Rogo_Dashboard_V2/features/products/products-page.tsx#L853).
+    - This allows the image preview frame to stretch to full width of the column, lining up its left and right borders perfectly with the Hardware Spec panel borders below it.
+
+### Current Status
+- Typechecking, unit tests, and production build checks are all passing cleanly.
+
+### Pending Tasks
+1. [ ] Implement real staging credentials verification.
+2. [ ] Expand feature-specific documentation in the `doc/` folder.
+3. [ ] Verify ABAC permission gates with real data.
+
+## Previous Update: May 26, 2026
 
 ### Work Completed
 - **Fixed Organization and Project Visibility in Access Tree**:

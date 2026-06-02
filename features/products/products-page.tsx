@@ -115,7 +115,7 @@ export function ProductsPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [allProducts, setAllProducts] = useState<Model[]>([]);
-  const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "table">("table");
   const [statusFilter, setStatusFilter] = useState<"all" | "released" | "developing">("all");
 
   const [selectedProduct, setSelectedProduct] = useState<Model | null>(null);
@@ -432,10 +432,10 @@ export function ProductsPage() {
                   <div
                     key={product.uuid ?? product.modelId}
                     onClick={() => setSelectedProduct(product)}
-                    className="group relative flex flex-col w-full max-w-[285px] bg-white border border-neutral-200/80 rounded-3xl overflow-hidden shadow-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:border-primary-200/40 hover:-translate-y-1 transition-all duration-300 cursor-pointer mx-auto sm:mx-0"
+                    className="group relative flex flex-col w-full bg-white border border-neutral-200/80 rounded-3xl overflow-hidden shadow-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:border-primary-200/40 hover:-translate-y-1 transition-all duration-300 cursor-pointer mx-auto sm:mx-0"
                   >
                     {/* Radial Mesh Backdrop & Image */}
-                    <div className="aspect-square bg-white flex items-center justify-center p-6 border-b border-neutral-100/60 relative group-hover:bg-neutral-50/50 transition-colors duration-500 overflow-hidden rounded-t-3xl">
+                    <div className="h-[232px] w-full bg-white flex items-end justify-center pt-6 pb-5 px-6 border-b border-neutral-100/60 relative group-hover:bg-neutral-50/50 transition-colors duration-500 overflow-hidden rounded-t-3xl">
                       {/* Radial pattern background */}
                       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-40 group-hover:scale-110 transition-transform duration-500" />
                       
@@ -469,7 +469,7 @@ export function ProductsPage() {
                       <img
                         src={product.image || "/product_hub.png"}
                         alt={product.name}
-                        className="w-full h-full object-contain max-h-[160px] rounded-[2.25rem] drop-shadow-md group-hover:scale-105 transition-transform duration-500 ease-out z-1"
+                        className="aspect-square size-[160px] object-contain bg-gradient-to-br from-white via-neutral-50/30 to-[color-mix(in_srgb,var(--brand-primary)_8%,transparent)] border border-[color-mix(in_srgb,var(--brand-primary)_15%,#E5E7EB)] p-3 rounded-full shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_4px_12px_rgba(0,0,0,0.03)] group-hover:scale-105 group-hover:border-[color-mix(in_srgb,var(--brand-primary)_35%,#E5E7EB)] group-hover:shadow-[0_8px_20px_color-mix(in_srgb,var(--brand-primary)_10%,transparent)] transition-all duration-500 ease-out z-1"
                       />
                     </div>
 
@@ -850,7 +850,7 @@ export function ProductsPage() {
                 {/* Left Column: Image and Specs */}
                 <div className="lg:col-span-5 space-y-6">
                   {/* Product Image Frame */}
-                  <div className="w-full max-w-[280px] h-[210px] mx-auto bg-white rounded-[2rem] border border-neutral-200/60 p-5 flex items-center justify-center relative overflow-hidden shadow-sm">
+                  <div className="w-full h-[210px] bg-white rounded-[2rem] border border-neutral-200/60 p-5 flex items-center justify-center relative overflow-hidden shadow-sm">
                     {/* Radial dot mesh background */}
                     <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1.5px,transparent_1.5px)] [background-size:20px_20px] opacity-40" />
                     

@@ -26,10 +26,11 @@ describe("access helpers", () => {
 
   it("filters navigation from permissions", () => {
     expect(getAllowedNavigation(session).map((item) => item.title)).toEqual([
-      "Organizations",
-      "Projects",
-      "Users",
-      "Permissions",
+      "Overview",
+      "Users & Permissions",
+      "My Permissions",
+      "Account",
+      "Settings",
     ]);
   });
 });
