@@ -1,15 +1,42 @@
 "use client";
 
-import { Bell, Moon, Sun } from "lucide-react";
+import { Bell, Moon, Sun, Menu, Library } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 
-export function Topbar() {
+export function Topbar({ 
+  onMenuToggle, 
+  onTreeToggle,
+  showTreeToggle 
+}: { 
+  onMenuToggle?: () => void; 
+  onTreeToggle?: () => void;
+  showTreeToggle?: boolean;
+}) {
   const { themeMode, toggleTheme } = useTheme();
 
   return (
-    <header className="flex h-[72px] items-center justify-between border-b border-border bg-surface px-8 transition-colors duration-500">
+    <header className="flex h-[72px] items-center justify-between border-b border-border bg-surface px-4 sm:px-8 transition-colors duration-500">
       <div className="flex items-center gap-2">
-        {/* Partner Switcher moved to AccessTreeSidebar */}
+        {onMenuToggle && (
+          <button
+            onClick={onMenuToggle}
+            className="md:hidden rounded-lg p-2 text-neutral-500 hover:bg-surface-muted hover:text-primary-300 transition-all cursor-pointer"
+            title="Toggle Navigation Menu"
+          >
+            <Menu className="size-[22px] stroke-[1.5px]" />
+          </button>
+        )}
+        
+        {showTreeToggle && onTreeToggle && (
+          <button
+            onClick={onTreeToggle}
+            className="lg:hidden rounded-lg p-2 text-neutral-500 hover:bg-surface-muted hover:text-primary-300 transition-all cursor-pointer flex items-center gap-1.5"
+            title="Toggle Access Tree"
+          >
+            <Library className="size-[22px] stroke-[1.5px]" />
+            <span className="text-[10px] font-bold uppercase tracking-wider hidden sm:inline text-neutral-400">Access Tree</span>
+          </button>
+        )}
       </div>
 
       <div className="flex items-center gap-4">

@@ -116,8 +116,8 @@ export function BrandingTab() {
             </div>
             
             <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-3 py-2 h-[56px] w-fit focus-within:border-primary-200 transition-all group">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                <div className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-3 py-2 h-[56px] w-fit focus-within:border-primary-200 transition-all group shrink-0">
                   <div 
                     className="h-10 w-10 rounded-lg shrink-0 cursor-pointer transition-transform hover:scale-105 active:scale-95" 
                     style={{ backgroundColor: primaryColor }}
@@ -132,7 +132,7 @@ export function BrandingTab() {
                   />
                 </div>
                 
-                <div className="flex gap-4">
+                <div className="flex flex-wrap gap-3">
                   {recommendedColors.map((c) => (
                     <button
                       key={c}

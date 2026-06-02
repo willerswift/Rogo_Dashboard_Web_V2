@@ -124,19 +124,19 @@ export function MyPermissionsPage() {
       </div>
 
       {/* User info card */}
-      <div className="flex items-center justify-between rounded-2xl border border-border bg-surface px-6 py-4">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between rounded-2xl border border-border bg-surface px-6 py-4">
+        <div className="flex items-center gap-4 min-w-0">
           <div className="flex size-11 items-center justify-center rounded-full bg-gradient-to-br from-primary-200 to-secondary-300 text-white font-bold text-[15px] shrink-0">
             {initials}
           </div>
-          <div>
-            <p className="font-bold text-foreground text-[15px]">
+          <div className="min-w-0">
+            <p className="font-bold text-foreground text-[15px] truncate">
               {session.email?.split("@")[0] ?? "User"}
             </p>
-            <p className="text-[13px] text-neutral-500">{session.email}</p>
+            <p className="text-[13px] text-neutral-500 truncate break-all">{session.email}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-border bg-surface-muted px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-neutral-500">
+        <div className="flex items-center gap-2 rounded-full border border-border bg-surface-muted px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-neutral-500 shrink-0">
           <ShieldCheck className="size-3.5" />
           Partner User
         </div>
@@ -158,14 +158,14 @@ export function MyPermissionsPage() {
               return (
                 <div
                   key={orgAccess.orgId}
-                  className="flex items-center justify-between rounded-2xl border border-border bg-surface px-6 py-4 transition-colors hover:border-primary-300/30 hover:bg-primary-300/5"
+                  className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between rounded-2xl border border-border bg-surface px-6 py-4 transition-colors hover:border-primary-300/30 hover:bg-primary-300/5"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="flex size-9 items-center justify-center rounded-xl bg-primary-100/20 text-primary-300">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <div className="flex size-9 items-center justify-center rounded-xl bg-primary-100/20 text-primary-300 shrink-0">
                       <Building2 className="size-4" />
                     </div>
-                    <div>
-                      <p className="font-bold text-foreground text-[14px]">{orgAccess.orgId}</p>
+                    <div className="min-w-0">
+                      <p className="font-bold text-foreground text-[14px] break-all">{orgAccess.orgId}</p>
                       <div className="mt-1 flex gap-1.5 flex-wrap">
                         {badges.map((badge, i) => (
                           <span
@@ -180,7 +180,7 @@ export function MyPermissionsPage() {
                   </div>
                   <button
                     onClick={() => router.push(`/overview?orgId=${orgAccess.orgId}`)}
-                    className="h-8 rounded-full border border-border bg-surface px-4 text-[12px] font-semibold text-foreground hover:border-primary-300 hover:text-primary-300 transition-all whitespace-nowrap"
+                    className="h-8 rounded-full border border-border bg-surface px-4 text-[12px] font-semibold text-foreground hover:border-primary-300 hover:text-primary-300 transition-all whitespace-nowrap w-full sm:w-auto"
                   >
                     View Org
                   </button>
@@ -214,11 +214,11 @@ export function MyPermissionsPage() {
                       <FolderKanban className="size-4" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-bold text-foreground text-[14px]">
+                      <p className="font-bold text-foreground text-[14px] break-all">
                         {projectAccess.projectId}
                       </p>
                       {projectAccess.orgId && (
-                        <p className="text-[12px] text-neutral-400 mt-0.5">
+                        <p className="text-[12px] text-neutral-400 mt-0.5 break-all">
                           Organization: {projectAccess.orgId}
                         </p>
                       )}
@@ -269,7 +269,7 @@ export function MyPermissionsPage() {
       )}
 
       {/* Info banner */}
-      <div className="flex items-center justify-between rounded-2xl border border-blue-100 bg-blue-50/50 px-5 py-4">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between rounded-2xl border border-blue-100 bg-blue-50/50 px-5 py-4">
         <div className="flex items-start gap-3">
           <Info className="size-4 text-blue-500 mt-0.5 shrink-0" />
           <p className="text-[13px] text-blue-700">
@@ -283,7 +283,7 @@ export function MyPermissionsPage() {
             to request changes.
           </p>
         </div>
-        <button className="ml-4 shrink-0 rounded-full border border-blue-200 bg-white px-4 py-2 text-[12px] font-semibold text-blue-700 hover:bg-blue-50 hover:border-blue-300 transition-all whitespace-nowrap">
+        <button className="shrink-0 rounded-full border border-blue-200 bg-white px-4 py-2 text-[12px] font-semibold text-blue-700 hover:bg-blue-50 hover:border-blue-300 transition-all whitespace-nowrap w-full sm:w-auto">
           Request access change
         </button>
       </div>

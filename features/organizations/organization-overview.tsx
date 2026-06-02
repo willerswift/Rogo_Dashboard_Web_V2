@@ -167,20 +167,20 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
 
       {/* Projects Section */}
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h3 className="text-xl font-bold font-heading text-foreground tracking-tight">Projects in Organization</h3>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
             <SearchInput
               placeholder="Search projects, id, time..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-[240px]"
+              className="flex-1 sm:flex-initial sm:w-[240px]"
             />
             {/* Chỉ hiện nút Create Project nếu có quyền */}
             {canCreateProject && (
               <PrimaryButton
                 onClick={() => setIsCreateOpen(true)}
-                className="transition-all"
+                className="transition-all shrink-0"
               >
                 <Plus className="size-4 stroke-[3px]" />
                 Create Project
@@ -196,8 +196,8 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                 <th className="px-6 py-4">Name</th>
                 <th className="px-6 py-4">Project ID</th>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Created</th>
-                <th className="px-6 py-4">Updated</th>
+                <th className="px-6 py-4 hidden md:table-cell">Created</th>
+                <th className="px-6 py-4 hidden md:table-cell">Updated</th>
                 {/* Chỉ hiện cột Actions nếu có quyền edit */}
                 {canEditProjects && <th className="px-6 py-4 text-right">Actions</th>}
               </tr>
@@ -300,8 +300,8 @@ export function OrganizationOverview({ orgId }: { orgId: string }) {
                         Active
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-[13px] font-medium text-neutral-500">{project.createdAt ? formatDate(project.createdAt) : "—"}</td>
-                    <td className="px-6 py-4 text-[13px] font-medium text-neutral-500">{project.updatedAt ? formatDate(project.updatedAt) : "—"}</td>
+                    <td className="px-6 py-4 text-[13px] font-medium text-neutral-500 hidden md:table-cell">{project.createdAt ? formatDate(project.createdAt) : "—"}</td>
+                    <td className="px-6 py-4 text-[13px] font-medium text-neutral-500 hidden md:table-cell">{project.updatedAt ? formatDate(project.updatedAt) : "—"}</td>
                     {/* Actions column chỉ hiện với admin */}
                     {canEditProjects && (
                       <td className="px-6 py-4 text-right">

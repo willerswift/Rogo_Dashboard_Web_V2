@@ -149,13 +149,13 @@ export function PartnerOverview() {
 
       {/* Organizations Table Section */}
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h3 className="text-xl font-bold font-heading text-foreground tracking-tight">All Organizations</h3>
           <SearchInput
             placeholder="Search organization name or ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-[300px]"
+            className="w-full sm:w-[300px]"
           />
         </div>
 
@@ -164,11 +164,11 @@ export function PartnerOverview() {
             <thead>
               <tr className="bg-surface-muted/50 border-b border-border text-[12px] font-bold uppercase tracking-wider text-neutral-500 font-sans">
                 <th className="px-6 py-4">Organization Name</th>
-                <th className="px-6 py-4">Organization ID</th>
+                <th className="px-6 py-4 hidden sm:table-cell">Organization ID</th>
                 <th className="px-6 py-4">Projects</th>
                 <th className="px-6 py-4">Members</th>
-                <th className="px-6 py-4">Created Date</th>
-                <th className="px-6 py-4">Updated Date</th>
+                <th className="px-6 py-4 hidden md:table-cell">Created Date</th>
+                <th className="px-6 py-4 hidden md:table-cell">Updated Date</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border-muted">
@@ -199,7 +199,7 @@ export function PartnerOverview() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 hidden sm:table-cell">
                       <span className="font-mono text-[12px] font-bold text-neutral-400 uppercase tracking-tight">
                         {org.orgId}
                       </span>
@@ -216,10 +216,10 @@ export function PartnerOverview() {
                         {org.memberCount}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-[13px] font-medium text-neutral-500">
+                    <td className="px-6 py-4 text-[13px] font-medium text-neutral-500 hidden md:table-cell">
                       {(org.createdAt || org.createdDate) ? formatDate((org.createdAt || org.createdDate) as string) : "—"}
                     </td>
-                    <td className="px-6 py-4 text-[13px] font-medium text-neutral-500">
+                    <td className="px-6 py-4 text-[13px] font-medium text-neutral-500 hidden md:table-cell">
                       {org.updatedAt ? formatDate(org.updatedAt) : "—"}
                     </td>
                   </tr>

@@ -381,12 +381,12 @@ export function ProductsPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 self-end sm:self-auto">
+            <div className="flex items-center gap-3 self-end sm:self-auto w-full sm:w-auto">
               <SearchInput
                 placeholder="Search name, ID or brand..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-[260px]"
+                className="w-full sm:w-[260px] flex-1 sm:flex-initial"
               />
 
               {/* Apple-style Segmented Control */}
@@ -575,12 +575,12 @@ export function ProductsPage() {
                 <thead>
                   <tr className="border-b border-neutral-100 text-[11px] font-bold uppercase tracking-wider text-neutral-400 leading-[18px] font-sans bg-neutral-50/50">
                     <th className="px-6 py-4 text-left">Product / Info</th>
-                    <th className="px-6 py-4 text-left">Model ID</th>
-                    <th className="px-6 py-4 text-left">Category</th>
-                    <th className="px-6 py-4 text-left">Base Info</th>
+                    <th className="px-6 py-4 text-left hidden md:table-cell">Model ID</th>
+                    <th className="px-6 py-4 text-left hidden md:table-cell">Category</th>
+                    <th className="px-6 py-4 text-left hidden md:table-cell">Base Info</th>
                     <th className="px-6 py-4 text-left">Release status</th>
-                    <th className="px-6 py-4 text-left">Public</th>
-                    <th className="px-6 py-4 text-left">OEM ready</th>
+                    <th className="px-6 py-4 text-left hidden md:table-cell">Public</th>
+                    <th className="px-6 py-4 text-left hidden md:table-cell">OEM ready</th>
                     <th className="py-4 pr-6 text-right">Action</th>
                   </tr>
                 </thead>
@@ -628,7 +628,7 @@ export function ProductsPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 font-mono text-xs text-neutral-600">
+                        <td className="px-6 py-4 font-mono text-xs text-neutral-600 hidden md:table-cell">
                           <div className="flex items-center gap-1.5 w-fit">
                             <span>{product.modelId}</span>
                             <button
@@ -644,8 +644,8 @@ export function ProductsPage() {
                             </button>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-xs font-semibold text-neutral-600 font-mono whitespace-nowrap">{product.categoryInfo.join(", ") || "—"}</td>
-                        <td className="px-6 py-4 text-xs font-semibold text-neutral-600 font-mono whitespace-nowrap">{product.baseInfo.join(", ") || "—"}</td>
+                        <td className="px-6 py-4 text-xs font-semibold text-neutral-600 font-mono whitespace-nowrap hidden md:table-cell">{product.categoryInfo.join(", ") || "—"}</td>
+                        <td className="px-6 py-4 text-xs font-semibold text-neutral-600 font-mono whitespace-nowrap hidden md:table-cell">{product.baseInfo.join(", ") || "—"}</td>
                         <td className="px-6 py-4">
                           {product.releaseStatus ? (
                             <span className={cn(
@@ -660,14 +660,14 @@ export function ProductsPage() {
                             <span className="text-neutral-400">—</span>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-neutral-600 text-xs">
+                        <td className="px-6 py-4 text-neutral-600 text-xs hidden md:table-cell">
                           {product.isPublic ? (
                             <span className="text-emerald-600 font-semibold flex items-center gap-1"><Globe className="size-3.5" /> Yes</span>
                           ) : (
                             <span className="text-neutral-400 font-medium">No</span>
                           )}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4 hidden md:table-cell">
                           <div className="flex items-center gap-1.5">
                             <span className="relative flex h-1.5 w-1.5">
                               {product.isReadyOEM ? (
@@ -811,19 +811,19 @@ export function ProductsPage() {
           <div className="relative z-10 w-full max-w-4xl bg-white rounded-xl shadow-xl border border-neutral-200 overflow-hidden flex flex-col max-h-[90vh]">
             
             {/* Header */}
-            <div className="px-8 py-5 flex justify-between items-start border-b border-neutral-100">
+            <div className="px-4 sm:px-8 py-5 flex flex-col sm:flex-row gap-4 justify-between sm:items-start border-b border-neutral-100">
               <div className="space-y-1">
-                <h3 className="text-[24px] font-bold text-neutral-900 tracking-tight font-sans">
+                <h3 className="text-[24px] font-bold text-neutral-900 tracking-tight font-sans break-all">
                   {selectedProduct.name}
                 </h3>
-                <div className="flex items-center gap-2 text-sm text-neutral-500 font-mono">
-                  <span>{selectedProduct.modelId}</span>
+                <div className="flex items-center gap-2 text-sm text-neutral-500 font-mono flex-wrap">
+                  <span className="break-all">{selectedProduct.modelId}</span>
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(selectedProduct.modelId);
                       toast.success("Copied Model ID to clipboard!");
                     }}
-                    className="p-1 hover:bg-neutral-100 rounded text-neutral-400 hover:text-neutral-600 transition"
+                    className="p-1 hover:bg-neutral-100 rounded text-neutral-400 hover:text-neutral-600 transition shrink-0"
                     title="Copy Model ID"
                   >
                     <Copy className="size-4" />
@@ -838,13 +838,14 @@ export function ProductsPage() {
               
               <button
                 onClick={() => setSelectedProduct(null)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-neutral-200 bg-white rounded-md hover:bg-neutral-50 text-sm font-semibold text-neutral-700 transition"
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 border border-neutral-200 bg-white rounded-md hover:bg-neutral-50 text-sm font-semibold text-neutral-700 transition shrink-0 self-end sm:self-start w-full sm:w-auto"
               >
                 <X className="size-4" /> Close
               </button>
             </div>
-                        {/* Content Area */}
-            <div className="flex-1 overflow-y-auto px-8 py-6">
+            
+            {/* Content Area */}
+            <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
                 {/* Left Column: Image and Specs */}
@@ -1049,7 +1050,7 @@ export function ProductsPage() {
             </div>
 
             {/* Footer / Action panel */}
-            <div className="px-8 py-4 border-t border-neutral-100 bg-neutral-50/50 flex justify-end gap-3">
+            <div className="px-4 sm:px-8 py-4 border-t border-neutral-100 bg-neutral-50/50 flex justify-end gap-3">
               <button
                 type="button"
                 disabled={isSaving}

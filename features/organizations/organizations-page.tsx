@@ -184,10 +184,10 @@ export function OrganizationsPage() {
               <thead>
                 <tr className="border-b border-border text-[12px] font-bold uppercase tracking-wider text-neutral-500 leading-[18px] font-sans">
                   <th className="px-6 py-4 text-left">Name</th>
-                  <th className="px-6 py-4 text-left">Org ID</th>
+                  <th className="px-6 py-4 text-left hidden md:table-cell">Org ID</th>
                   <th className="px-6 py-4 text-left">Status</th>
-                  <th className="px-6 py-4 text-left">Owner</th>
-                  <th className="px-6 py-4 text-left">Created</th>
+                  <th className="px-6 py-4 text-left hidden md:table-cell">Owner</th>
+                  <th className="px-6 py-4 text-left hidden md:table-cell">Created</th>
                   <th className="py-4 pr-6 text-right">Actions</th>
                 </tr>
               </thead>
@@ -200,16 +200,16 @@ export function OrganizationsPage() {
                         <div className="mt-1 text-xs text-neutral-500">{organization.description}</div>
                       ) : null}
                     </td>
-                    <td className="px-6 py-4 text-neutral-500">
+                    <td className="px-6 py-4 text-neutral-500 hidden md:table-cell">
                       <InlineCode value={organization.orgId} />
                     </td>
                     <td className="px-6 py-4">
                       <StatusBadge value={organization.status} />
                     </td>
-                    <td className="px-6 py-4 text-neutral-500">
+                    <td className="px-6 py-4 text-neutral-500 hidden md:table-cell">
                       {formatOwnerEmail(organization.owner, "—")}
                     </td>
-                    <td className="px-6 py-4 text-neutral-500 text-xs">
+                    <td className="px-6 py-4 text-neutral-500 text-xs hidden md:table-cell">
                       {organization.createdDate ? new Date(organization.createdDate).toLocaleDateString() : "—"}
                     </td>
                     <td className="py-4 pr-6 text-right">

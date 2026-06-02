@@ -138,9 +138,9 @@ export function CreateProjectDialog({ open, onClose, onSuccess, initialOrgId }: 
 
           <form onSubmit={onSubmit} className="px-8 pb-8 space-y-8">
             {/* Organization Selector */}
-            <div className="flex items-center gap-4">
-              <span className="text-[17px] font-medium text-neutral-500">Add project to</span>
-              <div className="relative flex-1" ref={dropdownRef}>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              <span className="text-[17px] font-medium text-neutral-500 shrink-0">Add project to</span>
+              <div className="relative flex-1 w-full" ref={dropdownRef}>
                 <button
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}

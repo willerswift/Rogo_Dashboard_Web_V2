@@ -404,10 +404,10 @@ export function GrantAccessDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4 transition-colors duration-500 font-sans">
-      <div className="relative w-full max-w-[900px] h-[720px] max-h-[90vh] flex flex-col rounded-[12px] bg-surface border border-dialog-border animate-in fade-in zoom-in-95 duration-200 overflow-hidden text-[#1F244A]">
+      <div className="relative w-full max-w-[900px] h-full md:h-[720px] max-h-[90vh] flex flex-col rounded-[12px] bg-surface border border-dialog-border animate-in fade-in zoom-in-95 duration-200 overflow-hidden text-[#1F244A]">
         
         {/* Header */}
-        <div className="relative px-8 pt-8 pb-0 shrink-0 bg-surface">
+        <div className="relative px-4 sm:px-8 pt-6 sm:pt-8 pb-0 shrink-0 bg-surface">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
               {isInviting && (
@@ -432,19 +432,19 @@ export function GrantAccessDialog({
                     </>
                   )}
                 </h2>
-                <p className="text-[14px] text-neutral-500 mt-1">Manage who has access to this organization and their roles.</p>
+                <p className="text-[13px] sm:text-[14px] text-neutral-500 mt-1">Manage who has access to this organization and their roles.</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="rounded-full p-1.5 text-neutral-400 hover:bg-surface-muted transition-colors -mt-1 -mr-1"
+              className="rounded-full p-1.5 text-neutral-400 hover:bg-surface-muted transition-colors shrink-0 -mt-1 -mr-1"
             >
               <X className="size-6" />
             </button>
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-8 mt-6 border-b border-border">
+          <div className="flex gap-4 sm:gap-8 mt-6 border-b border-border flex-wrap">
             <button
               onClick={() => setActiveTab("partner")}
               className={cn(
@@ -473,9 +473,9 @@ export function GrantAccessDialog({
         </div>
 
         {/* Body */}
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-col md:flex-row flex-1 overflow-y-auto md:overflow-hidden">
           {/* Left Panel - Users or Invite */}
-          <div className="w-[280px] border-r border-border flex flex-col bg-surface shrink-0 p-6">
+          <div className="w-full md:w-[280px] border-b md:border-b-0 md:border-r border-border flex flex-col bg-surface shrink-0 p-4 sm:p-6">
             {!isInviting ? (
               <>
                 <div className="mb-5">
@@ -567,7 +567,7 @@ export function GrantAccessDialog({
           </div>
 
           {/* Right Area: Content (Middle + Right columns if Project Tab) */}
-          <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 flex flex-col md:overflow-hidden min-w-0">
             <div className="flex-1 flex overflow-hidden">
               {(!selectedUserId && !isInviting) ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-neutral-400 bg-white">
@@ -575,10 +575,11 @@ export function GrantAccessDialog({
                 </div>
               ) : activeTab === "partner" ? (
                 /* Partner Permission Detail */
-                <div className="flex-1 p-8 overflow-y-auto custom-scrollbar bg-white">
+                <div className="flex-1 p-4 sm:p-8 overflow-y-auto custom-scrollbar bg-white">
                   <div className="space-y-8">
-                    <div className="space-y-4">                      <h6 className="text-[14px] font-medium text-[#3B4AD0]">(Optional) Role to Organization (Org):</h6>
-                      <div className="flex gap-6">
+                    <div className="space-y-4">
+                      <h6 className="text-[14px] font-medium text-[#3B4AD0]">(Optional) Role to Organization (Org):</h6>
+                      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 flex-wrap">
                         <label className="flex items-center gap-3 cursor-pointer group">
                           <CheckboxInput checked={permissions.orgEdit} onChange={() => updatePerm("orgEdit", !permissions.orgEdit)} />
                           <span className="text-[14px] text-neutral-800 group-hover:text-primary-300 transition-colors">Organization Edit (Create/ Edit/ Delete)</span>
@@ -592,7 +593,7 @@ export function GrantAccessDialog({
 
                     <div className="space-y-4">
                       <h6 className="text-[14px] font-medium text-[#3B4AD0]">(Optional) Project Management (Manage all Projects):</h6>
-                      <div className="flex gap-6">
+                      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 flex-wrap">
                         <label className="flex items-center gap-3 cursor-pointer group">
                           <CheckboxInput checked={permissions.mqttEdit} onChange={() => updatePerm("mqttEdit", !permissions.mqttEdit)} />
                           <span className="text-[14px] text-neutral-800 group-hover:text-primary-300 transition-colors">Project Edit (Create/ Edit/ Delete)</span>
@@ -606,7 +607,7 @@ export function GrantAccessDialog({
 
                     <div className="space-y-4">
                       <h6 className="text-[14px] font-medium text-[#3B4AD0]">(Optional) IOT Product Development:</h6>
-                      <div className="flex gap-6">
+                      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 flex-wrap">
                         <label className="flex items-center gap-3 cursor-pointer group">
                           <CheckboxInput checked={permissions.prodEdit} onChange={() => updatePerm("prodEdit", !permissions.prodEdit)} />
                           <span className="text-[14px] text-neutral-800 group-hover:text-primary-300 transition-colors">Product Edit (Create/ Edit/ Delete)</span>
@@ -620,7 +621,7 @@ export function GrantAccessDialog({
 
                     <div className="space-y-4">
                       <h6 className="text-[14px] font-medium text-[#3B4AD0]">(Optional) Authorization for Users:</h6>
-                      <div className="flex gap-6">
+                      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 flex-wrap">
                         <label className="flex items-center gap-3 cursor-pointer group">
                           <CheckboxInput checked={permissions.authPartnerEdit} onChange={() => updatePerm("authPartnerEdit", !permissions.authPartnerEdit)} />
                           <span className="text-[14px] text-neutral-800 group-hover:text-primary-300 transition-colors">Authorization Edit (Create/ Edit/ Delete)</span>
@@ -634,7 +635,7 @@ export function GrantAccessDialog({
 
                     <div className="space-y-4">
                       <h6 className="text-[14px] font-medium text-[#3B4AD0]">(Optional) Role to Report:</h6>
-                      <div className="flex gap-6">
+                      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 flex-wrap">
                         <label className="flex items-center gap-3 cursor-pointer group">
                           <CheckboxInput checked={permissions.reportPartnerEdit} onChange={() => updatePerm("reportPartnerEdit", !permissions.reportPartnerEdit)} />
                           <span className="text-[14px] text-neutral-800 group-hover:text-primary-300 transition-colors">Report Device Activations</span>
@@ -645,9 +646,9 @@ export function GrantAccessDialog({
                 </div>
               ) : (
                 /* Project Permission Layout (Middle + Right) */
-                <div className="flex-1 flex overflow-hidden divide-x divide-border">
+                <div className="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden divide-y md:divide-y-0 md:divide-x divide-border bg-white min-w-0">
                   {/* Middle: Access Scope Tree */}
-                  <div className="w-[280px] flex flex-col bg-surface shrink-0 p-6 overflow-hidden">
+                  <div className="w-full md:w-[280px] flex flex-col bg-surface shrink-0 p-4 sm:p-6 overflow-y-auto md:overflow-hidden border-b md:border-b-0 border-border">
                     <h4 className="text-[12px] font-bold text-neutral-400 uppercase tracking-widest mb-6">ORGANIZATION & PROJECT</h4>
                     <div className="flex-1 overflow-y-auto space-y-2 custom-scrollbar pr-1 mb-4">
                       {orgs.map(org => (
@@ -746,7 +747,7 @@ export function GrantAccessDialog({
                   </div>
 
                   {/* Right: Permission Detail */}
-                  <div className="flex-1 p-6 overflow-y-auto custom-scrollbar bg-white text-[14px]">
+                  <div className="flex-1 p-4 sm:p-8 overflow-y-auto custom-scrollbar bg-white text-[14px]">
                     {focusedProject ? (
                       <div className="space-y-6">
                         <div>                          <h3 className="text-[16px] font-bold text-neutral-500 font-heading">
@@ -821,9 +822,9 @@ export function GrantAccessDialog({
 
             {/* Selection Summary Bar */}
             {activeTab === "project" && numSelectedProjects > 0 && (
-              <div className="mx-4 mb-4 h-[56px] bg-[#FFF1F3] border-l-[4px] border-primary-300 rounded-[8px] flex items-center justify-between px-6 shrink-0">
-                <div className="flex items-center gap-8">
-                  <div className="flex items-center gap-3 text-[#1F244A]">
+              <div className="mx-4 mb-4 min-h-[56px] py-3 bg-[#FFF1F3] border-l-[4px] border-primary-300 rounded-[8px] flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between px-4 sm:px-6 shrink-0">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-8">
+                  <div className="flex items-center gap-3 text-[#1F244A] shrink-0">
                     <LayoutGrid className="size-5 text-[#3B4AD0]" />
                     <span className="text-[12px] font-bold">{numSelectedProjects} Projects Selected</span>
                   </div>
@@ -831,7 +832,7 @@ export function GrantAccessDialog({
                 </div>
                 <button 
                   onClick={clearAllProjects}
-                  className="text-primary-300 font-bold text-[12px] hover:text-primary-400 transition-colors"
+                  className="text-primary-300 font-bold text-[12px] hover:text-primary-400 transition-colors shrink-0 self-end sm:self-auto"
                 >
                   Clear all
                 </button>

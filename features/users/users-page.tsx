@@ -420,8 +420,9 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
         {
           id: "updatedAt",
           header: "TIME UPDATED",
-          headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider",
-           cell: ({ user }) => {
+          className: "hidden md:table-cell",
+          headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider hidden md:table-cell",
+          cell: ({ user }) => {
             const record = permissionRecords.find(r => r.ownerId === user.ownerId);
             const date = record?.updatedDate || user.updatedAt;
             return <span className="text-[13px] text-neutral-500">{formatPermissionUpdateDate(date)}</span>;
@@ -433,7 +434,7 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
           className: "text-right",
           headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider text-right",
           cell: () => (
-            <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex justify-end gap-3 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
               <button className="text-neutral-400 hover:text-foreground transition-colors">
                 <Pencil className="size-4" />
               </button>
@@ -541,6 +542,7 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
         },
       },      {
         id: "updatedAt",
+        className: "hidden md:table-cell",
         header: (
           <div className="flex items-center gap-2 whitespace-nowrap">
             <span>TIME UPDATE</span>
@@ -555,7 +557,7 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
             </button>
           </div>
         ),
-        headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider",
+        headerClassName: "text-[11px] font-bold text-neutral-500 uppercase tracking-wider hidden md:table-cell",
         cell: ({ user }) => {
           const record = permissionRecords.find(r => r.ownerId === user.ownerId);
           const date = record?.updatedDate || user.updatedAt;
@@ -568,7 +570,7 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
         header: "",
         className: "text-right",
         cell: ({ user }) => (
-          <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex justify-end opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
             {canDelete ? (
               <button
                 onClick={() => void handleDeleteUser(user.uuid)}
@@ -655,7 +657,7 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
         </div>
 
         {/* Bottom Tier: Context Title & Action Button */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h2 className="text-[18px] font-bold text-neutral-800 tracking-tight font-heading">
             {subTitle}
           </h2>

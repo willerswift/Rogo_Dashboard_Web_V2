@@ -103,11 +103,11 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
       </BreadcrumbHeader>
 
       {/* Actions Row */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <p className="text-sm text-neutral-500">
           Manage your project configuration and view essential details.
         </p>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           <SecondaryButton onClick={() => setIsRenameOpen(true)}>
             <Pencil className="size-4" />
             Rename

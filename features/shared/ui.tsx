@@ -280,8 +280,8 @@ export function SecondaryButton(props: React.ButtonHTMLAttributes<HTMLButtonElem
   );
 }
 
-export function InlineCode({ value }: { value: string }) {
-  return <code className="rounded bg-surface-muted border border-border px-2 py-1 text-xs text-foreground font-mono">{value}</code>;
+export function InlineCode({ value, className }: { value: string; className?: string }) {
+  return <code className={cn("rounded bg-surface-muted border border-border px-2 py-1 text-xs text-foreground font-mono break-all", className)}>{value}</code>;
 }
 
 export function JsonBlock({ value }: { value: unknown }) {

@@ -234,21 +234,21 @@ export function AccountPage() {
 
       {/* Bottom Banner */}
       <div className="lg:col-span-2">
-        <div className="flex items-center justify-between rounded-xl border border-primary-300/20 bg-primary-100/10 p-4 pl-0 overflow-hidden">
-          <div className="flex items-center gap-5">
-            <div className="h-20 w-1.5 bg-primary-300 rounded-r-full" />
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border bg-surface">
+        <div className="flex flex-col md:flex-row md:items-center justify-between rounded-xl border border-primary-300/20 bg-primary-100/10 p-4 pl-0 gap-4 overflow-hidden">
+          <div className="flex items-start gap-3 sm:gap-5">
+            <div className="w-1.5 bg-primary-300 rounded-r-full self-stretch min-h-[80px]" />
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border bg-surface mt-2 sm:mt-1">
               <Shield className="size-5 text-primary-300" />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1 py-1 pr-4 sm:pr-0">
               <h4 className="text-[14px] font-bold text-primary-300">Administrative Permission Management</h4>
               <p className="text-[13px] leading-relaxed text-neutral-500 max-w-4xl">
                 Your account is currently governed by the Enterprise Security Policy. Some profile settings, including organizational mapping and core authentication methods, are locked by your administrator. If you believe your access level or profile data is incorrect, please contact the Rogo Solutions internal support desk.
               </p>
             </div>
           </div>
-          <div className="pr-6">
-            <SecondaryButton className="border-primary-300 text-primary-300 hover:bg-primary-300 hover:text-white transition-all">
+          <div className="pl-6 md:pl-0 pr-6 shrink-0 pb-2 md:pb-0">
+            <SecondaryButton className="border-primary-300 text-primary-300 hover:bg-primary-300 hover:text-white transition-all w-full md:w-auto">
               Request access change
             </SecondaryButton>
           </div>

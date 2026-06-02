@@ -199,7 +199,7 @@ export function PermissionsPage() {
                   className="flex flex-col gap-3 rounded-xl border border-border px-4 py-3 md:flex-row md:items-center md:justify-between"
                 >
                   <div>
-                    <div className="font-medium text-foreground text-sm font-mono">{record.ownerId}</div>
+                    <div className="font-medium text-foreground text-sm font-mono break-all">{record.ownerId}</div>
                     <div className="mt-1 text-xs text-muted-foreground">{record.abac.length} permission {record.abac.length === 1 ? "entry" : "entries"}</div>
                   </div>
                   {canView ? (

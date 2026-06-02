@@ -199,9 +199,9 @@ export function ProjectsPage() {
                 <tr className="border-b border-border text-[12px] font-bold uppercase tracking-wider text-foreground leading-[18px] font-sans">
                   <th className="px-6 py-4 text-left">Name</th>
                   <th className="px-6 py-4 text-left">Project ID</th>
-                  <th className="px-6 py-4 text-left">Organization</th>
-                  <th className="px-6 py-4 text-left">Email verify</th>
-                  <th className="px-6 py-4 text-left">Services</th>
+                  <th className="px-6 py-4 text-left hidden md:table-cell">Organization</th>
+                  <th className="px-6 py-4 text-left hidden md:table-cell">Email verify</th>
+                  <th className="px-6 py-4 text-left hidden md:table-cell">Services</th>
                   <th className="py-4 pr-6 text-right">Actions</th>
                 </tr>
               </thead>
@@ -271,11 +271,11 @@ export function ProjectsPage() {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-neutral-500">
+                    <td className="px-6 py-4 text-neutral-500 hidden md:table-cell">
                       {project.orgId ? (orgNameById[project.orgId] ?? project.orgId) : "—"}
                     </td>
-                    <td className="px-6 py-4 text-neutral-500">{project.needVerifyEmail ? "Required" : "Optional"}</td>
-                    <td className="px-6 py-4 text-neutral-500">{project.authorizedServices?.length ?? 0}</td>
+                    <td className="px-6 py-4 text-neutral-500 hidden md:table-cell">{project.needVerifyEmail ? "Required" : "Optional"}</td>
+                    <td className="px-6 py-4 text-neutral-500 hidden md:table-cell">{project.authorizedServices?.length ?? 0}</td>
                     <td className="py-4 pr-6 text-right">
                       <div className="flex justify-end gap-2">
                         <Link

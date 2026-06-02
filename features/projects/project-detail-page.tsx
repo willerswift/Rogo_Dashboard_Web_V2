@@ -131,7 +131,7 @@ export function ProjectDetailPage({ projectId }: { projectId: string }) {
           <dl className="grid gap-4 text-sm md:grid-cols-2 xl:grid-cols-4">
             <div>
               <dt className="text-muted-foreground">UUID</dt>
-              <dd className="mt-1 font-medium text-foreground">{detail.project.uuid}</dd>
+              <dd className="mt-1 font-medium text-foreground break-all">{detail.project.uuid}</dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Org ID</dt>

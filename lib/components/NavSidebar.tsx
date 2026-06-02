@@ -21,7 +21,7 @@ const ICONS = {
   MyPermissions: ShieldCheck,
 };
 
-export function NavSidebar() {
+export function NavSidebar({ className }: { className?: string }) {
   const pathname = usePathname();
   const { logoUrl, faviconUrl, themeMode } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
@@ -54,7 +54,8 @@ export function NavSidebar() {
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
         "relative flex h-screen flex-col border-r border-border bg-surface transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] px-4 py-6 z-40",
-        isCollapsed ? "w-[80px]" : "w-[260px]"
+        isCollapsed ? "w-[80px]" : "w-[260px]",
+        className
       )}
     >
       <div className={cn("flex items-center mb-10 transition-all duration-500", isCollapsed ? "px-0 justify-center" : "pl-3")}>

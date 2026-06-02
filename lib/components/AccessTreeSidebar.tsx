@@ -16,7 +16,7 @@ import { getUserAccessibleOrgIds, getUserAccessibleProjectIds, hasPermission, ha
 import { getOrganization } from "@/lib/api/organization";
 import { getProjectDetail } from "@/lib/api/project";
 
-export function AccessTreeSidebar() {
+export function AccessTreeSidebar({ className }: { className?: string }) {
   const { 
     session, 
     setSession, 
@@ -219,7 +219,7 @@ export function AccessTreeSidebar() {
   };
 
   return (
-    <aside className="relative z-40 h-screen w-[280px] border-r border-border bg-surface overflow-hidden flex flex-col font-sans transition-colors duration-500">
+    <aside className={cn("relative z-40 h-screen w-[280px] border-r border-border bg-surface overflow-hidden flex flex-col font-sans transition-colors duration-500", className)}>
       <div className="p-4 border-b border-border relative shrink-0" ref={partnerDropdownRef}>
         {isAdmin ? (
           <>
