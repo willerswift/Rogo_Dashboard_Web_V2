@@ -2,7 +2,30 @@
 
 This file serves as a persistent record of work completed, current status, and pending tasks. It should be updated at the end of every working session to ensure continuity.
 
-## Latest Update: June 2, 2026
+> [!IMPORTANT]
+> Every new session MUST read this file at the start to understand the history, context, and what the previous session was working on.
+
+## Latest Update: June 3, 2026
+
+### Work Completed
+- **Fixed Settings Tabs Desktop Web View Regression**:
+    - Resolved a layout bug in [features/settings/SettingsTabs.tsx](file:///Users/sonnguyen/Desktop/RogoGithub/Rogo_Dashboard_V2/features/settings/SettingsTabs.tsx) where settings tabs (Branding, Domain, Email Templates) were stretched across the full screen width on desktop.
+    - Reverted the buttons' styling to their original natural width structure (`px-6 py-4` padding, left-aligned, no `flex-1`), restoring desktop layout appearance 100% identical to the original codebase.
+    - Added `shrink-0` to the buttons and kept the container's horizontal scrolling overflow features (`overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] whitespace-nowrap`), ensuring a smooth scrolling experience on mobile viewports without causing formatting anomalies on desktop.
+- **QA and Verification**:
+    - Validated all typescript compilation typechecks (`npx tsc --noEmit`) and unit tests (`npm test`). All checks passed successfully.
+
+### Current Status
+- Desktop web views restored to original styling guidelines.
+- Mobile scroll views work perfectly.
+- Typechecking, unit tests, and production build checks are all passing cleanly.
+
+### Pending Tasks
+1. [ ] Implement real staging credentials verification.
+2. [ ] Expand feature-specific documentation in the `doc/` folder.
+3. [ ] Verify ABAC permission gates with real data.
+
+## Previous Update: June 2, 2026
 
 ### Work Completed
 - **Fixed Navigation Test Drift**:

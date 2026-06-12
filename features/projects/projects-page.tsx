@@ -6,7 +6,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Info, Copy, Check } from "lucide-react";
+import { Info, Copy, Check, Eye, Pencil, Trash2 } from "lucide-react";
 
 import { listOrganizations } from "@/lib/api/organization";
 import { createProject, deleteProject, listProjects, updateProject } from "@/lib/api/project";
@@ -197,19 +197,19 @@ export function ProjectsPage() {
             <table className="min-w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-border text-[12px] font-bold uppercase tracking-wider text-foreground leading-[18px] font-sans">
-                  <th className="px-6 py-4 text-left">Name</th>
-                  <th className="px-6 py-4 text-left">Project ID</th>
-                  <th className="px-6 py-4 text-left hidden md:table-cell">Organization</th>
-                  <th className="px-6 py-4 text-left hidden md:table-cell">Email verify</th>
-                  <th className="px-6 py-4 text-left hidden md:table-cell">Services</th>
-                  <th className="py-4 pr-6 text-right">Actions</th>
+                  <th className="px-4 sm:px-6 py-4 text-left">Name</th>
+                  <th className="px-4 sm:px-6 py-4 text-left">Project ID</th>
+                  <th className="px-4 sm:px-6 py-4 text-left hidden md:table-cell">Organization</th>
+                  <th className="px-4 sm:px-6 py-4 text-left hidden md:table-cell">Email verify</th>
+                  <th className="px-4 sm:px-6 py-4 text-left hidden md:table-cell">Services</th>
+                  <th className="py-4 pr-4 sm:pr-6 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {visibleProjects.map((project) => (
                   <tr key={project.uuid} className="border-b border-border align-top">
-                    <td className="px-6 py-4 font-medium text-foreground">{project.name}</td>
-                    <td className="px-6 py-4 text-neutral-500">
+                    <td className="px-4 sm:px-6 py-4 font-medium text-foreground">{project.name}</td>
+                    <td className="px-4 sm:px-6 py-4 text-neutral-500">
                       <div className="flex items-center gap-1.5 leading-none relative">
                         <InlineCode value={project.uuid.slice(0, 8)} />
                         <button
@@ -271,13 +271,14 @@ export function ProjectsPage() {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-neutral-500 hidden md:table-cell">
+                    <td className="px-4 sm:px-6 py-4 text-neutral-500 hidden md:table-cell">
                       {project.orgId ? (orgNameById[project.orgId] ?? project.orgId) : "—"}
                     </td>
-                    <td className="px-6 py-4 text-neutral-500 hidden md:table-cell">{project.needVerifyEmail ? "Required" : "Optional"}</td>
-                    <td className="px-6 py-4 text-neutral-500 hidden md:table-cell">{project.authorizedServices?.length ?? 0}</td>
-                    <td className="py-4 pr-6 text-right">
-                      <div className="flex justify-end gap-2">
+                    <td className="px-4 sm:px-6 py-4 text-neutral-500 hidden md:table-cell">{project.needVerifyEmail ? "Required" : "Optional"}</td>
+                    <td className="px-4 sm:px-6 py-4 text-neutral-500 hidden md:table-cell">{project.authorizedServices?.length ?? 0}</td>
+                    <td className="py-4 pr-4 sm:pr-6 text-right">
+                      {/* Desktop View (Unchanged) */}
+                      <div className="hidden md:flex justify-end gap-2">
                         <Link
                           href={`/projects/${project.uuid}`}
                           className="inline-flex h-10 items-center justify-center rounded-xl border border-border px-3 text-sm font-medium text-foreground hover:bg-surface-muted"
@@ -291,6 +292,37 @@ export function ProjectsPage() {
                             </SecondaryButton>
                             <SecondaryButton type="button" onClick={() => void handleDelete(project.uuid)}>
                               Delete
+                            </SecondaryButton>
+                          </>
+                        ) : null}
+                      </div>
+
+                      {/* Mobile View (Icons only) */}
+                      <div className="flex md:hidden justify-end gap-1.5">
+                        <Link
+                          href={`/projects/${project.uuid}`}
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-surface text-foreground hover:bg-surface-muted shrink-0"
+                          title="Detail"
+                        >
+                          <Eye className="size-4" />
+                        </Link>
+                        {canEdit ? (
+                          <>
+                            <SecondaryButton
+                              type="button"
+                              onClick={() => startEditing(project)}
+                              className="h-9 w-9 p-0 flex items-center justify-center shrink-0"
+                              title="Edit"
+                            >
+                              <Pencil className="size-4" />
+                            </SecondaryButton>
+                            <SecondaryButton
+                              type="button"
+                              onClick={() => void handleDelete(project.uuid)}
+                              className="h-9 w-9 p-0 flex items-center justify-center text-primary-300 hover:text-primary-400 shrink-0"
+                              title="Delete"
+                            >
+                              <Trash2 className="size-4" />
                             </SecondaryButton>
                           </>
                         ) : null}

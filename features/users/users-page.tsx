@@ -389,11 +389,11 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
             
             return (
               <div className="flex flex-col gap-2 py-1">
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 md:gap-2">
                   {displayProjects.map((p) => (
-                    <div key={p.uuid} className="flex h-[28px] items-center justify-center gap-2 rounded-full bg-[hsla(241,100%,90%,1)] px-3 py-0.5 whitespace-nowrap">
-                      <span className="text-[12px] font-bold text-[#4A4A4A] tracking-tight">{p.name}</span>
-                      <span className="text-[12px] font-bold text-[#3B4AD0] opacity-80">{p.uuid.slice(0, 8)}</span>
+                    <div key={p.uuid} className="flex h-6 md:h-[28px] items-center justify-center gap-1.5 md:gap-2 rounded-full bg-[hsla(241,100%,90%,1)] px-2 md:px-3 py-0.5 whitespace-nowrap shrink-0">
+                      <span className="text-[10px] md:text-[12px] font-bold text-[#4A4A4A] tracking-tight">{p.name}</span>
+                      <span className="text-[10px] md:text-[12px] font-bold text-[#3B4AD0] opacity-80">{p.uuid.slice(0, 8)}</span>
                     </div>
                   ))}
                 </div>
@@ -834,7 +834,7 @@ const handleGrantAccess = async (userId: string, projectIds: string[], permissio
 function PermissionBadge({ label, isAdmin }: { label: string; isAdmin: boolean }) {
   return (
     <span className={cn(
-      "inline-flex h-[28px] items-center justify-center rounded-full px-3 py-0.5 text-[12px] font-bold leading-[21px] font-sans whitespace-nowrap transition-colors",
+      "inline-flex h-6 md:h-[28px] items-center justify-center rounded-full px-2 md:px-3 py-0.5 text-[10px] md:text-[12px] font-bold leading-none font-sans whitespace-nowrap transition-colors shrink-0",
       "bg-[hsla(148,72%,44%,0.1)] text-[#1F244A]"
     )}>
       {label}

@@ -40,7 +40,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
           />
           {/* Drawer body */}
           <div className="relative flex flex-col w-[260px] max-w-[85vw] h-full bg-surface shadow-2xl animate-in slide-in-from-left duration-300">
-            <NavSidebar className="w-full h-full border-r-0" />
+            <NavSidebar className="w-full h-full border-r-0" isMobile />
           </div>
         </div>
       )}

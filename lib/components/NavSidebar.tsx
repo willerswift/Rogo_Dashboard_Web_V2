@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, UserCircle, Settings, LogOut, ShieldCheck, Package } from "lucide-react";
+import { LayoutDashboard, Users, UserCircle, Settings, LogOut, ShieldCheck, Package, Zap } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -19,16 +19,18 @@ const ICONS = {
   Account: UserCircle,
   Settings: Settings,
   MyPermissions: ShieldCheck,
+  Ems: Zap,
 };
 
-export function NavSidebar({ className }: { className?: string }) {
+export function NavSidebar({ className, isMobile = false }: { className?: string; isMobile?: boolean }) {
   const pathname = usePathname();
   const { logoUrl, faviconUrl, themeMode } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
   const isAdmin = useIsAdmin();
   
   // Sidebar is collapsed by default, expands when hovered
-  const isCollapsed = !isHovered;
+  // On mobile view (via mobile drawer), it should always be expanded
+  const isCollapsed = isMobile ? false : !isHovered;
 
   // Lọc nav items theo quyền admin/user
   const visibleNavItems = NAV_ITEMS.filter((item) => {

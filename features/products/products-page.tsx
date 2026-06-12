@@ -328,14 +328,14 @@ export function ProductsPage() {
         ) : (
           <>
           <div className="px-6 py-4 border-b border-border-muted flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white">
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full sm:w-auto">
               {/* Release Status Filter Tabs */}
-              <div className="flex items-center gap-1 bg-neutral-100 p-1 rounded-xl border border-neutral-200/50 shadow-sm">
+              <div className="flex items-center gap-1 bg-neutral-100 p-1 rounded-xl border border-neutral-200/50 shadow-sm w-full sm:w-auto">
                 <button
                   type="button"
                   onClick={() => setStatusFilter("all")}
                   className={cn(
-                    "px-3 py-1 rounded-lg text-xs font-bold font-sans transition-all duration-200",
+                    "flex-1 sm:flex-initial px-3 py-1 rounded-lg text-xs font-bold font-sans transition-all duration-200 text-center",
                     statusFilter === "all"
                       ? "bg-white text-neutral-800 shadow-sm border border-neutral-200/30"
                       : "text-neutral-500 hover:text-neutral-700"
@@ -347,7 +347,7 @@ export function ProductsPage() {
                   type="button"
                   onClick={() => setStatusFilter("released")}
                   className={cn(
-                    "px-3 py-1 rounded-lg text-xs font-bold font-sans transition-all duration-200",
+                    "flex-1 sm:flex-initial px-3 py-1 rounded-lg text-xs font-bold font-sans transition-all duration-200 text-center",
                     statusFilter === "released"
                       ? "bg-white text-blue-600 shadow-sm border border-neutral-200/30"
                       : "text-neutral-500 hover:text-neutral-700"
@@ -359,7 +359,7 @@ export function ProductsPage() {
                   type="button"
                   onClick={() => setStatusFilter("developing")}
                   className={cn(
-                    "px-3 py-1 rounded-lg text-xs font-bold font-sans transition-all duration-200",
+                    "flex-1 sm:flex-initial px-3 py-1 rounded-lg text-xs font-bold font-sans transition-all duration-200 text-center",
                     statusFilter === "developing"
                       ? "bg-white text-purple-600 shadow-sm border border-neutral-200/30"
                       : "text-neutral-500 hover:text-neutral-700"
@@ -370,7 +370,7 @@ export function ProductsPage() {
               </div>
 
               {/* Redesigned Product Count Badge */}
-              <div className="flex items-center gap-2 text-xs text-neutral-500 bg-neutral-50 border border-neutral-200/40 px-3.5 py-[7px] rounded-xl font-sans font-semibold shadow-sm transition-all duration-300">
+              <div className="flex items-center justify-center sm:justify-start gap-2 text-xs text-neutral-500 bg-neutral-50 border border-neutral-200/40 px-3.5 py-[7px] rounded-xl font-sans font-semibold shadow-sm transition-all duration-300 w-full sm:w-auto">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-100 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-300"></span>
@@ -574,20 +574,20 @@ export function ProductsPage() {
               <table className="min-w-full text-left text-sm bg-white">
                 <thead>
                   <tr className="border-b border-neutral-100 text-[11px] font-bold uppercase tracking-wider text-neutral-400 leading-[18px] font-sans bg-neutral-50/50">
-                    <th className="px-6 py-4 text-left">Product / Info</th>
-                    <th className="px-6 py-4 text-left hidden md:table-cell">Model ID</th>
-                    <th className="px-6 py-4 text-left hidden md:table-cell">Category</th>
-                    <th className="px-6 py-4 text-left hidden md:table-cell">Base Info</th>
-                    <th className="px-6 py-4 text-left">Release status</th>
-                    <th className="px-6 py-4 text-left hidden md:table-cell">Public</th>
-                    <th className="px-6 py-4 text-left hidden md:table-cell">OEM ready</th>
-                    <th className="py-4 pr-6 text-right">Action</th>
+                    <th className="px-4 sm:px-6 py-4 text-left">Product / Info</th>
+                    <th className="px-4 sm:px-6 py-4 text-left hidden md:table-cell">Model ID</th>
+                    <th className="px-4 sm:px-6 py-4 text-left hidden md:table-cell">Category</th>
+                    <th className="px-4 sm:px-6 py-4 text-left hidden md:table-cell">Base Info</th>
+                    <th className="px-4 sm:px-6 py-4 text-left">Release status</th>
+                    <th className="px-4 sm:px-6 py-4 text-left hidden md:table-cell">Public</th>
+                    <th className="px-4 sm:px-6 py-4 text-left hidden md:table-cell">OEM ready</th>
+                    <th className="py-4 pr-4 sm:pr-6 text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredProducts.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="px-6 py-12 text-center text-neutral-400 font-sans">
+                      <td colSpan={8} className="px-4 sm:px-6 py-12 text-center text-neutral-400 font-sans">
                         No products found matching your search.
                       </td>
                     </tr>
@@ -599,7 +599,7 @@ export function ProductsPage() {
                         className="group border-b border-neutral-100 hover:bg-neutral-50/50 transition-all duration-200 cursor-pointer"
                       >
                         {/* Product Thumbnail Info */}
-                        <td className="px-6 py-4">
+                        <td className="px-4 sm:px-6 py-4">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full border border-neutral-200/60 bg-white p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-sm group-hover:border-neutral-300 transition-colors">
                               <img
@@ -628,7 +628,7 @@ export function ProductsPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 font-mono text-xs text-neutral-600 hidden md:table-cell">
+                        <td className="px-4 sm:px-6 py-4 font-mono text-xs text-neutral-600 hidden md:table-cell">
                           <div className="flex items-center gap-1.5 w-fit">
                             <span>{product.modelId}</span>
                             <button
@@ -644,9 +644,9 @@ export function ProductsPage() {
                             </button>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-xs font-semibold text-neutral-600 font-mono whitespace-nowrap hidden md:table-cell">{product.categoryInfo.join(", ") || "—"}</td>
-                        <td className="px-6 py-4 text-xs font-semibold text-neutral-600 font-mono whitespace-nowrap hidden md:table-cell">{product.baseInfo.join(", ") || "—"}</td>
-                        <td className="px-6 py-4">
+                        <td className="px-4 sm:px-6 py-4 text-xs font-semibold text-neutral-600 font-mono whitespace-nowrap hidden md:table-cell">{product.categoryInfo.join(", ") || "—"}</td>
+                        <td className="px-4 sm:px-6 py-4 text-xs font-semibold text-neutral-600 font-mono whitespace-nowrap hidden md:table-cell">{product.baseInfo.join(", ") || "—"}</td>
+                        <td className="px-4 sm:px-6 py-4">
                           {product.releaseStatus ? (
                             <span className={cn(
                               "inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border shadow-sm",
@@ -660,14 +660,14 @@ export function ProductsPage() {
                             <span className="text-neutral-400">—</span>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-neutral-600 text-xs hidden md:table-cell">
+                        <td className="px-4 sm:px-6 py-4 text-neutral-600 text-xs hidden md:table-cell">
                           {product.isPublic ? (
                             <span className="text-emerald-600 font-semibold flex items-center gap-1"><Globe className="size-3.5" /> Yes</span>
                           ) : (
                             <span className="text-neutral-400 font-medium">No</span>
                           )}
                         </td>
-                        <td className="px-6 py-4 hidden md:table-cell">
+                        <td className="px-4 sm:px-6 py-4 hidden md:table-cell">
                           <div className="flex items-center gap-1.5">
                             <span className="relative flex h-1.5 w-1.5">
                               {product.isReadyOEM ? (
@@ -684,7 +684,7 @@ export function ProductsPage() {
                             </span>
                           </div>
                         </td>
-                        <td className="py-4 pr-6 text-right">
+                        <td className="py-4 pr-4 sm:pr-6 text-right">
                           <button
                             type="button"
                             onClick={() => setSelectedProduct(product)}

@@ -444,11 +444,11 @@ export function GrantAccessDialog({
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-4 sm:gap-8 mt-6 border-b border-border flex-wrap">
+          <div className="flex gap-4 sm:gap-8 mt-6 border-b border-border flex-nowrap sm:flex-wrap">
             <button
               onClick={() => setActiveTab("partner")}
               className={cn(
-                "pb-4 text-[16px] font-bold transition-all relative",
+                "flex-1 sm:flex-initial pb-4 text-[16px] font-bold transition-all relative text-center sm:text-left",
                 activeTab === "partner" ? "text-primary-300" : "text-neutral-400 hover:text-neutral-600"
               )}
             >
@@ -460,7 +460,7 @@ export function GrantAccessDialog({
             <button
               onClick={() => setActiveTab("project")}
               className={cn(
-                "pb-4 text-[16px] font-bold transition-all relative",
+                "flex-1 sm:flex-initial pb-4 text-[16px] font-bold transition-all relative text-center sm:text-left",
                 activeTab === "project" ? "text-primary-300" : "text-neutral-400 hover:text-neutral-600"
               )}
             >

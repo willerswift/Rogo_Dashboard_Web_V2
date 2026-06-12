@@ -68,7 +68,7 @@ export function DataTable<T>({
                   <TableHead 
                     key={column.id} 
                     className={cn(
-                      "px-6 py-4 text-[12px] font-bold uppercase tracking-wider text-neutral-500 leading-[18px] font-sans", 
+                      "px-4 sm:px-6 py-4 text-[12px] font-bold uppercase tracking-wider text-neutral-500 leading-[18px] font-sans", 
                       column.headerClassName
                     )}
                   >
@@ -90,7 +90,7 @@ export function DataTable<T>({
                     onClick={() => onRowClick?.(row)}
                   >
                     {columns.map((column) => (
-                      <TableCell key={column.id} className={cn("px-6 py-4 text-[13px] text-foreground", column.className)}>
+                      <TableCell key={column.id} className={cn("px-4 sm:px-6 py-4 text-[13px] text-foreground", column.className)}>
                         {column.cell(row)}
                       </TableCell>
                     ))}

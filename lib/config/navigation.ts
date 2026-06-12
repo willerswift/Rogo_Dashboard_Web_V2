@@ -22,6 +22,13 @@ export const NAV_ITEMS = [
     userOnly: true,
   },
   {
+    title: "Techno Park EMS",
+    href: "/techno-park-ems",
+    permission: "projectMgmt:view",
+    icon: "Ems",
+    adminOnly: false,
+  },
+  {
     title: "Products",
     href: "/products",
     permission: "productDev:view",
